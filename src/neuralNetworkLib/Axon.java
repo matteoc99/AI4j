@@ -1,7 +1,9 @@
 package neuralNetworkLib;
 
 /**
- * Created by matte on 15.05.2017.
+ * An Axon is a connection between two {@link Neuron} with a specific weight
+ * @author Matteo Cosi
+ * @since 16.04.2017
  */
 public class Axon {
 
