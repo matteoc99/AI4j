@@ -23,25 +23,31 @@ public class AgentInteface {
 
     //int 0-360
     public int getBallDir() {
-        return ballX;
+        int ret=0;
+
+        return ret;
     }
 
     //0-1
     public double getBallX() {
-        return ballX;
+        int ret=0;
+        return ret;
     }
 
     //0-1
     public double getBallY() {
-        return ballY;
+        int ret=0;
+        return ret;
     }
 
     //0-1
     public double getPalayer1Y() {
-        return palayer1Y;
+        int ret=0;
+        return ret;
     }
     //0-1
     public double getPlayer2Y() {
-        return player2Y;
+        int ret=0;
+        return ret;
     }
 }
