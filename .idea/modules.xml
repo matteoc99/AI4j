@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AI4j.iml" filepath="$PROJECT_DIR$/AI4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GameAi/GameAi.iml" filepath="$PROJECT_DIR$/GameAi/GameAi.iml" />
     </modules>
   </component>
 </project>
