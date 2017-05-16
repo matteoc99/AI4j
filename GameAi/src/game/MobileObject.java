@@ -9,7 +9,7 @@ import javax.swing.*;
 
 public class MobileObject extends ImmobileObject {
     /**
-     * Construktor for the {@link ImmobileObject}
+     * Construktor for the {@link MobileObject}
      *
      * @param dateiname image to load in the {@link JComponent}
      */
