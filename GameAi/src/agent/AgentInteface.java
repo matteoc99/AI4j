@@ -1,6 +1,6 @@
 package agent;
 
-import gui.PlayGround;
+import game.PlayGround;
 
 /**
  * Created by matte on 15.05.2017.
