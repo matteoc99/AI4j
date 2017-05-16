@@ -6,6 +6,8 @@ import java.util.ArrayList;
 /**
  * Network is a class that combines the Layers and offers some utilities
  *
+ * TODO training and learning. for now it only processes some values
+ *
  * @author Matteo Cosi
  * @since 15.05.2017
  */
@@ -48,7 +50,7 @@ public class Network {
      * @param hiddenAmount the preferred ammount of hidden layers
      * @param hiddenSize   the preferred size of the hidden layers for every hidden layer
      */
-    public Network(int inputSize, int outputSize, int hiddenAmount, int... hiddenSize) {
+    public Network(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {
         this();
         if (hiddenSize.length != hiddenAmount)
             throw new IllegalArgumentException("hiddenSize count not rigth");
@@ -137,7 +139,7 @@ public class Network {
      * @param hiddenSize   the preferred size of the hidden layers for every hidden layer
      * @return a DFF Network with everything set up.
      */
-    public Network createDFF(int inputSize, int outputSize, int hiddenAmount, int hiddenSize) {
+    public static Network createDFF(int inputSize, int outputSize, int hiddenAmount, int hiddenSize) {
         int[] hidden = new int[hiddenAmount];
         for (int i = 0; i < hiddenAmount; i++) {
             hidden[i] = hiddenSize;
@@ -200,7 +202,12 @@ public class Network {
             return -1;
     }
 
-    public double[] processData(double... in){
+    /**
+     * Process Data through all the Layers, and return the
+     * @param in
+     * @return
+     */
+    public double[] processData(double[] in){
         double [] ret = new double[layers.get(layers.size()-1).getNeuronCount()];
 
         if(layers.size()<=0)
@@ -210,6 +217,10 @@ public class Network {
         Layer inLayer = layers.get(0);
         if(inLayer.getType()!=LayerType.IN)
             throw new IllegalStateException("cant find the in-Layer");
+        for (int i = 0; i <in.length; i++) {
+                if(in[i]>1)
+                    throw new IllegalArgumentException("Inputs have to be smaller than1");
+        }
         inLayer.feed(in);
         for (int i = 0; i < layers.size()-1; i++) {
             layers.get(i).send();

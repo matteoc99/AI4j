@@ -146,7 +146,7 @@ public class Layer {
      * sets all the Neurons to the given value, if the Layer is of Type Input only
      * @param in values to use
      */
-    public void feed(double... in){
+    public void feed(double[] in){
         if (in.length != neurons.size())
             throw new IllegalArgumentException("feed_ERR in size not right");
         for (int i = 0; i < in.length; i++) {
@@ -164,6 +164,11 @@ public class Layer {
         }
     }
 
+    /**
+     * returns the Neuron from {@link #neurons} with a given index
+     * @param i index
+     * @return a {@link Neuron} from neurons with the requested index
+     */
     public Neuron getNeuronAt(int i) {
         if(i>=neurons.size())
             throw new IndexOutOfBoundsException("Index out of Bound");
