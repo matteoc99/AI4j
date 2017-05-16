@@ -1,18 +1,18 @@
 package neuralNetworkLib;
 
 /**
- * An Axon is a connection between two {@link Neuron} with a specific weight
+ * An Connection is a connection between two {@link Neuron} with a specific weight
  * @author Matteo Cosi
  * @since 16.04.2017
  */
-public class Axon {
+public class Connection {
 
     /**
-     * The minimum {@link Axon#weight} a connection is allowed to have
+     * The minimum {@link Connection#weight} a connection is allowed to have
      */
     private static final int MIN_WEIGTH = 0;
     /**
-     * The maximum {@link Axon#weight} a connection is allowed to have
+     * The maximum {@link Connection#weight} a connection is allowed to have
      */
     private static final int MAX_WEIGTH = 1;
     /**
@@ -30,13 +30,13 @@ public class Axon {
 
 
     /**
-     * Constructor for a Axon, which connects two {@link Neuron}s
+     * Constructor for a Connection, which connects two {@link Neuron}s
      *
      * @param from   {@link Neuron} where the connection begins
      * @param to     {@link Neuron} where the connection ends
-     * @param weight {@link Axon#weight} of the Synapse
+     * @param weight {@link Connection#weight} of the Synapse
      */
-    public Axon(Neuron from, Neuron to, double weight) {
+    public Connection(Neuron from, Neuron to, double weight) {
         if (from == null || to == null)
             throw new NullPointerException("from or to = null");
         this.from = from;
@@ -45,7 +45,7 @@ public class Axon {
     }
 
     /**
-     * sets {@link Axon#weight}
+     * sets {@link Connection#weight}
      */
     public void setWeight(double weight) {
         if (weight >= MIN_WEIGTH || weight <= MAX_WEIGTH)
@@ -55,7 +55,7 @@ public class Axon {
     }
 
     /**
-     * sets {@link Axon#from}
+     * sets {@link Connection#from}
      */
     public void setFrom(Neuron from) {
         if (from != null)
@@ -65,7 +65,7 @@ public class Axon {
     }
 
     /**
-     * sets {@link Axon#to}
+     * sets {@link Connection#to}
      *
      * @param to {@link Neuron}
      */
@@ -77,7 +77,7 @@ public class Axon {
     }
 
     /**
-     * @return {@link Axon#from}
+     * @return {@link Connection#from}
      */
     public Neuron getFrom() {
         return from;
@@ -85,14 +85,14 @@ public class Axon {
 
 
     /**
-     * @return {@link Axon#to}
+     * @return {@link Connection#to}
      */
     public Neuron getTo() {
         return to;
     }
 
     /**
-     * @return {@link Axon#weight}
+     * @return {@link Connection#weight}
      */
     public double getWeight() {
         return weight;
@@ -100,7 +100,7 @@ public class Axon {
 
 
     /**
-     * Send a value to the {@link Axon#to} Neuron multiplied by the {@link Axon#weight}
+     * Send a value to the {@link Connection#to} Neuron multiplied by the {@link Connection#weight}
      *
      * @param value
      */

@@ -13,12 +13,12 @@ public class Neuron {
     /**
      * Connections to other Neurons
      */
-    private ArrayList<Axon> axons = new ArrayList<>();
+    private ArrayList<Connection> axons = new ArrayList<>();
 
     /**
      * Connections from other Neurons
      */
-    private ArrayList<Axon> dendrites = new ArrayList<>();
+    private ArrayList<Connection> dendrites = new ArrayList<>();
 
     /**
      * current value in the node
@@ -44,7 +44,7 @@ public class Neuron {
      * sets the {@link Neuron#axons} for this Neuron
      * @param axons {@link #axons}
      */
-    public void setAxons(ArrayList<Axon> axons) {
+    public void setAxons(ArrayList<Connection> axons) {
         this.axons = axons;
     }
 
@@ -52,7 +52,7 @@ public class Neuron {
      * sets the {@link Neuron#dendrites} for this Neuron
      * @param dendrites {@link #dendrites}
      */
-    public void setDendrites(ArrayList<Axon> dendrites) {
+    public void setDendrites(ArrayList<Connection> dendrites) {
         this.dendrites = dendrites;
     }
 
@@ -60,7 +60,7 @@ public class Neuron {
      * returns all active {@link Neuron#axons}
      * @return {@link Neuron#axons}
      */
-    public ArrayList<Axon> getAxons() {
+    public ArrayList<Connection> getAxons() {
         return axons;
     }
 
@@ -69,7 +69,7 @@ public class Neuron {
      *
      * @return  {@link Neuron#dendrites}
      */
-    public ArrayList<Axon> getDendrites() {
+    public ArrayList<Connection> getDendrites() {
         return dendrites;
     }
 
@@ -119,40 +119,54 @@ public class Neuron {
     }
 
     /**
-     * Add an Axon to {@link #axons}
-     * @param s {@link Axon} to add
+     * Add an Connection to {@link #axons}
+     * @param s {@link Connection} to add
      */
-    public void addAxon(Axon s) {
+    public void addAxon(Connection s) {
         axons.add(s);
     }
     /**
      * Add a Dendride to {@link #dendrites}
-     * @param s {@link Axon} to add
+     * @param s {@link Connection} to add
      */
-    public void addDendrite(Axon s) {
+    public void addDendrite(Connection s) {
         dendrites.add(s);
     }
+    /**
+     * Add an Connection to {@link #axons}
+     * @param s {@link Connection} to add
+     */
+    public void removeAxon(Connection s) {
+        axons.remove(s);
+    }
+    /**
+     * Add a Dendride to {@link #dendrites}
+     * @param s {@link Connection} to add
+     */
+    public void removeDendrite(Connection s) {
+        dendrites.remove(s);
+    }
 
-    public Axon getAxonByToIndex(int to) {
-        Axon ret = null;
+    public Connection getAxonByToIndex(int to) {
+        Connection ret = null;
         //TODO
         return ret;
     }
 
-    public Axon getAxonByFromIndex(int to) {
-        Axon ret = null;
+    public Connection getAxonByFromIndex(int to) {
+        Connection ret = null;
         //TODO
         return ret;
     }
 
-    public Axon getDendroidByToIndex(int to) {
-        Axon ret = null;
+    public Connection getDendroidByToIndex(int to) {
+        Connection ret = null;
         //TODO
         return ret;
     }
 
-    public Axon getDendroidByFromIndex(int to) {
-        Axon ret = null;
+    public Connection getDendroidByFromIndex(int to) {
+        Connection ret = null;
         //TODO
         return ret;
     }
