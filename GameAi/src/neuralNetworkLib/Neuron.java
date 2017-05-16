@@ -123,7 +123,7 @@ public class Neuron {
      * @return {@link Neuron#value}
      */
     public double getValue() {
-        return value;
+        return activationFunction(value);
     }
 
     /**

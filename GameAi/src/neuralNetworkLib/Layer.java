@@ -134,11 +134,39 @@ public class Layer {
     }
 
     /**
+     * Returns the number of Neurons currently in neurons
+     * @return {@link #neurons}
+     */
+    public int getNeuronCount(){
+        return neurons.size();
+    }
+
+
+    /**
+     * sets all the Neurons to the given value, if the Layer is of Type Input only
+     * @param in values to use
+     */
+    public void feed(double... in){
+        if (in.length != neurons.size())
+            throw new IllegalArgumentException("feed_ERR in size not right");
+        for (int i = 0; i < in.length; i++) {
+            neurons.get(i).setValue(in[i]);
+        }
+    }
+
+
+    /**
      * Stimulates all the Neurons of this {@link Layer} to send a signal to all the Neurons of the next Layer
      */
     public void send() {
         for (int i = 0; i < neurons.size(); i++) {
             neurons.get(i).send();
         }
+    }
+
+    public Neuron getNeuronAt(int i) {
+        if(i>=neurons.size())
+            throw new IndexOutOfBoundsException("Index out of Bound");
+        return neurons.get(i);
     }
 }

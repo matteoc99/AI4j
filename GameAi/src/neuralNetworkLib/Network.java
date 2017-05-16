@@ -1,9 +1,7 @@
 package neuralNetworkLib;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
+
 
 /**
  * Network is a class that combines the Layers and offers some utilities
@@ -27,14 +25,18 @@ public class Network {
     }
 
     /**
-     * Create a Network with some Layers
+     * Create a Network with some Layers and connects them in the order they arrive
      *
-     * @param layers
+     * @param layerSet
      */
-    public Network(ArrayList<Layer> layers) {
+    public Network(ArrayList<Layer> layerSet) {
         this();
-        if (layers != null)
-            this.layers = layers;
+        if (layerSet != null) {
+            this.layers = layerSet;
+            for (int i = 0; i < layerSet.size()-1; i++) {
+                connect(layerSet.get(i),layerSet.get(i+1));
+            }
+        }
     }
 
     /**
@@ -66,11 +68,13 @@ public class Network {
         for (int i = 0; i < inNeurons.length; i++) {
             inNeurons[i] = new Neuron(i, Math.random());
         }
-        Layer[] hiddenLayers;
-        Neuron[][] hiddenNeurons;
+        Layer[] hiddenLayers=null;
+        Neuron[][] hiddenNeurons=null;
         if (hiddenAmount > 0) {
+
             //HIDDN Layer setup
             hiddenLayers = new Layer[hiddenAmount];
+
 
             //HIDDN Neuron setup
             hiddenNeurons = new Neuron[hiddenAmount][];
@@ -85,13 +89,24 @@ public class Network {
                 }
             }
         }
+
         //OUT Layer setup
         Layer outLayers = new Layer(LayerType.OUT);
+
         //OUT Neuron setup&initialization
-        Neuron[] outNeurons = new Neuron[hiddenSize[outputSize];
+        Neuron[] outNeurons = new Neuron[outputSize];
         for (int i = 0; i < outNeurons.length; i++) {
             outNeurons[i] = new Neuron(i, Math.random());
         }
+
+        //adding all the Neurons to the Layers
+        inLayers.addNeurons(inNeurons);
+        for (int i = 0; i < hiddenAmount; i++) {
+            hiddenLayers[i].addNeurons(hiddenNeurons[i]);
+        }
+        outLayers.addNeurons(outNeurons);
+
+
         //connecting all the layers
         if(hiddenAmount>0){
             connect(inLayers,hiddenLayers[0]);
@@ -105,7 +120,12 @@ public class Network {
         }else{
             connect(inLayers,outLayers);
         }
-
+        //adding The Layers to the Network used to calculate later
+        layers.add(inLayers);
+        for (int i = 0; i < hiddenAmount; i++) {
+            layers.add(hiddenLayers[i]);
+        }
+        layers.add(outLayers);
     }
 
     /**
@@ -162,6 +182,8 @@ public class Network {
      * @param layer2 second Layer
      */
     public void connect(Layer layer1, Layer layer2) {
+        if(layer1==null||layer2==null)
+            throw new NullPointerException("layer==null");
         layer1.connectWith(layer2);
     }
 
@@ -178,4 +200,23 @@ public class Network {
             return -1;
     }
 
+    public double[] processData(double... in){
+        double [] ret = new double[layers.get(layers.size()-1).getNeuronCount()];
+
+        if(layers.size()<=0)
+            throw new IllegalStateException("Network is still empty, cant process Data");
+        if (in.length != layers.get(0).getNeuronCount())
+            throw new IllegalArgumentException("hiddenSize count not rigth");
+        Layer inLayer = layers.get(0);
+        if(inLayer.getType()!=LayerType.IN)
+            throw new IllegalStateException("cant find the in-Layer");
+        inLayer.feed(in);
+        for (int i = 0; i < layers.size()-1; i++) {
+            layers.get(i).send();
+        }
+        for (int i = 0; i <ret.length; i++) {
+            ret[i]=layers.get(i).getNeuronAt(i).getValue();
+        }
+        return  ret;
+    }
 }
