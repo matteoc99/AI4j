@@ -31,17 +31,24 @@ public class Neuron {
     private int index;
 
     /**
+     * The bias of the {@link Neuron}
+     */
+    private double bias;
+
+    /**
      * constructor for a Neuron
      *
      * @param index {@link Neuron#index}
      */
-    public Neuron(int index) {
+    public Neuron(int index, double bias) {
         this.index = index;
+        this.bias = bias;
     }
 
 
     /**
      * sets the {@link Neuron#axons} for this Neuron
+     *
      * @param axons {@link #axons}
      */
     public void setAxons(ArrayList<Connection> axons) {
@@ -50,6 +57,7 @@ public class Neuron {
 
     /**
      * sets the {@link Neuron#dendrites} for this Neuron
+     *
      * @param dendrites {@link #dendrites}
      */
     public void setDendrites(ArrayList<Connection> dendrites) {
@@ -58,6 +66,7 @@ public class Neuron {
 
     /**
      * returns all active {@link Neuron#axons}
+     *
      * @return {@link Neuron#axons}
      */
     public ArrayList<Connection> getAxons() {
@@ -67,7 +76,7 @@ public class Neuron {
     /**
      * returns all active {@link Neuron#dendrites}
      *
-     * @return  {@link Neuron#dendrites}
+     * @return {@link Neuron#dendrites}
      */
     public ArrayList<Connection> getDendrites() {
         return dendrites;
@@ -76,6 +85,7 @@ public class Neuron {
 
     /**
      * returns the value of the current {@link Neuron}
+     *
      * @return {@link Neuron#value}
      */
     public double getValue() {
@@ -84,6 +94,7 @@ public class Neuron {
 
     /**
      * sets the value of the current {@link Neuron}
+     *
      * @param value {@link #value}
      */
     public void setValue(double value) {
@@ -92,6 +103,7 @@ public class Neuron {
 
     /**
      * returns the index of the current {@link Neuron}
+     *
      * @return {@link Neuron#index}
      */
     public int getIndex() {
@@ -99,8 +111,27 @@ public class Neuron {
     }
 
     /**
+     * returns the bias of the current {@link Neuron}
+     *
+     * @return {@link Neuron#bias}
+     */
+    public double getBias() {
+        return bias;
+    }
+
+    /**
+     * sets the bias of the current {@link Neuron}
+     *
+     * @param bias {@link Neuron#bias}
+     */
+    public void setBias(double bias) {
+        this.bias = bias;
+    }
+
+    /**
      * The Activation Function for this Neuron
      * Returns a value between 0 and 1 for a given value
+     *
      * @param val value to pass trougth the function
      * @return a value etween 0 and 1
      */
@@ -110,7 +141,8 @@ public class Neuron {
     }
 
     /**
-     * send the signal between 0-1 to all {@link Neuron} the current Neuron is connected with (all {@link Neuron#axons});
+     * send a signal to all {@link Neuron} the current Neuron is connected with (all {@link Neuron#axons});
+     * the function used is {@link Neuron#activationFunction(double)}
      */
     public void send() {
         for (int i = 0; i < axons.size(); i++) {
@@ -120,67 +152,98 @@ public class Neuron {
 
     /**
      * Add an Connection to {@link #axons}
+     *
      * @param s {@link Connection} to add
+     * @return true if the connection was added. Otherwise false
      */
-    public void addAxon(Connection s) {
-        axons.add(s);
+    public boolean addAxon(Connection s) {
+        if (!axons.contains(s))
+            axons.add(s);
+        else
+            return false;
+        return true;
     }
+
     /**
      * Add a Dendride to {@link #dendrites}
+     *
      * @param s {@link Connection} to add
+     * @return true if the connection was added. Otherwise false
      */
-    public void addDendrite(Connection s) {
-        dendrites.add(s);
+    public boolean addDendrite(Connection s) {
+        if (!dendrites.contains(s))
+            dendrites.add(s);
+        else
+            return false;
+        return true;
     }
+
     /**
-     * Add an Connection to {@link #axons}
+     * Remove an Connection from {@link #axons}
+     *
      * @param s {@link Connection} to add
+     * @return true if the connection was removed. Otherwise false
      */
-    public void removeAxon(Connection s) {
-        axons.remove(s);
+    public boolean removeAxon(Connection s) {
+        if (axons.contains(s))
+            axons.remove(s);
+        else
+            return false;
+        return true;
     }
+
     /**
-     * Add a Dendride to {@link #dendrites}
+     * remove a Dendrite from {@link #dendrites}
+     *
      * @param s {@link Connection} to add
+     * @return true if the connection was added. Otherwise false
      */
-    public void removeDendrite(Connection s) {
-        dendrites.remove(s);
+    public boolean removeDendrite(Connection s) {
+        if (dendrites.contains(s))
+            dendrites.remove(s);
+        else
+            return false;
+        return true;
     }
 
 
     /**
-     * Searches for a Axon with the requested to index {@link Neuron#index}
+     * Searches for an Axon with the requested "to" index {@link Neuron#index}
+     *
      * @param to {@link Neuron#index}
      * @return null if no Axon was found otherwise the requested connection
      */
     public Connection getAxonByToIndex(int to) {
         Connection ret = null;
         for (int i = 0; i < axons.size(); i++) {
-            if(to==axons.get(i).getTo().getIndex())
-                ret=axons.get(i);
+            if (to == axons.get(i).getTo().getIndex())
+                ret = axons.get(i);
         }
         return ret;
     }
 
     /**
-     * Searches for a Dendrite with the requested from index {@link Neuron#index}
+     * Searches for a Dendrite with the requested "from" index {@link Neuron#index}
+     *
      * @param from {@link Neuron#index}
      * @return null if no Dendrite was found otherwise the requested connection
      */
     public Connection getDendriteByFromIndex(int from) {
         Connection ret = null;
         for (int i = 0; i < dendrites.size(); i++) {
-            if(from==dendrites.get(i).getFrom().getIndex())
-                ret=dendrites.get(i);
+            if (from == dendrites.get(i).getFrom().getIndex())
+                ret = dendrites.get(i);
         }
         return ret;
     }
 
     /**
-     * TODO method created for class axon implementation needed
+     * the function which is called by all the dendrites, to send the data to this Neuron.
+     * The function simply adds all the "val" inputs to {@link Neuron#value}
+     *
+     * @param val the value that arrives from the dendrites
      */
     public void recive(double val) {
-
+        value += val;
     }
-
 }
