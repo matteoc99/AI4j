@@ -6,25 +6,19 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
- * Created by matte on 15.05.2017.
+ * Network is a class that combines the Layers and offers some utilities
+ * @author Matteo Cosi
+ * @since 15.05.2017
  */
 public class Network {
+    ArrayList<Layer> layers;
 
-    private LinkedList<Layer> layers;
-
-    public Network(LinkedList<Layer> layers) {
-        this.layers = layers;
+    private Network(){
+        layers=new ArrayList<>();
     }
-
-    public Network() {
-        this(new LinkedList<>());
-    }
-
-    public void addLayer(@NotNull Layer layer) {
-        if (layer != null) {
-            //  if (!layers.isEmpty();
-            //    layer.setInputCount(layers.g)
-            layers.add(layer);
-        }
+    private Network(ArrayList<Layer> layers){
+        this();
+        if (layers!=null)
+        this.layers=layers;
     }
 }
