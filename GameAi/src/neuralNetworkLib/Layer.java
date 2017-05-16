@@ -105,6 +105,17 @@ public class Layer {
     }
 
     /**
+     * Many neurons to add to {@link Layer#neurons}
+     *
+     * @param neurons {@link Neuron} to add to {@link #neurons}
+     */
+    public void addNeurons(Neuron[] neurons) {
+        for (int i = 0; i < neurons.length; i++) {
+            if (!this.neurons.contains(neurons[i]))
+                this.neurons.add(neurons[i]);
+        }
+    }
+    /**
      * Connect all the Neurons of this {@link Layer} to all the Neurons of the layer given as parameter.
      * the weight is a random Number done with Math.random();
      *

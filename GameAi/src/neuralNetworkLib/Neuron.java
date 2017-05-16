@@ -26,7 +26,7 @@ public class Neuron {
     private double value = 0;
 
     /**
-     * for identification purposes
+     * for identification purposes inside a {@link Layer}
      */
     private int index;
 
@@ -36,15 +36,49 @@ public class Neuron {
     private double bias;
 
     /**
+     * {@link Layer} where this Neuron is contained
+     */
+    private Layer myLayer=null;
+
+    /**
      * constructor for a Neuron
      *
      * @param index {@link Neuron#index}
+     * @param bias {@link #bias}
      */
     public Neuron(int index, double bias) {
         this.index = index;
         this.bias = bias;
     }
+    /**
+     * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
+     *
+     * @param index {@link Neuron#index}
+     * @param bias {@link #bias}
+     * @param layer {@link Layer}
+     */
+    public Neuron(int index, double bias,Layer layer) {
+        this.index = index;
+        this.bias = bias;
+        this.myLayer=layer;
+    }
+    /**
+     * sets the Layer, in which the Neuron is into
+     * @return {@link Layer} where the {@link Layer} is currently in. null, if there is no layer
+     */
+    public Layer getMyLayer() {
+        return myLayer;
+    }
 
+    /**
+     * sets the Layer, in which the Neuron is into
+     * @param myLayer {@link Layer}
+     */
+    public void setMyLayer(Layer myLayer) {
+        if(myLayer!=null)
+            this.myLayer = myLayer;
+
+    }
 
     /**
      * sets the {@link Neuron#axons} for this Neuron
