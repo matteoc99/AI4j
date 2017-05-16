@@ -147,27 +147,32 @@ public class Neuron {
         dendrites.remove(s);
     }
 
+
+    /**
+     * Searches for a Axon with the requested to index {@link Neuron#index}
+     * @param to {@link Neuron#index}
+     * @return null if no Axon was found otherwise the requested connection
+     */
     public Connection getAxonByToIndex(int to) {
         Connection ret = null;
-        //TODO
+        for (int i = 0; i < axons.size(); i++) {
+            if(to==axons.get(i).getTo().getIndex())
+                ret=axons.get(i);
+        }
         return ret;
     }
 
-    public Connection getAxonByFromIndex(int to) {
+    /**
+     * Searches for a Dendrite with the requested from index {@link Neuron#index}
+     * @param from {@link Neuron#index}
+     * @return null if no Dendrite was found otherwise the requested connection
+     */
+    public Connection getDendriteByFromIndex(int from) {
         Connection ret = null;
-        //TODO
-        return ret;
-    }
-
-    public Connection getDendroidByToIndex(int to) {
-        Connection ret = null;
-        //TODO
-        return ret;
-    }
-
-    public Connection getDendroidByFromIndex(int to) {
-        Connection ret = null;
-        //TODO
+        for (int i = 0; i < dendrites.size(); i++) {
+            if(from==dendrites.get(i).getFrom().getIndex())
+                ret=dendrites.get(i);
+        }
         return ret;
     }
 
@@ -175,7 +180,7 @@ public class Neuron {
      * TODO method created for class axon implementation needed
      */
     public void recive(double val) {
-        //TODO
+
     }
 
 }
