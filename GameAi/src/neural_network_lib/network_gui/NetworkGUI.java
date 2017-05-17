@@ -4,6 +4,8 @@ import neural_network_lib.Network;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -17,7 +19,7 @@ public class NetworkGUI extends JFrame{
     /**
      * Amount of NetworkPanels displayed horizontally on the screen
      */
-    private int horizontalAmountToDisplay = 4;
+    private int horizontalAmountToDisplay = 3;
 
     /**
      * Container for all components
@@ -103,10 +105,20 @@ public class NetworkGUI extends JFrame{
         networkContainer.add(new NetworkPanel(null));
         networkContainer.add(new NetworkPanel(null));
         networkContainer.add(new NetworkPanel(null));
+        networkContainer.add(new NetworkPanel(null));
+        networkContainer.add(new NetworkPanel(null));
+        networkContainer.add(new NetworkPanel(null));
+        networkContainer.add(new NetworkPanel(null));
+        networkContainer.add(new NetworkPanel(null));
+
 
 
 
         container.add(new JScrollPane(networkContainer), BorderLayout.CENTER);
+
+        JLabel placeHolder = new JLabel("Look at me, I'm a placeholder!");
+        placeHolder.setPreferredSize(new Dimension(-1,50));
+        container.add(placeHolder, BorderLayout.PAGE_END);
         // components end
 
         // adds the parent of all components to the contentPane
@@ -132,21 +144,18 @@ public class NetworkGUI extends JFrame{
     private class NetworkPanel extends JPanel{
 
         private NetworkPanel(Network network) {
-            //this.setBorder(new );
-            this.setBackground(Color.BLUE);
+            this.setBorder(new TitledBorder(new LineBorder(Color.GRAY,3,true),
+                    "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                    new Font("Arial Black", Font.PLAIN, 14)));
             this.addComponentListener(new ComponentAdapter() {
                 @Override
                 public void componentResized(ComponentEvent e) {
-                    System.out.println(NetworkGUI.this.getClass());
                     super.componentResized(e);
                     // Keeps this JPanel in a 16:9 resolution
-                    double prefWidth = (NetworkGUI.this.getWidth()-(horizontalAmountToDisplay+1)*20) /
-                            (horizontalAmountToDisplay+1);
-                    if (prefWidth<160) prefWidth=160;
-                    double prefHeight = prefWidth/16.0*9.0;
-                    NetworkPanel.this.setPreferredSize(new Dimension((int)prefWidth, (int)prefHeight));
-                    System.out.println(NetworkPanel.this.getWidth());
-                    System.out.println(NetworkPanel.this.getHeight());
+                    if (NetworkPanel.this.getWidth()>=160)
+                        NetworkPanel.this.setPreferredSize(new Dimension(-1, NetworkPanel.this.getWidth()/16*9));
+                    else
+                        NetworkPanel.this.setPreferredSize(new Dimension(240,135));
                 }
             });
         }
