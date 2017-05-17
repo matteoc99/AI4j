@@ -46,7 +46,7 @@ public class NetworkGUI extends JFrame{
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds(0,0, (int)d.getWidth(), (int)d.getHeight());
         this.setLocationRelativeTo(null);
-
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         // Location and Size end
 
         // components
