@@ -226,7 +226,7 @@ public class Network {
             layers.get(i).send();
         }
         for (int i = 0; i <ret.length; i++) {
-            ret[i]=layers.get(i).getNeuronAt(i).getValue();
+            ret[i]=layers.get(layers.size()-1).getNeuronAt(i).getValue();
         }
         return  ret;
     }

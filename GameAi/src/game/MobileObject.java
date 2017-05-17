@@ -11,6 +11,10 @@ import javax.swing.*;
 
 public class MobileObject extends ImmobileObject {
 
+    /**
+     * Declares the maximum speed this object can have
+     */
+    public static final int MAX_SPEED=4;
 
     /**
      * describes the speed at which the {@link MobileObject} is moving
@@ -20,7 +24,16 @@ public class MobileObject extends ImmobileObject {
     /**
      * Describes the current direction of this {@link MobileObject}
      */
+    /**
+     * stores the current direction of the Object
+     */
     Vec2d direction;
+
+    /**
+     * stores current the position of the Object
+     */
+    Vec2d position;
+
 
 
     /**
@@ -30,7 +43,30 @@ public class MobileObject extends ImmobileObject {
      */
     public MobileObject(String dateiname) throws ClassNotFoundException {
         super(dateiname);
+        direction = new Vec2d();
+        direction.x=(int)Math.random()*4-2;
+        direction.y=(int)Math.random()*4-2;
     }
 
-    //TODO get, set, move &direction
+    //TODO get, set, &direction
+
+    public void move(){
+        if (position==null){
+            position=new Vec2d();
+            position.x=getX();
+            position.y=getY();
+        }
+    }
+    /**
+     * Changes the Location of the current Object
+     */
+
+    protected void changeLoc() {
+        this.setLocation((int) (position.x + direction.x), (int) (position.y + direction.y));
+        position.x = (int) (position.x + direction.x);
+        position.y = (int) (position.y + direction.y);
+        if(Math.abs(direction.x)<MAX_SPEED) {
+            direction.x *= 1.0005;
+        }
+    }
 }

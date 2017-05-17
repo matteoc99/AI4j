@@ -19,8 +19,18 @@ public class Player extends MobileObject {
      *
      * @param dateiname image to load in the {@link JComponent}
      */
-    public Player(String dateiname,Agent agent) throws ClassNotFoundException {
+    public Player(String dateiname, Agent agent) throws ClassNotFoundException {
         super(dateiname);
-        this.agent=agent;
+        this.agent = agent;
+        direction.x=0;
+        direction.y=0;
+    }
+
+    @Override
+    public void move() {
+        super.move();
+        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y))==null) {
+            changeLoc();
+        }
     }
 }
