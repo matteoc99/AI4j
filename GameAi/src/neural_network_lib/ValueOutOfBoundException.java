@@ -1,4 +1,4 @@
-package neuralNetworkLib;
+package neural_network_lib;
 
 /**
  * Created by matte on 15.05.2017.

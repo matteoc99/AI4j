@@ -1,4 +1,4 @@
-package neuralNetworkLib;
+package neural_network_lib;
 
 /**
  * An Connection is a connection between two {@link Neuron} with a specific weight
