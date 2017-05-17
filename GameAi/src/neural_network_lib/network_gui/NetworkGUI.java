@@ -3,12 +3,12 @@ package neural_network_lib.network_gui;
 import neural_network_lib.Network;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 /**
@@ -113,8 +113,9 @@ public class NetworkGUI extends JFrame{
 
 
 
-
-        container.add(new JScrollPane(networkContainer), BorderLayout.CENTER);
+        JScrollPane scroll = new JScrollPane(networkContainer);
+        scroll.getVerticalScrollBar().setUnitIncrement(12);
+        container.add(scroll, BorderLayout.CENTER);
 
         JLabel placeHolder = new JLabel("Look at me, I'm a placeholder!");
         placeHolder.setPreferredSize(new Dimension(-1,50));
@@ -130,11 +131,12 @@ public class NetworkGUI extends JFrame{
 
     /**
      * Adds a Network to this JFrame
+     * A Network is displayed in form of a NetworkPanel
      *
      * @param network to add
      */
     public void addNetwork(Network network) {
-
+        networkContainer.add(new NetworkPanel(network));
     }
 
     /**
@@ -152,10 +154,41 @@ public class NetworkGUI extends JFrame{
                 public void componentResized(ComponentEvent e) {
                     super.componentResized(e);
                     // Keeps this JPanel in a 16:9 resolution
-                    if (NetworkPanel.this.getWidth()>=160)
+                    if (NetworkPanel.this.getWidth()>=240)
                         NetworkPanel.this.setPreferredSize(new Dimension(-1, NetworkPanel.this.getWidth()/16*9));
                     else
                         NetworkPanel.this.setPreferredSize(new Dimension(240,135));
+                }
+            });
+            this.addMouseListener(new MouseAdapter() {
+                /**
+                 * Increases the size of this NetworkPanel significantly
+                 * and thereby overlaps the other NetworkPanels
+                 */
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+
+                /**
+                 * Slight changes to the JPanel in order to indicate that
+                 * this JPanel is clickable
+                 */
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // changes the Border
+                    NetworkPanel.this.setBorder(new TitledBorder(new LineBorder(Color.GRAY.darker(), 5, true),
+                            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                            new Font("Arial Black", Font.PLAIN, 14)));
+                }
+
+                /**
+                 * Restores default
+                 */
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    NetworkPanel.this.setBorder(new TitledBorder(new LineBorder(Color.GRAY,3,true),
+                            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                            new Font("Arial Black", Font.PLAIN, 14)));
                 }
             });
         }
