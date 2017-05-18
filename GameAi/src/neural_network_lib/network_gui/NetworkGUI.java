@@ -5,10 +5,7 @@ import neural_network_lib.Network;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 
 /**
@@ -84,35 +81,6 @@ public class NetworkGUI extends JFrame{
         networkContainer = new JPanel(networkContainerGridLayout);
         networkContainer.setBorder(new EmptyBorder(5,20,5,20));
 
-
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-        networkContainer.add(new NetworkPanel(null));
-
-
-
         JScrollPane scroll = new JScrollPane(networkContainer);
         scroll.getVerticalScrollBar().setUnitIncrement(12);
         container.add(scroll, BorderLayout.CENTER);
@@ -129,6 +97,8 @@ public class NetworkGUI extends JFrame{
         this.setVisible(true);
     }
 
+
+
     /**
      * Adds a Network to this JFrame
      * A Network is displayed in form of a NetworkPanel
@@ -143,12 +113,35 @@ public class NetworkGUI extends JFrame{
      * A NetworkPanel contains all components to display a network
      * It is added to the networkContainer od the NetworkGUI
      */
-    private class NetworkPanel extends JPanel{
+    private class NetworkPanel extends JPanel {
+
+        /**
+         * This is the standard Border used
+         * It is a TitleBorder with a CompoundBorder as Border
+         * The CompoundBorder consists of a gray LineBorder (Outer) and a EmptyBoder(Inner) as a placeHolder
+         */
+        private Border normalBorder = new TitledBorder(
+                new CompoundBorder(
+                    new LineBorder(Color.GRAY,3,true),
+                    new EmptyBorder(2,2,2,2)),
+                "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                new Font("Arial Black", Font.PLAIN, 14));
+
+        /**
+         * This is the Border used, while the mouse is on this JPanel
+         * It is a TitleBorder with a CompoundBorder as Border
+         * The CompoundBorder consists of a gray LineBorder (Outer) and another gray LineBorder(Inner),
+         * so that the Border's size can be increases without increasing the size of this JPanel
+         */
+        private Border selectedBorder = new TitledBorder(
+                new CompoundBorder(
+                    new LineBorder(Color.GRAY,3,true),
+                    new LineBorder(Color.GRAY,2,false)),
+                "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                new Font("Arial Black", Font.PLAIN, 14));
 
         private NetworkPanel(Network network) {
-            this.setBorder(new TitledBorder(new LineBorder(Color.GRAY,3,true),
-                    "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                    new Font("Arial Black", Font.PLAIN, 14)));
+            this.setBorder(normalBorder);
             this.addComponentListener(new ComponentAdapter() {
                 @Override
                 public void componentResized(ComponentEvent e) {
@@ -176,9 +169,7 @@ public class NetworkGUI extends JFrame{
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     // changes the Border
-                    NetworkPanel.this.setBorder(new TitledBorder(new LineBorder(Color.GRAY.darker(), 5, true),
-                            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                            new Font("Arial Black", Font.PLAIN, 14)));
+                    NetworkPanel.this.setBorder(selectedBorder);
                 }
 
                 /**
@@ -186,13 +177,14 @@ public class NetworkGUI extends JFrame{
                  */
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    NetworkPanel.this.setBorder(new TitledBorder(new LineBorder(Color.GRAY,3,true),
-                            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                            new Font("Arial Black", Font.PLAIN, 14)));
+                    // changes the Border
+                    NetworkPanel.this.setBorder(normalBorder);
                 }
             });
         }
     }
+
+
 
     public static void main(String[] args) {
         new NetworkGUI();
