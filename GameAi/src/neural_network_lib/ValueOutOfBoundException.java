@@ -1,7 +1,8 @@
 package neural_network_lib;
 
 /**
- * Created by matte on 15.05.2017.
+ * @author Matteo Cosi
+ * @since 15.04.2017
  */
 public class ValueOutOfBoundException extends RuntimeException {
     public ValueOutOfBoundException(String s) {

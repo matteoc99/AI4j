@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * @since 15.05.2017
  */
 public class Layer {
-//TODO increase sizes in Network when Neurns are addes
+    //TODO increase sizes in Network when Neurons are added
     /**
      * Contains all the {@link Neuron} of this Layer
      */

@@ -5,7 +5,6 @@ import java.awt.*;
 import java.net.URL;
 
 /**
- *
  * @author Matteo Cosi
  * @since 15.05.2017
  */

@@ -1,7 +1,6 @@
 package agent.cosi;
 
 import agent.Agent;
-import neural_network_lib.Function;
 import neural_network_lib.Network;
 
 /**
@@ -17,8 +16,8 @@ public class CosiAgent extends Agent {
             in[i]=Math.random();
         }
         double[] d = n.processData(in);
-        for (int i = 0; i < d.length; i++) {
-            System.out.println(d[i]);
+        for (double aD : d) {
+            System.out.println(aD);
         }
 
     }

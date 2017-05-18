@@ -1,10 +1,6 @@
 package game;
 
-import com.sun.javafx.geom.Vec2d;
-import com.sun.org.apache.bcel.internal.generic.GOTO;
-
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * @author Matteo Cosi

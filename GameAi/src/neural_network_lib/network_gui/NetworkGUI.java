@@ -38,7 +38,6 @@ public class NetworkGUI extends JFrame{
         // Settings
         this.setTitle("NetworkDisplay");
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
         // Settings end
 
         // Location and Size
@@ -66,25 +65,33 @@ public class NetworkGUI extends JFrame{
         file.add(exit);
         menuBar.add(file);
 
-        // adds the fileMenu to the menuBar and fills it with Items
+        // adds the editMenu to the menuBar and fills it with Items
         JMenu edit = new JMenu("Edit");
         JMenuItem restore = new JMenuItem("Restore NetworkPanels");
         edit.add(restore);
         menuBar.add(edit);
 
-        // adds the menuBar at the top of the container
+        // adds the menuBar to the container, page-start
         container.add(menuBar, BorderLayout.PAGE_START);
 
+        // creates a GridLayout for the networkContainer
         GridLayout networkContainerGridLayout = new GridLayout(0, horizontalAmountToDisplay);
+        // gaps
         networkContainerGridLayout.setHgap(20);
         networkContainerGridLayout.setVgap(20);
+        // JPanel containing all NetworkPanels
         networkContainer = new JPanel(networkContainerGridLayout);
+        // margin
         networkContainer.setBorder(new EmptyBorder(5,20,5,20));
 
+        // adds the networkContainer to a JScrollPanel
         JScrollPane scroll = new JScrollPane(networkContainer);
+        // speedUp
         scroll.getVerticalScrollBar().setUnitIncrement(12);
+        // adds the JScrollPanel to the container, page-center
         container.add(scroll, BorderLayout.CENTER);
 
+        // No usage yet
         JLabel placeHolder = new JLabel("Look at me, I'm a placeholder!");
         placeHolder.setPreferredSize(new Dimension(-1,50));
         container.add(placeHolder, BorderLayout.PAGE_END);

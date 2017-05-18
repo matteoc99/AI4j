@@ -1,7 +1,5 @@
 package neural_network_lib;
 
-import java.awt.*;
-
 /**
  * @author Matteo Cosi
  * @since 18.05.2017

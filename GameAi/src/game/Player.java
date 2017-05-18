@@ -5,7 +5,8 @@ import agent.Agent;
 import javax.swing.*;
 
 /**
- * Created by matte on 15.05.2017.
+ * @author Matteo Cosi
+ * @since 15.04.2017
  */
 public class Player extends MobileObject {
 

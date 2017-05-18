@@ -3,7 +3,9 @@ package agent.est;
 import agent.Agent;
 
 /**
- * Created by matte on 15.05.2017.
+ *
+ * @author Maximilian Estfeller
+ * @since 15.04.2017
  */
 public class EstAgent extends Agent {
 }
