@@ -7,7 +7,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * Created by matte on 15.05.2017.
+ *
+ * @author Matteo Cosi
+ * @since 15.05.2017
  */
 public class PlayGround extends JFrame {
 

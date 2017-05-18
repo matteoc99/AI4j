@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 /**
  * Network is a class that combines the Layers and offers some utilities
- *
+ * <p>
  * TODO training and learning. for now it only processes some values
  *
  * @author Matteo Cosi
@@ -18,6 +18,10 @@ public class Network {
      */
     private ArrayList<Layer> layers;
 
+    private int inputSize;
+    private int outSize;
+    private int hiddenAmount;
+    private int hiddenSize[];
 
     /**
      * Create an empty Network
@@ -35,8 +39,8 @@ public class Network {
         this();
         if (layerSet != null) {
             this.layers = layerSet;
-            for (int i = 0; i < layerSet.size()-1; i++) {
-                connect(layerSet.get(i),layerSet.get(i+1));
+            for (int i = 0; i < layerSet.size() - 1; i++) {
+                connect(layerSet.get(i), layerSet.get(i + 1));
             }
         }
     }
@@ -51,6 +55,7 @@ public class Network {
      * @param hiddenSize   the preferred size of the hidden layers for every hidden layer
      */
     public Network(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {
+
         this();
         if (hiddenSize.length != hiddenAmount)
             throw new IllegalArgumentException("hiddenSize count not rigth");
@@ -61,6 +66,10 @@ public class Network {
             if (hiddenSize[i] <= 0)
                 throw new IllegalArgumentException("all Sizes must be >0");
         }
+        this.hiddenAmount=hiddenAmount;
+        this.hiddenSize=hiddenSize;
+        this.inputSize=inputSize;
+        this.outSize=outputSize;
 
         //IN Layer setup
         Layer inLayers = new Layer(LayerType.IN);
@@ -70,8 +79,8 @@ public class Network {
         for (int i = 0; i < inNeurons.length; i++) {
             inNeurons[i] = new Neuron(i, Math.random());
         }
-        Layer[] hiddenLayers=null;
-        Neuron[][] hiddenNeurons=null;
+        Layer[] hiddenLayers = null;
+        Neuron[][] hiddenNeurons = null;
         if (hiddenAmount > 0) {
 
             //HIDDN Layer setup
@@ -110,17 +119,17 @@ public class Network {
 
 
         //connecting all the layers
-        if(hiddenAmount>0){
-            connect(inLayers,hiddenLayers[0]);
+        if (hiddenAmount > 0) {
+            connect(inLayers, hiddenLayers[0]);
             for (int i = 0; i < hiddenAmount; i++) {
-                if(i==hiddenAmount-1){
-                    connect(hiddenLayers[i],outLayers);
-                }else{
-                    connect(hiddenLayers[i],hiddenLayers[i+i]);
+                if (i == hiddenAmount - 1) {
+                    connect(hiddenLayers[i], outLayers);
+                } else {
+                    connect(hiddenLayers[i], hiddenLayers[i + i]);
                 }
             }
-        }else{
-            connect(inLayers,outLayers);
+        } else {
+            connect(inLayers, outLayers);
         }
         //adding The Layers to the Network used to calculate later
         layers.add(inLayers);
@@ -176,6 +185,66 @@ public class Network {
     }
 
     /**
+     * clears layers and fills it with the Layers in the Parameter.
+     * @param layers {@link #layers}
+     */
+    public void setLayers(ArrayList<Layer> layers) {
+        this.layers = layers;
+    }
+
+    /**
+     * Returns the size of the input nodes
+     * @return {@link #inputSize}
+     */
+    public int getInputSize() {
+        return inputSize;
+    }
+
+    /**
+     * Returns the size of the output nodes
+     * @return {@link #outSize}
+     */
+    public int getOutSize() {
+        return outSize;
+    }
+
+    /**
+     * Returns the amount of the hidden nodes
+     * @return {@link #hiddenAmount}
+     */
+    public int getHiddenAmount() {
+        return hiddenAmount;
+    }
+
+
+    /**
+     * Returns the size of all the hidden node sizes
+     * @return {@link #hiddenSize}
+     */
+    public int[] getHiddenSize() {
+        return hiddenSize;
+    }
+
+    /**
+     * Returns the Layers of this Network
+     * @return {@link #layers}
+     */
+    public ArrayList<Layer> getLayers() {
+        return layers;
+    }
+
+    /**
+     * Returns the Layer at a given index
+     * @param index index of the Layer
+     * @return the requested Layer
+     */
+    public Layer getLayerByIndex(int index) {
+        if (index<layers.size())
+            return layers.get(index);
+        throw new NullPointerException("index greater than layer size");
+    }
+
+    /**
      * Connects the first Layer with the second
      * from layer1 -> layer2 axon
      * from layer1 <- layer2 dendrites
@@ -184,7 +253,7 @@ public class Network {
      * @param layer2 second Layer
      */
     public void connect(Layer layer1, Layer layer2) {
-        if(layer1==null||layer2==null)
+        if (layer1 == null || layer2 == null)
             throw new NullPointerException("layer==null");
         layer1.connectWith(layer2);
     }
@@ -204,30 +273,31 @@ public class Network {
 
     /**
      * Process Data through all the Layers, and return the
+     *
      * @param in
      * @return
      */
-    public double[] processData(double[] in){
-        double [] ret = new double[layers.get(layers.size()-1).getNeuronCount()];
+    public double[] processData(double[] in) {
+        double[] ret = new double[layers.get(layers.size() - 1).getNeuronCount()];
 
-        if(layers.size()<=0)
+        if (layers.size() <= 0)
             throw new IllegalStateException("Network is still empty, cant process Data");
         if (in.length != layers.get(0).getNeuronCount())
             throw new IllegalArgumentException("hiddenSize count not rigth");
         Layer inLayer = layers.get(0);
-        if(inLayer.getType()!=LayerType.IN)
+        if (inLayer.getType() != LayerType.IN)
             throw new IllegalStateException("cant find the in-Layer");
-        for (int i = 0; i <in.length; i++) {
-                if(in[i]>1)
-                    throw new IllegalArgumentException("Inputs have to be smaller than1");
+        for (int i = 0; i < in.length; i++) {
+            if (in[i] > 1)
+                throw new IllegalArgumentException("Inputs have to be smaller than1");
         }
         inLayer.feed(in);
-        for (int i = 0; i < layers.size()-1; i++) {
+        for (int i = 0; i < layers.size() - 1; i++) {
             layers.get(i).send();
         }
-        for (int i = 0; i <ret.length; i++) {
-            ret[i]=layers.get(layers.size()-1).getNeuronAt(i).getValue();
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = layers.get(layers.size() - 1).getNeuronAt(i).getValue();
         }
-        return  ret;
+        return ret;
     }
 }
