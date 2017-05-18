@@ -38,32 +38,65 @@ public class Neuron {
     /**
      * {@link Layer} where this Neuron is contained
      */
-    private Layer myLayer=null;
+    private Layer myLayer = null;
+
+    /**
+     * the Neuron Activation Function
+     */
+    private Function function = null;
 
     /**
      * constructor for a Neuron
      *
      * @param index {@link Neuron#index}
-     * @param bias {@link #bias}
+     * @param bias  {@link #bias}
      */
     public Neuron(int index, double bias) {
-        this.index = index;
-        this.bias = bias;
+      this(index, bias, null, new Function() {
+          @Override
+          public double calculate(double val) {
+              double ret = 1 / (1 + Math.exp(-val));
+              return ret;
+          }
+      });
     }
+
     /**
      * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
      *
      * @param index {@link Neuron#index}
-     * @param bias {@link #bias}
+     * @param bias  {@link #bias}
      * @param layer {@link Layer}
      */
-    public Neuron(int index, double bias,Layer layer) {
+    public Neuron(int index, double bias, Layer layer) {
+        this(index, bias, layer, new Function() {
+            @Override
+            public double calculate(double val) {
+                double ret = 1 / (1 + Math.exp(-val));
+                return ret;
+            }
+        });
+    }
+
+    /**
+     * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
+     * The Activation function can also be changed
+     *
+     * @param index    {@link Neuron#index}
+     * @param bias     {@link #bias}
+     * @param layer    {@link Layer}
+     * @param function {@link #function}
+     */
+    public Neuron(int index, double bias, Layer layer, Function function) {
         this.index = index;
         this.bias = bias;
-        this.myLayer=layer;
+        this.myLayer = layer;
+        this.function = function;
     }
+
     /**
      * sets the Layer, in which the Neuron is into
+     *
      * @return {@link Layer} where the {@link Layer} is currently in. null, if there is no layer
      */
     public Layer getMyLayer() {
@@ -72,12 +105,12 @@ public class Neuron {
 
     /**
      * sets the Layer, in which the Neuron is into
+     *
      * @param myLayer {@link Layer}
      */
     public void setMyLayer(Layer myLayer) {
-        if(myLayer!=null)
+        if (myLayer != null)
             this.myLayer = myLayer;
-
     }
 
     /**
@@ -118,12 +151,32 @@ public class Neuron {
 
 
     /**
+     * sets the {@link Neuron#function} for this Neuron
+     *
+     * @param function {@link #function}
+     */
+    public void setFunction(Function function) {
+        if (function == null)
+            throw new NullPointerException("function = null");
+        this.function = function;
+    }
+
+    /**
+     * returns the {@link Function} of the current {@link Neuron}
+     *
+     * @return {@link Neuron#function}
+     */
+    public Function getFunction() {
+        return function;
+    }
+
+    /**
      * returns the value of the current {@link Neuron}
      *
      * @return {@link Neuron#value}
      */
     public double getValue() {
-        return activationFunction(value);
+        return function.calculate(value);
     }
 
     /**
@@ -163,11 +216,10 @@ public class Neuron {
     }
 
     /**
-     * The Activation Function for this Neuron
-     * Returns a value between 0 and 1 for a given value
-     *
      * @param val value to pass trougth the function
      * @return a value etween 0 and 1
+     * @deprecated The Activation Function for this Neuron
+     * Returns a value between 0 and 1 for a given value
      */
     public static double activationFunction(double val) {
         double ret = 1 / (1 + Math.exp(-val));
@@ -180,7 +232,7 @@ public class Neuron {
      */
     public void send() {
         for (int i = 0; i < axons.size(); i++) {
-            axons.get(i).send(activationFunction(value));
+                axons.get(i).send(function.calculate(value * bias));
         }
     }
 
