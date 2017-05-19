@@ -105,7 +105,7 @@ public class Connection {
      * @param value
      */
     public void send(double value) {
-        to.recive(value * weight);
+        to.receive(value * weight);
     }
 
 }

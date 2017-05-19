@@ -234,6 +234,7 @@ public class Neuron {
         for (int i = 0; i < axons.size(); i++) {
                 axons.get(i).send(function.calculate(value * bias));
         }
+        value=0;
     }
 
     /**
@@ -329,7 +330,7 @@ public class Neuron {
      *
      * @param val the value that arrives from the dendrites
      */
-    public void recive(double val) {
+    public void receive(double val) {
         value += val;
     }
 }

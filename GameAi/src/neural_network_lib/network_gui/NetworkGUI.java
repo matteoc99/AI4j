@@ -1,11 +1,11 @@
 package neural_network_lib.network_gui;
 
+import com.sun.istack.internal.NotNull;
 import neural_network_lib.Network;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.awt.event.*;
 
 
 /**
@@ -100,6 +100,11 @@ public class NetworkGUI extends JFrame{
         // adds the parent of all components to the contentPane
         this.getContentPane().add(container);
 
+        // adds the first set of Networks to this NetworkGUI
+        for (Network network : networks) {
+            this.addNetwork(network);
+        }
+
         // sets visible after everything is set up
         this.setVisible(true);
     }
@@ -112,88 +117,17 @@ public class NetworkGUI extends JFrame{
      *
      * @param network to add
      */
-    public void addNetwork(Network network) {
+    public void addNetwork(@NotNull Network network) {
+        //if (network == null) return;
         networkContainer.add(new NetworkPanel(network));
     }
 
-    /**
-     * A NetworkPanel contains all components to display a network
-     * It is added to the networkContainer od the NetworkGUI
-     */
-    private class NetworkPanel extends JPanel {
-
-        /**
-         * This is the standard Border used
-         * It is a TitleBorder with a CompoundBorder as Border
-         * The CompoundBorder consists of a gray LineBorder (Outer) and a EmptyBoder(Inner) as a placeHolder
-         */
-        private Border normalBorder = new TitledBorder(
-                new CompoundBorder(
-                    new LineBorder(Color.GRAY,3,true),
-                    new EmptyBorder(2,2,2,2)),
-                "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                new Font("Arial Black", Font.PLAIN, 14));
-
-        /**
-         * This is the Border used, while the mouse is on this JPanel
-         * It is a TitleBorder with a CompoundBorder as Border
-         * The CompoundBorder consists of a gray LineBorder (Outer) and another gray LineBorder(Inner),
-         * so that the Border's size can be increases without increasing the size of this JPanel
-         */
-        private Border selectedBorder = new TitledBorder(
-                new CompoundBorder(
-                    new LineBorder(Color.GRAY,3,true),
-                    new LineBorder(Color.GRAY,2,false)),
-                "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-                new Font("Arial Black", Font.PLAIN, 14));
-
-        private NetworkPanel(Network network) {
-            this.setBorder(normalBorder);
-            this.addComponentListener(new ComponentAdapter() {
-                @Override
-                public void componentResized(ComponentEvent e) {
-                    super.componentResized(e);
-                    // Keeps this JPanel in a 16:9 resolution
-                    if (NetworkPanel.this.getWidth()>=240)
-                        NetworkPanel.this.setPreferredSize(new Dimension(-1, NetworkPanel.this.getWidth()/16*9));
-                    else
-                        NetworkPanel.this.setPreferredSize(new Dimension(240,135));
-                }
-            });
-            this.addMouseListener(new MouseAdapter() {
-                /**
-                 * Increases the size of this NetworkPanel significantly
-                 * and thereby overlaps the other NetworkPanels
-                 */
-                @Override
-                public void mousePressed(MouseEvent e) {
-                }
-
-                /**
-                 * Slight changes to the JPanel in order to indicate that
-                 * this JPanel is clickable
-                 */
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    // changes the Border
-                    NetworkPanel.this.setBorder(selectedBorder);
-                }
-
-                /**
-                 * Restores default
-                 */
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    // changes the Border
-                    NetworkPanel.this.setBorder(normalBorder);
-                }
-            });
+    public static void main(String[] args) {
+        NetworkGUI g = new NetworkGUI();
+        for (int i = 0; i < 16; i++) {
+            g.addNetwork(new Network());
         }
     }
-
-
-
-    public static void main(String[] args) {
-        new NetworkGUI();
-    }
 }
+
+// TODO: 19.05.2017 Fix bug when less networks than cols are added
