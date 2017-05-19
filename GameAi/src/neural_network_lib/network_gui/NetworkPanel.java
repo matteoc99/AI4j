@@ -53,9 +53,6 @@ class NetworkPanel extends JPanel {
         setLayout(null);
 
         // Listener
-        // ComponentListener reacts when this NetworkPanel is resized
-        // Used to keep this Panel in a 16:9 resolution
-        this.addComponentListener(new NetworkComponentListener());
         // MouseListener reacts when the Mouse enters and leaves this NetworkPane
         // Used to adjust Borders
         this.addMouseListener(new NetworkMouseListener());
@@ -99,17 +96,6 @@ class NetworkPanel extends JPanel {
         public void mouseExited(MouseEvent e) {
             // changes the Border
             NetworkPanel.this.setBorder(normalBorder);
-        }
-    }
-    private class NetworkComponentListener extends ComponentAdapter {
-        @Override
-        public void componentResized(ComponentEvent e) {
-            super.componentResized(e);
-            // Keeps this JPanel in a 16:9 resolution
-            if (NetworkPanel.this.getWidth()>=240)
-                NetworkPanel.this.setPreferredSize(new Dimension(-1, (int)(NetworkPanel.this.getWidth()/16.0*9.0)));
-            else
-                NetworkPanel.this.setPreferredSize(new Dimension(240,135));
         }
     }
 }

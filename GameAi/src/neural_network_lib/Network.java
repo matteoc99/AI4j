@@ -83,11 +83,11 @@ public class Network {
         Neuron[][] hiddenNeurons = null;
         if (hiddenAmount > 0) {
 
-            //HIDDN Layer setup
+            //HIDDEN Layer setup
             hiddenLayers = new Layer[hiddenAmount];
 
 
-            //HIDDN Neuron setup
+            //HIDDEN Neuron setup
             hiddenNeurons = new Neuron[hiddenAmount][];
             for (int i = 0; i < hiddenAmount; i++) {
                 hiddenLayers[i] = new Layer(LayerType.HIDDEN);

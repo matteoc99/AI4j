@@ -5,7 +5,10 @@ import neural_network_lib.Network;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
+import java.util.LinkedList;
 
 
 /**
@@ -16,7 +19,16 @@ public class NetworkGUI extends JFrame{
     /**
      * Amount of NetworkPanels displayed horizontally on the screen
      */
-    private int horizontalAmountToDisplay = 3;
+    private int horizontalAmountToDisplay;
+    /**
+     * Amount of NetworkPanels that should be displayed on the screen in possible
+     */
+    private int preferredHorizontalAmountToDisplay = 3;
+
+    /**
+     * List stores all created NetworkPanels
+     */
+    private LinkedList<NetworkPanel> networkPanels = new LinkedList<>();
 
     /**
      * Container for all components
@@ -32,6 +44,7 @@ public class NetworkGUI extends JFrame{
      * Container for all NetworkPanels
      */
     private JPanel networkContainer;
+    private GridLayout networkContainerGridLayout;
 
     public NetworkGUI(Network... networks) {
 
@@ -71,12 +84,34 @@ public class NetworkGUI extends JFrame{
         edit.add(restore);
         menuBar.add(edit);
 
-        // adds the menuBar to the container, page-start
         container.add(menuBar, BorderLayout.PAGE_START);
 
+        // JSplitPane for splitting the centerSplitter and the bottom JPanel
+        JSplitPane endSplitter = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        endSplitter.setUI(new BasicSplitPaneUI(){
+            public BasicSplitPaneDivider createDefaultDivider() {
+                return new BasicSplitPaneDivider(this);
+            }
+        });
+
+        // JSplitPane for splitting the networkContainer and the left JPanel
+        JSplitPane centerSplitter = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        centerSplitter.setUI(new BasicSplitPaneUI(){
+            public BasicSplitPaneDivider createDefaultDivider() {
+                return new BasicSplitPaneDivider(this);
+            }
+        });
+
+        // No usage yet
+        JLabel westPlaceHolder = new JLabel("Look at me, I'm a placeholder!");
+        westPlaceHolder.setPreferredSize(new Dimension(200,(int)(d.getHeight()/4*3)));
+        centerSplitter.add(westPlaceHolder);
+
+        // sets the amount of cols within the networkContainer on 1-preferredAmount
+        horizontalAmountToDisplay = networks.length<preferredHorizontalAmountToDisplay ?
+                networks.length+1: preferredHorizontalAmountToDisplay;
         // creates a GridLayout for the networkContainer
-        GridLayout networkContainerGridLayout = new GridLayout(0, horizontalAmountToDisplay);
-        // gaps
+        networkContainerGridLayout = new GridLayout(0, horizontalAmountToDisplay);
         networkContainerGridLayout.setHgap(20);
         networkContainerGridLayout.setVgap(20);
         // JPanel containing all NetworkPanels
@@ -84,20 +119,22 @@ public class NetworkGUI extends JFrame{
         // margin
         networkContainer.setBorder(new EmptyBorder(5,20,5,20));
 
-        // adds the networkContainer to a JScrollPanel
         JScrollPane scroll = new JScrollPane(networkContainer);
         // speedUp
         scroll.getVerticalScrollBar().setUnitIncrement(12);
-        // adds the JScrollPanel to the container, page-center
-        container.add(scroll, BorderLayout.CENTER);
+        scroll.setBorder(null);
+        centerSplitter.add(scroll);
+        endSplitter.add(centerSplitter);
+
 
         // No usage yet
-        JLabel placeHolder = new JLabel("Look at me, I'm a placeholder!");
-        placeHolder.setPreferredSize(new Dimension(-1,50));
-        container.add(placeHolder, BorderLayout.PAGE_END);
+        JLabel bottomPlaceHolder = new JLabel("Look at me, I'm a placeholder!", SwingConstants.CENTER);
+        bottomPlaceHolder.setPreferredSize(new Dimension(-1,100));
+        endSplitter.add(bottomPlaceHolder);
+
+        container.add(endSplitter, BorderLayout.CENTER);
         // components end
 
-        // adds the parent of all components to the contentPane
         this.getContentPane().add(container);
 
         // adds the first set of Networks to this NetworkGUI
@@ -105,7 +142,6 @@ public class NetworkGUI extends JFrame{
             this.addNetwork(network);
         }
 
-        // sets visible after everything is set up
         this.setVisible(true);
     }
 
@@ -118,16 +154,21 @@ public class NetworkGUI extends JFrame{
      * @param network to add
      */
     public void addNetwork(@NotNull Network network) {
-        //if (network == null) return;
-        networkContainer.add(new NetworkPanel(network));
+        if (network == null) return;
+        NetworkPanel networkPanel = new NetworkPanel(network);
+        networkPanels.add(networkPanel);
+        if (horizontalAmountToDisplay<preferredHorizontalAmountToDisplay &&
+                horizontalAmountToDisplay<networkPanels.size()) {
+            horizontalAmountToDisplay++;
+            networkContainerGridLayout.setColumns(horizontalAmountToDisplay);
+        }
+        networkContainer.add(networkPanel);
     }
 
     public static void main(String[] args) {
         NetworkGUI g = new NetworkGUI();
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 23; i++) {
             g.addNetwork(new Network());
         }
     }
 }
-
-// TODO: 19.05.2017 Fix bug when less networks than cols are added
