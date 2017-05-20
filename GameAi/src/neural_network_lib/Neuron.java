@@ -46,19 +46,34 @@ public class Neuron {
     private Function function = null;
 
     /**
+     * basic constructor for a Neuron
+     *
+     * @param index {@link Neuron#index}
+     */
+    public Neuron(int index) {
+        this(index, Math.random(), null, new Function() {
+            @Override
+            public double calculate(double val) {
+                double ret = 1 / (1 + Math.exp(-val));
+                return ret;
+            }
+        });
+    }
+
+    /**
      * constructor for a Neuron
      *
      * @param index {@link Neuron#index}
      * @param bias  {@link #bias}
      */
     public Neuron(int index, double bias) {
-      this(index, bias, null, new Function() {
-          @Override
-          public double calculate(double val) {
-              double ret = 1 / (1 + Math.exp(-val));
-              return ret;
-          }
-      });
+        this(index, bias, null, new Function() {
+            @Override
+            public double calculate(double val) {
+                double ret = 1 / (1 + Math.exp(-val));
+                return ret;
+            }
+        });
     }
 
     /**
@@ -216,25 +231,14 @@ public class Neuron {
     }
 
     /**
-     * @param val value to pass trougth the function
-     * @return a value etween 0 and 1
-     * @deprecated The Activation Function for this Neuron
-     * Returns a value between 0 and 1 for a given value
-     */
-    public static double activationFunction(double val) {
-        double ret = 1 / (1 + Math.exp(-val));
-        return ret;
-    }
-
-    /**
      * send a signal to all {@link Neuron} the current Neuron is connected with (all {@link Neuron#axons});
-     * the function used is {@link Neuron#activationFunction(double)}
+     * the function used is {@link Function#calculate(double)}
      */
     public void send() {
         for (int i = 0; i < axons.size(); i++) {
-                axons.get(i).send(function.calculate(value * bias));
+            axons.get(i).send(function.calculate(value * bias));
         }
-        value=0;
+        value = 0;
     }
 
     /**
@@ -322,6 +326,52 @@ public class Neuron {
                 ret = dendrites.get(i);
         }
         return ret;
+    }
+
+    /**
+     * changes the activation state of an Axon with the requested "to" index {@link Neuron#index}
+     *
+     * @param to {@link Neuron#index}
+     * @return true if everything went fine, otherwise false
+     */
+    public boolean toggleAxonByToIndex(int to) {
+        Connection ret = null;
+        for (int i = 0; i < axons.size(); i++) {
+            if (to == axons.get(i).getTo().getIndex())
+                ret = axons.get(i);
+        }
+      return toggle(ret);
+    }
+
+    /**
+     * changes the activation state of a Dendrite with the requested "from" index {@link Neuron#index}
+     *
+     * @param from {@link Neuron#index}
+     * @return true if everything went fine, otherwise false
+     */
+    public boolean toggleDendriteByFromIndex(int from) {
+        Connection ret = null;
+        for (int i = 0; i < dendrites.size(); i++) {
+            if (from == dendrites.get(i).getFrom().getIndex())
+                ret = dendrites.get(i);
+        }
+       return toggle(ret);
+    }
+
+    /**
+     * toggles the activation state of a Connection
+     * @param ret {@link Connection}
+     * @return true if everything went fine, otherwise false
+     */
+    private boolean toggle(Connection ret) {
+        if (ret != null)
+            if (ret.isActive())
+                ret.setActive(false);
+            else
+                ret.setActive(true);
+        else
+            return false;
+        return true;
     }
 
     /**

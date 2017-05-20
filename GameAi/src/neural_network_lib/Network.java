@@ -18,10 +18,22 @@ public class Network {
      */
     private ArrayList<Layer> layers;
 
+    /**
+     * used for storing the current Network data
+     */
     private int inputSize;
     private int outSize;
     private int hiddenAmount;
     private int hiddenSize[];
+
+
+    /**
+     * used to describe a Network. The length equals {@link #getDescriptorLength(int, int, int, int[])}.
+     * it consists of a Network bias and all the connection weights for all the Neurons
+     */
+    private double[] descriptor;
+
+
 
     /**
      * Create an empty Network
@@ -274,8 +286,8 @@ public class Network {
     /**
      * Process Data through all the Layers, and return the
      *
-     * @param in
-     * @return
+     * @param in Data for the Input Layer
+     * @return the Data that the Network Processes
      */
     public double[] processData(double[] in) {
         double[] ret = new double[layers.get(layers.size() - 1).getNeuronCount()];
@@ -283,7 +295,7 @@ public class Network {
         if (layers.size() <= 0)
             throw new IllegalStateException("Network is still empty, cant process Data");
         if (in.length != layers.get(0).getNeuronCount())
-            throw new IllegalArgumentException("hiddenSize count not rigth");
+            throw new IllegalArgumentException("input size not rigth");
         Layer inLayer = layers.get(0);
         if (inLayer.getType() != LayerType.IN)
             throw new IllegalStateException("cant find the in-Layer");
@@ -297,6 +309,31 @@ public class Network {
         }
         for (int i = 0; i < ret.length; i++) {
             ret[i] = layers.get(layers.size() - 1).getNeuronAt(i).getValue();
+        }
+        return ret;
+    }
+
+    /**
+     * returns the length of the descriptor of a network with the given parameters
+     * @param inputSize {@link #inputSize}
+     * @param outputSize {@link #outSize}
+     * @param hiddenAmount {@link #hiddenAmount}
+     * @param hiddenSize {@link #hiddenSize}
+     * @return the minimum length a descriptor must have
+     */
+    public static int getDescriptorLength(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {
+        int ret=0;
+        if (hiddenAmount>0) {
+            ret += inputSize * hiddenSize[0];
+            ret+=inputSize;
+            for (int i = 0; i < hiddenSize.length-1; i++) {
+                ret+=hiddenSize[i]*hiddenSize[i+1];
+                ret+=hiddenSize.length;
+            }
+            ret+=hiddenSize[hiddenSize.length-1]*outputSize;
+            ret+=outputSize;
+        }else {
+            ret += inputSize * outputSize;
         }
         return ret;
     }

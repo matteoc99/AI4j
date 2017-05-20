@@ -14,7 +14,7 @@ public class MobileObject extends ImmobileObject {
     /**
      * Declares the maximum speed this object can have
      */
-    public static final int MAX_SPEED=4;
+    public static final int MAX_SPEED=8;
 
     /**
      * describes the speed at which the {@link MobileObject} is moving
@@ -44,8 +44,8 @@ public class MobileObject extends ImmobileObject {
     public MobileObject(String dateiname) throws ClassNotFoundException {
         super(dateiname);
         direction = new Vec2d();
-        direction.x=(int)Math.random()*4-2;
-        direction.y=(int)Math.random()*4-2;
+        direction.x=(int)Math.random()*2-2;
+        direction.y=(int)Math.random()*2-2;
     }
 
     //TODO get, set, &direction
@@ -66,7 +66,7 @@ public class MobileObject extends ImmobileObject {
         position.x = (int) (position.x + direction.x);
         position.y = (int) (position.y + direction.y);
         if(Math.abs(direction.x)<MAX_SPEED) {
-            direction.x *= 1.0005;
+            direction.x *= 1.002;
         }
     }
 }

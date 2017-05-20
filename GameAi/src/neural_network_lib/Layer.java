@@ -23,6 +23,12 @@ public class Layer {
     private LayerType type;
 
     /**
+     * Stores the Network this layer is into.
+     *
+     */
+    private Network net;
+
+    /**
      * Create an empty Layer with just the type {@link LayerType}
      * @param type {@link LayerType} to set for this Layer
      */
@@ -126,9 +132,11 @@ public class Layer {
             Neuron from = neurons.get(i);
             for (int j = 0; j < layer.neurons.size(); j++) {
                 Neuron to = layer.neurons.get(j);
-                Connection con = new Connection(from, to, Math.random());
-                from.addAxon(con);
+                Connection con = new Connection(from, to, Math.random() * 2 - 1);
+                if (from.getAxonByToIndex(to.getIndex()) == null){
+                    from.addAxon(con);
                 to.addDendrite(con);
+            }
             }
         }
     }

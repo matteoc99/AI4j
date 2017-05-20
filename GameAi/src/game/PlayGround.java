@@ -13,7 +13,7 @@ import java.awt.event.KeyEvent;
 public class PlayGround extends JFrame {
 
     //FPS control
-    private static final int FPS = 60;
+    private static final int FPS = 120;
     private long zeitvorsleep;
 
     private Player leftPlayer, rightPlayer;
