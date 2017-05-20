@@ -10,10 +10,10 @@ import neural_network_lib.Network;
 public class CosiAgent extends Agent {
 
     public static void main(String[] args) {
-        Network n = Network.createDFF(10, 4, 4, 6);
+        Network n = Network.createDFF(2, 4, 1, 6);
         int len = n.generateDescriptor().length;
         for (int i = 0; i < len; i++) {
-            //  System.out.print(n.getDescriptor()[i]+" ");
+              System.out.print(n.getDescriptor()[i]+" ");
         }
 
       /* double []in = new double[n.getLayerByIndex(0).getNeuronCount()];
@@ -24,9 +24,10 @@ public class CosiAgent extends Agent {
         for (double aD : d) System.out.println(aD);
 */
 
+        System.out.println();
         Network net = new Network(n.getDescriptor());
         for (int i = 0; i < net.generateDescriptor().length; i++) {
-            //    System.out.print(net.getDescriptor()[i]+" ");
+                System.out.print(net.getDescriptor()[i]+" ");
         }
     }
 }
