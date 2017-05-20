@@ -61,16 +61,16 @@ public class Network {
         this.descriptor = descriptor;
         layers = new ArrayList<>();
 
-
         //creating Layer structure and adding Neurons
         int anzLayer = (int) descriptor[0];
         int inputSize = (int) descriptor[1];
         int outputSize = (int) descriptor[(int) descriptor[0]];
         int hiddenAmount = (int) (descriptor[0] - 2);
         int[] hiddenSize = new int[hiddenAmount];
+
         int neuronCount = 0;
-        for (int i = 2; i < descriptor[0] - 1; i++) {
-            hiddenSize[i - 2] = (int) descriptor[i];
+        for (int i = 0; i < hiddenAmount; i++) {
+            hiddenSize[i ] = (int) descriptor[i+2];
         }
         Layer layerin = new Layer(LayerType.IN);
         for (int i = 0; i < inputSize; i++) {
