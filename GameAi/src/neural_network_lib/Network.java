@@ -21,6 +21,9 @@ public class Network {
     /**
      * used to describe a Network. The length equals {@link #getDescriptorLength(int, int, int, int[])}.
      * it consists of a Network bias and all the connection weights for all the Neurons
+     * [0]...layercount
+     * [1-layercount]...size of the layers
+     * 0...layer is deactivated
      */
     private double[] descriptor;
 
@@ -45,6 +48,15 @@ public class Network {
                 connect(layerSet.get(i), layerSet.get(i + 1));
             }
         }
+    }
+
+    /**
+     * Create a Network given the descriptor of another {@link Network}
+     *
+     * @param descriptor {@link #descriptor}
+     */
+    public Network(double[] descriptor) {
+
     }
 
     /**
@@ -119,7 +131,7 @@ public class Network {
         //connecting all the layers
         if (hiddenAmount > 0) {
             connect(inLayers, hiddenLayers[0]);
-            for (int i = 0; i < hiddenAmount-1; i++) {
+            for (int i = 0; i < hiddenAmount - 1; i++) {
                 if (i == hiddenAmount - 2) {
                     connect(hiddenLayers[i], outLayers);
                 } else {
@@ -135,7 +147,7 @@ public class Network {
             layers.add(hiddenLayers[i]);
         }
         layers.add(outLayers);
-        descriptor=generateDescriptor();
+        descriptor = generateDescriptor();
     }
 
     /**
@@ -319,19 +331,22 @@ public class Network {
         */
         int index = 1;
         for (int i = 0; i < ret[0]; i++) {
-            ret[i + 1] =layers.get(i).getNeuronCount();
+            ret[i + 1] = layers.get(i).getNeuronCount();
             index++;
         }
 
         int tot = getTotalNeuronCount();
-        ArrayList<Neuron>all=getAllNeurons();
+        ArrayList<Neuron> all = getAllNeurons();
         //for all neurons add himself and the connection
         for (int i = 0; i < all.size(); i++) {
             Neuron neuron = all.get(i);
-            ret[index]= neuron.getBias();
+            ret[index] = neuron.getBias();
             index++;
             for (int j = 0; j < neuron.getAxons().size(); j++) {
-                ret[index]= neuron.getAxons().get(j).getWeight();
+                if (neuron.getAxons().get(j).isActive())
+                    ret[index] = neuron.getAxons().get(j).getWeight();
+                else
+                    ret[index] = 0;
                 index++;
             }
         }
@@ -350,6 +365,7 @@ public class Network {
         }
         return ret;
     }
+
     /**
      * Returns all the Neurons contained in this Network
      *

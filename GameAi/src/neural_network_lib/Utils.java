@@ -10,11 +10,11 @@ public class Utils
 {
 
     /**
-     * Creates a random chromosome, of the size given by
+     * Creates a random descriptor, of the size given by
      * {@link Network#getDescriptorLength(int, int, int, int[])}. So be sure to have set the set
-     * Size of the Chromosome, before calling this Function
+     * Size of the descriptor, before calling this Function
      *
-     * @return a randomly generated chromosome
+     * @return a randomly generated descriptor
      */
     public static double[] createRandomDescriptor(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {
         double ret[] = new double[Network.getDescriptorLength( inputSize,  outputSize,  hiddenAmount, hiddenSize)];
@@ -26,11 +26,11 @@ public class Utils
     }
 
     /**
-     * Performs a crossover of two parent chromosomes and generates two child chromosomes
+     * Performs a crossover of two parent descriptor and generates two child descriptor
      *
-     * @param parent1 chromosome of the parent 1
-     * @param parent2 chromosome of the parent 2
-     * @return two child chromosomes in a Matrix [2][parent1.length]<br>
+     * @param parent1 descriptor of the parent 1
+     * @param parent2 descriptor of the parent 2
+     * @return two child descriptor in a Matrix [2][parent1.length]<br>
      * child 1 is found in return[0] and child 2 is found in return[1]
      */
     public static double[][] crossOver(double[] parent1, double[] parent2) {
@@ -48,22 +48,22 @@ public class Utils
     }
 
     /**
-     * Given a Chromosome, chromosome has the chance of 25% to lose information,
+     * Given a descriptor, descriptor has the chance of 25% to lose information,
      * 50% to change or add information, 25% chance that nothing happens. By
      * Information I mean one connection between Neurons in the Neural net
      *
      * Mutation gives a new random value to one weight //TODO better
      *
-     * @param chromosome
-     *            the chromosome to mutate
-     * @return the mutated chromosome
+     * @param descriptor
+     *            the descriptor to mutate
+     * @return the mutated descriptor
      */
-    public static double[] mutate(double[] chromosome) {
+    public static double[] mutate(double[] descriptor) {
         int probability = (int) (Math.random() * 5);
-        int index = (int) (Math.random() * chromosome.length);
-        chromosome[index] = Math.random();
+        int index = (int) (Math.random() * descriptor.length);
+        descriptor[index] = Math.random();
         if (probability == 0)
-            chromosome[index] = 0;
-        return chromosome;
+            descriptor[index] = 0;
+        return descriptor;
     }
 }
