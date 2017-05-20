@@ -30,10 +30,20 @@ public class Connection {
     private Neuron to;
 
     /**
-     * Describes whether this connection is Active or not
+     * Describes whether this connection is Active or not. the connection behaves like she did not exist
      */
     private boolean active;
 
+    /**
+     *basic Constructor for a Connection, which connects two {@link Neuron}s
+     *
+     * @param from   {@link Neuron} where the connection begins
+     * @param to     {@link Neuron} where the connection ends
+     *
+     */
+    public Connection(Neuron from, Neuron to) {
+        this(from,to,Math.random()*2-1,true);
+    }
 
     /**
      * Constructor for a Connection, which connects two {@link Neuron}s
@@ -138,7 +148,7 @@ public class Connection {
      * Send a value to the {@link Connection#to} Neuron multiplied
      * by the {@link Connection#weight} if the connection is active
      *
-     * @param value
+     * @param value the value to forward
      */
     public void send(double value) {
         if(isActive())

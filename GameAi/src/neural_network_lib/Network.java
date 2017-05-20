@@ -19,20 +19,10 @@ public class Network {
     private ArrayList<Layer> layers;
 
     /**
-     * used for storing the current Network data
-     */
-    private int inputSize;
-    private int outSize;
-    private int hiddenAmount;
-    private int hiddenSize[];
-
-
-    /**
      * used to describe a Network. The length equals {@link #getDescriptorLength(int, int, int, int[])}.
      * it consists of a Network bias and all the connection weights for all the Neurons
      */
     private double[] descriptor;
-
 
 
     /**
@@ -78,10 +68,7 @@ public class Network {
             if (hiddenSize[i] <= 0)
                 throw new IllegalArgumentException("all Sizes must be >0");
         }
-        this.hiddenAmount=hiddenAmount;
-        this.hiddenSize=hiddenSize;
-        this.inputSize=inputSize;
-        this.outSize=outputSize;
+
 
         //IN Layer setup
         Layer inLayers = new Layer(LayerType.IN);
@@ -129,12 +116,11 @@ public class Network {
         }
         outLayers.addNeurons(outNeurons);
 
-
         //connecting all the layers
         if (hiddenAmount > 0) {
             connect(inLayers, hiddenLayers[0]);
-            for (int i = 0; i < hiddenAmount; i++) {
-                if (i == hiddenAmount - 1) {
+            for (int i = 0; i < hiddenAmount-1; i++) {
+                if (i == hiddenAmount - 2) {
                     connect(hiddenLayers[i], outLayers);
                 } else {
                     connect(hiddenLayers[i], hiddenLayers[i + i]);
@@ -149,6 +135,7 @@ public class Network {
             layers.add(hiddenLayers[i]);
         }
         layers.add(outLayers);
+        descriptor=generateDescriptor();
     }
 
     /**
@@ -197,48 +184,8 @@ public class Network {
     }
 
     /**
-     * clears layers and fills it with the Layers in the Parameter.
-     * @param layers {@link #layers}
-     */
-    public void setLayers(ArrayList<Layer> layers) {
-        this.layers = layers;
-    }
-
-    /**
-     * Returns the size of the input nodes
-     * @return {@link #inputSize}
-     */
-    public int getInputSize() {
-        return inputSize;
-    }
-
-    /**
-     * Returns the size of the output nodes
-     * @return {@link #outSize}
-     */
-    public int getOutSize() {
-        return outSize;
-    }
-
-    /**
-     * Returns the amount of the hidden nodes
-     * @return {@link #hiddenAmount}
-     */
-    public int getHiddenAmount() {
-        return hiddenAmount;
-    }
-
-
-    /**
-     * Returns the size of all the hidden node sizes
-     * @return {@link #hiddenSize}
-     */
-    public int[] getHiddenSize() {
-        return hiddenSize;
-    }
-
-    /**
      * Returns the Layers of this Network
+     *
      * @return {@link #layers}
      */
     public ArrayList<Layer> getLayers() {
@@ -247,11 +194,12 @@ public class Network {
 
     /**
      * Returns the Layer at a given index
+     *
      * @param index index of the Layer
      * @return the requested Layer
      */
     public Layer getLayerByIndex(int index) {
-        if (index<layers.size())
+        if (index < layers.size())
             return layers.get(index);
         throw new NullPointerException("index greater than layer size");
     }
@@ -313,27 +261,106 @@ public class Network {
         return ret;
     }
 
+    public double[] getDescriptor() {
+        return descriptor;
+    }
+
     /**
      * returns the length of the descriptor of a network with the given parameters
-     * @param inputSize {@link #inputSize}
-     * @param outputSize {@link #outSize}
-     * @param hiddenAmount {@link #hiddenAmount}
-     * @param hiddenSize {@link #hiddenSize}
+     *
+     * @param inputSize    size of the input layer
+     * @param outputSize   size of the output layer
+     * @param hiddenAmount amount of hidden layer
+     * @param hiddenSize   size of the hidden layers
      * @return the minimum length a descriptor must have
      */
     public static int getDescriptorLength(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {
-        int ret=0;
-        if (hiddenAmount>0) {
+        int ret = 0;
+        if (hiddenAmount > 0) {
             ret += inputSize * hiddenSize[0];
-            ret+=inputSize;
-            for (int i = 0; i < hiddenSize.length-1; i++) {
-                ret+=hiddenSize[i]*hiddenSize[i+1];
-                ret+=hiddenSize.length;
+            ret += inputSize;
+            for (int i = 0; i < hiddenSize.length - 1; i++) {
+                ret += hiddenSize[i] * hiddenSize[i + 1];
+                ret += hiddenSize.length;
             }
-            ret+=hiddenSize[hiddenSize.length-1]*outputSize;
-            ret+=outputSize;
-        }else {
+            ret += hiddenSize[hiddenSize.length - 1] * outputSize;
+            ret += outputSize;
+        } else {
             ret += inputSize * outputSize;
+        }
+        ret++;
+        ret += inputSize + outputSize + hiddenAmount;
+        return ret;
+    }
+
+    /**
+     * Generates the descriptor for this network
+     * [0]...layercount
+     * [1-layercount]...size of the layers
+     *
+     * @return {@link #descriptor}
+     */
+    public double[] generateDescriptor() {
+        double[] ret;
+        //calculate length
+        if (layers.size() > 2) {
+            int[] hid = new int[layers.size() - 2];
+            for (int i = 1; i < layers.size() - 1; i++) {
+                hid[i - 1] = layers.get(i).getNeuronCount();
+            }
+            ret = new double[getDescriptorLength(layers.get(0).getNeuronCount(), layers.get(1).getNeuronCount(), hid.length, hid)];
+        } else {
+            ret = new double[getDescriptorLength(layers.get(0).getNeuronCount(), layers.get(1).getNeuronCount(), 0, null)];
+        }
+        //write data
+        ret[0] = layers.size();
+        /*
+            stores the current index in this
+        */
+        int index = 1;
+        for (int i = 0; i < ret[0]; i++) {
+            ret[i + 1] =layers.get(i).getNeuronCount();
+            index++;
+        }
+
+        int tot = getTotalNeuronCount();
+        ArrayList<Neuron>all=getAllNeurons();
+        //for all neurons add himself and the connection
+        for (int i = 0; i < all.size(); i++) {
+            Neuron neuron = all.get(i);
+            ret[index]= neuron.getBias();
+            index++;
+            for (int j = 0; j < neuron.getAxons().size(); j++) {
+                ret[index]= neuron.getAxons().get(j).getWeight();
+                index++;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Returns the total Neurons number contained in this Network
+     *
+     * @return total Neurons number
+     */
+    public int getTotalNeuronCount() {
+        int ret = 0;
+        for (Layer layer : layers) {
+            ret += layer.getNeuronCount();
+        }
+        return ret;
+    }
+    /**
+     * Returns all the Neurons contained in this Network
+     *
+     * @return all Neurons
+     */
+    public ArrayList<Neuron> getAllNeurons() {
+        ArrayList<Neuron> ret = new ArrayList();
+        for (Layer layer : layers) {
+            for (int i = 0; i < layer.getNeuronCount(); i++) {
+                ret.add(layer.getNeuronAt(i));
+            }
         }
         return ret;
     }

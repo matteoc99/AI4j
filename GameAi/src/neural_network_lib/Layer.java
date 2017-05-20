@@ -11,7 +11,6 @@ import java.util.ArrayList;
  * @since 15.05.2017
  */
 public class Layer {
-    //TODO increase sizes in Network when Neurons are added
     /**
      * Contains all the {@link Neuron} of this Layer
      */
@@ -23,13 +22,8 @@ public class Layer {
     private LayerType type;
 
     /**
-     * Stores the Network this layer is into.
-     *
-     */
-    private Network net;
-
-    /**
      * Create an empty Layer with just the type {@link LayerType}
+     *
      * @param type {@link LayerType} to set for this Layer
      */
     public Layer(LayerType type) {
@@ -42,8 +36,9 @@ public class Layer {
 
     /**
      * Create a fully functional Layer by giving a bunch of Neurons to start with
+     *
      * @param neurons {@link Layer#neurons}
-     * @param type {@link LayerType}
+     * @param type    {@link LayerType}
      */
     public Layer(Neuron[] neurons, LayerType type) {
         this(type);
@@ -56,8 +51,9 @@ public class Layer {
 
     /**
      * Create a fully functional Layer by giving a bunch of Neurons to start with
+     *
      * @param neurons {@link Layer#neurons}
-     * @param type {@link LayerType}
+     * @param type    {@link LayerType}
      */
     public Layer(@NotNull ArrayList<Neuron> neurons, LayerType type) {
         this(type);
@@ -67,6 +63,7 @@ public class Layer {
 
     /**
      * returns the current type of the {@link Layer}
+     *
      * @return {@link LayerType}
      */
     public LayerType getType() {
@@ -75,6 +72,7 @@ public class Layer {
 
     /**
      * sets the type fro the {@link Layer}
+     *
      * @param type{@link LayerType} to set
      */
     public void setType(LayerType type) {
@@ -121,9 +119,12 @@ public class Layer {
                 this.neurons.add(neurons[i]);
         }
     }
+
     /**
      * Connect all the Neurons of this {@link Layer} to all the Neurons of the layer given as parameter.
      * the weight is a random Number done with Math.random();
+     * <p>
+     * Only the connections that are not set are created
      *
      * @param layer {@link Layer} to connect this {@link Layer} with
      */
@@ -133,29 +134,33 @@ public class Layer {
             for (int j = 0; j < layer.neurons.size(); j++) {
                 Neuron to = layer.neurons.get(j);
                 Connection con = new Connection(from, to, Math.random() * 2 - 1);
-                if (from.getAxonByToIndex(to.getIndex()) == null){
+                if (from.getAxonByToIndex(to.getIndex()) == null) {
                     from.addAxon(con);
-                to.addDendrite(con);
-            }
+                    to.addDendrite(con);
+                }
             }
         }
     }
 
     /**
      * Returns the number of Neurons currently in neurons
+     *
      * @return {@link #neurons}
      */
-    public int getNeuronCount(){
+    public int getNeuronCount() {
         return neurons.size();
     }
 
 
     /**
      * sets all the Neurons to the given value, if the Layer is of Type Input only
+     *
      * @param in values to use
      */
-    public void feed(double[] in){
+    public void feed(double[] in) {
         if (in.length != neurons.size())
+            throw new IllegalArgumentException("feed_ERR in size not right");
+        if (type != LayerType.IN)
             throw new IllegalArgumentException("feed_ERR in size not right");
         for (int i = 0; i < in.length; i++) {
             neurons.get(i).setValue(in[i]);
@@ -174,11 +179,12 @@ public class Layer {
 
     /**
      * returns the Neuron from {@link #neurons} with a given index
+     *
      * @param i index
      * @return a {@link Neuron} from neurons with the requested index
      */
     public Neuron getNeuronAt(int i) {
-        if(i>=neurons.size())
+        if (i >= neurons.size())
             throw new IndexOutOfBoundsException("Index out of Bound");
         return neurons.get(i);
     }
