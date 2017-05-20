@@ -17,20 +17,6 @@ import java.util.LinkedList;
  */
 public class NetworkGUI extends JFrame{
     /**
-     * Amount of NetworkPanels displayed horizontally on the screen
-     */
-    private int horizontalAmountToDisplay;
-    /**
-     * Amount of NetworkPanels that should be displayed on the screen in possible
-     */
-    private int preferredHorizontalAmountToDisplay = 3;
-
-    /**
-     * List stores all created NetworkPanels
-     */
-    private LinkedList<NetworkPanel> networkPanels = new LinkedList<>();
-
-    /**
      * Container for all components
      */
     private JPanel container;
@@ -43,8 +29,7 @@ public class NetworkGUI extends JFrame{
     /**
      * Container for all NetworkPanels
      */
-    private JPanel networkContainer;
-    private GridLayout networkContainerGridLayout;
+    private NetworkContainer networkContainer;
 
     public NetworkGUI(Network... networks) {
 
@@ -55,8 +40,8 @@ public class NetworkGUI extends JFrame{
 
         // Location and Size
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setBounds(0,0, (int)d.getWidth(), (int)d.getHeight());
-        this.setLocationRelativeTo(null);
+        this.setLocation((int)d.getWidth()/4, (int)d.getHeight()/4);
+        this.setSize(new Dimension((int)d.getWidth()/2, (int)d.getHeight()/2));
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         // Location and Size end
 
@@ -107,22 +92,16 @@ public class NetworkGUI extends JFrame{
         westPlaceHolder.setPreferredSize(new Dimension(200,(int)(d.getHeight()/4*3)));
         centerSplitter.add(westPlaceHolder);
 
-        // sets the amount of cols within the networkContainer on 1-preferredAmount
-        horizontalAmountToDisplay = networks.length<preferredHorizontalAmountToDisplay ?
-                networks.length+1: preferredHorizontalAmountToDisplay;
-        // creates a GridLayout for the networkContainer
-        networkContainerGridLayout = new GridLayout(0, horizontalAmountToDisplay);
-        networkContainerGridLayout.setHgap(20);
-        networkContainerGridLayout.setVgap(20);
         // JPanel containing all NetworkPanels
-        networkContainer = new JPanel(networkContainerGridLayout);
-        // margin
-        networkContainer.setBorder(new EmptyBorder(5,20,5,20));
+        networkContainer = new NetworkContainer();
 
         JScrollPane scroll = new JScrollPane(networkContainer);
+        scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         // speedUp
         scroll.getVerticalScrollBar().setUnitIncrement(12);
         scroll.setBorder(null);
+        scroll.setMinimumSize(new Dimension(520, 280));
+
         centerSplitter.add(scroll);
         endSplitter.add(centerSplitter);
 
@@ -139,30 +118,17 @@ public class NetworkGUI extends JFrame{
 
         // adds the first set of Networks to this NetworkGUI
         for (Network network : networks) {
-            this.addNetwork(network);
+            networkContainer.addNetwork(network);
         }
 
+        this.pack();
+        centerSplitter.setDividerLocation(0.0);
+        endSplitter.setDividerLocation(1.0);
         this.setVisible(true);
     }
 
-
-
-    /**
-     * Adds a Network to this JFrame
-     * A Network is displayed in form of a NetworkPanel
-     *
-     * @param network to add
-     */
-    public void addNetwork(@NotNull Network network) {
-        if (network == null) return;
-        NetworkPanel networkPanel = new NetworkPanel(network);
-        networkPanels.add(networkPanel);
-        if (horizontalAmountToDisplay<preferredHorizontalAmountToDisplay &&
-                horizontalAmountToDisplay<networkPanels.size()) {
-            horizontalAmountToDisplay++;
-            networkContainerGridLayout.setColumns(horizontalAmountToDisplay);
-        }
-        networkContainer.add(networkPanel);
+    public void addNetwork(Network network) {
+        networkContainer.addNetwork(network);
     }
 
     public static void main(String[] args) {

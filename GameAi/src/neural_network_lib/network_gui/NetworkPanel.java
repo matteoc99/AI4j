@@ -50,7 +50,9 @@ class NetworkPanel extends JPanel {
     NetworkPanel(Network network) {
         // Settings
         this.setBorder(normalBorder);
-        setLayout(null);
+        this.setLayout(null);
+        this.setPreferredSize(new Dimension(-1, 180));
+
 
         // Listener
         // MouseListener reacts when the Mouse enters and leaves this NetworkPane
