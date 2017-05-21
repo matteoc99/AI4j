@@ -9,14 +9,6 @@ package neural_network_lib;
 public class Connection {
 
     /**
-     * The minimum {@link Connection#weight} a connection is allowed to have
-     */
-    private static final int MIN_WEIGHT= -1;
-    /**
-     * The maximum {@link Connection#weight} a connection is allowed to have
-     */
-    private static final int MAX_WEIGHT = 1;
-    /**
      * weight also known as value or cost of a Connection
      */
     private double weight;
@@ -93,10 +85,7 @@ public class Connection {
      * sets {@link Connection#weight}
      */
     public void setWeight(double weight) {
-        if (weight >= MIN_WEIGHT || weight <= MAX_WEIGHT)
             this.weight = weight;
-        else
-            throw new ValueOutOfBoundException("Value out of Bound");
     }
 
     /**
