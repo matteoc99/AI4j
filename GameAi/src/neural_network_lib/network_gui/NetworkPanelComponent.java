@@ -7,10 +7,11 @@ import java.util.LinkedList;
  * @author Maximilian Estfelller
  * @since 19.05.2017
  */
-public class NetworkPanelComponent extends JComponent {
-    private static LinkedList<NetworkPanelComponent> components = new LinkedList<>();
-
-    void restoreDefault() {
-
+abstract class NetworkPanelComponent extends JComponent {
+    enum NetworkComponentType {
+        NEURON,
+        CONNECTION
     }
+
+    abstract NetworkComponentType getNetworkComponentType();
 }

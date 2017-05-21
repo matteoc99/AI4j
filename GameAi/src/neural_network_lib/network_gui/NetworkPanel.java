@@ -1,7 +1,7 @@
 package neural_network_lib.network_gui;
 
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Ellipse;
+import neural_network_lib.Layer;
+import neural_network_lib.LayerType;
 import neural_network_lib.Network;
 
 import javax.swing.*;
@@ -11,7 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Ellipse2D;
+import java.util.LinkedList;
 
 /**
  * A NetworkPanel contains all components to display a network
@@ -23,11 +23,21 @@ import java.awt.geom.Ellipse2D;
 class NetworkPanel extends JPanel {
 
     /**
+     * Reference to the Network of this Panel
+     */
+    private Network network;
+
+    /**
+     * Size of a NetworkPanelNeuron
+     */
+    private int neuronSize;
+
+    /**
      * This is the standard Border used
      * It is a TitleBorder with a CompoundBorder as Border
      * The CompoundBorder consists of a gray LineBorder (Outer) and a EmptyBoder(Inner) as a placeHolder
      */
-    private Border normalBorder = new TitledBorder(
+    private static final Border NORMAL_BORDER = new TitledBorder(
             new CompoundBorder(
                     new LineBorder(Color.GRAY,3,true),
                     new EmptyBorder(2,2,2,2)),
@@ -40,36 +50,97 @@ class NetworkPanel extends JPanel {
      * The CompoundBorder consists of a gray LineBorder (Outer) and another gray LineBorder(Inner),
      * so that the Border's size can be increases without increasing the size of this JPanel
      */
-    private Border selectedBorder = new TitledBorder(
+    private static final Border SELECTED_BORDER = new TitledBorder(
             new CompoundBorder(
                     new LineBorder(Color.GRAY,3,true),
                     new LineBorder(Color.GRAY,2,false)),
             "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
             new Font("Arial Black", Font.PLAIN, 14));
 
-    NetworkPanel(Network network) {
-        // Settings
-        this.setBorder(normalBorder);
-        this.setLayout(null);
-        this.setPreferredSize(new Dimension(-1, 180));
+    private LinkedList<LinkedList<NetworkPanelNeuron>> neuronLayers;
 
+    NetworkPanel(Network network) {
+        this.network = network;
+        // Settings
+        this.setBorder(NORMAL_BORDER);
+        this.setLayout(null);
+        this.setPreferredSize(new Dimension(-1, 400));
+
+        createComponents();
 
         // Listener
         // MouseListener reacts when the Mouse enters and leaves this NetworkPane
         // Used to adjust Borders
         this.addMouseListener(new NetworkMouseListener());
 
-        //int layerCount = network.getHiddenAmount()+2;
-        //int neuronSize = getWidth()/(layerCount+1);
-
-        //NetworkPanelNeuron neuron = new NetworkPanelNeuron(NetworkPanelNeuron.NeuronType.OUTPUT);
-        //neuron.setBounds(30,30,neuronSize,neuronSize);
-        //add(neuron);
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                layoutComponents();
+            }
+        });
     }
 
     @Override
     public void paintComponents(Graphics g) {
         super.paintComponents(g);
+    }
+
+    private void createComponents() {
+        neuronLayers = new LinkedList<>();
+        for (Layer layer : network.getLayers()) {
+            switch (layer.getType()) {
+                case IN:
+                    LinkedList<NetworkPanelNeuron> inputLayer = new LinkedList<>();
+                    for (int i = 0; i < layer.getNeuronCount(); i++)
+                        inputLayer.add(new NetworkPanelNeuron(LayerType.IN));
+                    neuronLayers.add(inputLayer);
+                    break;
+                case HIDDEN:
+                    LinkedList<NetworkPanelNeuron> hiddenLayer = new LinkedList<>();
+                    for (int i = 0; i < layer.getNeuronCount(); i++) {
+                        hiddenLayer.add(new NetworkPanelNeuron(LayerType.HIDDEN));
+                    }
+                    neuronLayers.add(hiddenLayer);
+                    break;
+                case OUT:
+                    LinkedList<NetworkPanelNeuron> outputLayer = new LinkedList<>();
+                    for (int i = 0; i < layer.getNeuronCount(); i++)
+                        outputLayer.add(new NetworkPanelNeuron(LayerType.OUT));
+                    neuronLayers.add(outputLayer);
+                    break;
+            }
+        }
+    }
+
+    private void layoutComponents() {
+        int longestLineLength = neuronLayers.size();
+        for (LinkedList<NetworkPanelNeuron> layer : neuronLayers)
+            if (layer.size() > longestLineLength)
+                longestLineLength = layer.size();
+
+        neuronSize = getWidth()>getHeight()? (int)(this.getHeight()/(longestLineLength*1.75)) :
+                (int)(this.getWidth()/(longestLineLength*1.75));
+
+        double layerGap = (this.getWidth()+0.0)/network.getLayers().size();
+        double xToDraw = layerGap/2;
+
+        for (LinkedList<NetworkPanelNeuron> layer : neuronLayers) {
+            layoutLayer(layer, (int)xToDraw);
+            xToDraw+=layerGap;
+        }
+    }
+
+    private void layoutLayer(LinkedList<NetworkPanelNeuron> layer, int xToDraw) {
+        double neuronGap = (this.getHeight()+0.0)/layer.size();
+        double yToDraw = neuronGap/2;
+
+        for (NetworkPanelNeuron aLayer : layer) {
+            aLayer.setBounds(xToDraw - neuronSize / 2, (int) yToDraw - neuronSize / 2, neuronSize, neuronSize);
+            this.add(aLayer);
+            yToDraw += neuronGap;
+        }
     }
 
     private class NetworkMouseListener extends MouseAdapter {
@@ -88,7 +159,7 @@ class NetworkPanel extends JPanel {
         @Override
         public void mouseEntered(MouseEvent e) {
             // changes the Border
-            NetworkPanel.this.setBorder(selectedBorder);
+            NetworkPanel.this.setBorder(SELECTED_BORDER);
         }
 
         /**
@@ -97,7 +168,7 @@ class NetworkPanel extends JPanel {
         @Override
         public void mouseExited(MouseEvent e) {
             // changes the Border
-            NetworkPanel.this.setBorder(normalBorder);
+            NetworkPanel.this.setBorder(NORMAL_BORDER);
         }
     }
 }

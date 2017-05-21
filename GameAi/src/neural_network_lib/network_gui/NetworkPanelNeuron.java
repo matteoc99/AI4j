@@ -1,5 +1,7 @@
 package neural_network_lib.network_gui;
 
+import neural_network_lib.LayerType;
+
 import java.awt.*;
 
 /**
@@ -7,50 +9,62 @@ import java.awt.*;
  * @since 19.05.2017
  */
 public class NetworkPanelNeuron extends NetworkPanelComponent{
-    /**
-     * There are 3 Types of graphical neurons: input,hidden,output
-     * They differ in color
-     */
-    enum NeuronType {
-        INPUT,
-        HIDDEN,
-        OUTPUT
-    }
 
     /**
      * A Neuron is drawn with two different colors, depending on their type
      * The outerColor is the color of the border
      */
-    Color innerColor;
-    Color outerColor;
+    private Color innerColor;
+    private Color outerColor;
+    private RadialGradientPaint paint;
+
+    private LayerType type;
 
 
-    NetworkPanelNeuron(NeuronType type) {
+    NetworkPanelNeuron(LayerType type) {
+        this.type = type;
         switch (type) {
-            case INPUT:
-                innerColor = Color.YELLOW;
-                outerColor = Color.ORANGE.darker();
+            case IN:
+                innerColor = new Color(250,250,0).brighter();
+                outerColor = new Color(250,250,0);
                 break;
             case HIDDEN:
-                innerColor = Color.BLUE.brighter();
-                outerColor = Color.MAGENTA.darker();
+                innerColor = new Color(125,250,0).brighter();
+                outerColor = new Color(125,250,0);
                 break;
-            case OUTPUT:
-                innerColor = Color.RED;
-                outerColor = Color.BLACK.brighter();
+            case OUT:
+                innerColor = new Color(250,125,0).brighter();
+                outerColor = new Color(250,125,0);
                 break;
         }
     }
 
+    public LayerType getLayerType() {
+        return this.type;
+    }
+
+    @Override
+    NetworkComponentType getNetworkComponentType() {
+        return NetworkComponentType.NEURON;
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
-        int borderSize = getWidth()/8;
+        int outRad = (getWidth()-getWidth()/10)/2;
+        int inRad = outRad-getWidth()/10;
+
+        float[] dist = {0.1f, 1f};
+        paint = new RadialGradientPaint(getWidth()/2, getHeight()/2, inRad+1, dist,
+                new Color[]{innerColor, outerColor}, MultipleGradientPaint.CycleMethod.REPEAT);
+
         Graphics2D gAlia = (Graphics2D) g;
+
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        gAlia.setColor(outerColor);
-        gAlia.fillOval(0,0, getWidth(), getHeight());
-        gAlia.setColor(innerColor);
-        gAlia.fillOval(borderSize/2,borderSize/2,getWidth()-borderSize, getHeight()-borderSize);
+        gAlia.setPaint(outerColor);
+        gAlia.fillOval(getWidth()/2-outRad, getWidth()/2-outRad, outRad*2, outRad*2);
+        gAlia.setPaint(Color.BLACK);
+        gAlia.drawOval(getWidth()/2-outRad, getWidth()/2-outRad, outRad*2, outRad*2);
+        gAlia.setPaint(paint);
+        gAlia.fillOval(getWidth()/2-inRad, getWidth()/2-inRad, inRad*2, inRad*2);
     }
 }

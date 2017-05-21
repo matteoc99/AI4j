@@ -1,14 +1,14 @@
 package neural_network_lib.network_gui;
 
-import com.sun.istack.internal.NotNull;
+
 import neural_network_lib.Network;
 
 import javax.swing.*;
-import javax.swing.border.*;
+
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
-import java.util.LinkedList;
+
 
 
 /**
@@ -116,25 +116,42 @@ public class NetworkGUI extends JFrame{
 
         this.getContentPane().add(container);
 
+        centerSplitter.setDividerLocation(0.0);
+        endSplitter.setDividerLocation(1.0);
+
         // adds the first set of Networks to this NetworkGUI
         for (Network network : networks) {
             networkContainer.addNetwork(network);
         }
 
-        this.pack();
-        centerSplitter.setDividerLocation(0.0);
-        endSplitter.setDividerLocation(1.0);
         this.setVisible(true);
     }
+
 
     public void addNetwork(Network network) {
         networkContainer.addNetwork(network);
     }
 
     public static void main(String[] args) {
-        NetworkGUI g = new NetworkGUI();
-        for (int i = 0; i < 23; i++) {
-            g.addNetwork(new Network());
-        }
+        NetworkGUI g = new NetworkGUI(new Network(2,3,3,new int[]{2,3,3}));
+        g.addNetwork(new Network(2,3,1,new int[]{2}));
+        // BUG! g.addNetwork(new Network(3,2,3,new int[]{4,2,2}));
+        g.addNetwork(new Network(2,3,2,new int[]{2,3}));
+        g.addNetwork(new Network(2,4,2,new int[]{3,2}));
+        g.addNetwork(new Network(4,1,3,new int[]{2,3,3}));
+        g.addNetwork(new Network(2,3,3,new int[]{2,1,2}));
+        g.addNetwork(new Network(3,2,4,new int[]{3,3,3,1}));
+        g.addNetwork(new Network(2,2,3,new int[]{3,4,4}));
+        g.addNetwork(new Network(1,3,3,new int[]{2,3,2}));
+        g.addNetwork(new Network(2,2,2,new int[]{2,2}));
+        g.addNetwork(new Network(2,3,0,new int[]{}));
+        g.addNetwork(new Network(2,3,3,new int[]{2,3,3}));
+        g.addNetwork(new Network(5,2,2,new int[]{4,4}));
+        g.addNetwork(new Network(3,3,3,new int[]{2,2,4}));
+        g.addNetwork(new Network(4,3,3,new int[]{4,2,4}));
+        g.addNetwork(new Network(3,4,2,new int[]{2,3}));
+        g.addNetwork(new Network(2,2,3,new int[]{2,1,3}));
+        g.addNetwork(new Network(1,3,4,new int[]{1,3,4,2}));
+        g.addNetwork(new Network(2,5,3,new int[]{2,1,3}));
     }
 }

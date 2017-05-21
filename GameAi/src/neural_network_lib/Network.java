@@ -340,7 +340,7 @@ public class Network {
         if (layers.size() <= 0)
             throw new IllegalStateException("Network is still empty, cant process Data");
         if (in.length != layers.get(0).getNeuronCount())
-            throw new IllegalArgumentException("input size not rigth");
+            throw new IllegalArgumentException("input size not right");
         Layer inLayer = layers.get(0);
         if (inLayer.getType() != LayerType.IN)
             throw new IllegalStateException("cant find the in-Layer");
