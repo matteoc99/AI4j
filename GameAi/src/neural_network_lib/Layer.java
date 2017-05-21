@@ -11,6 +11,11 @@ import java.util.ArrayList;
  * @since 15.05.2017
  */
 public class Layer {
+
+    public enum LayerType {
+        IN,OUT,HIDDEN
+    }
+
     /**
      * Contains all the {@link Neuron} of this Layer
      */

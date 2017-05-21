@@ -1,7 +1,7 @@
 package neural_network_lib.network_gui;
 
 import neural_network_lib.Layer;
-import neural_network_lib.LayerType;
+import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Network;
 
 import javax.swing.*;

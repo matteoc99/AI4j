@@ -1,8 +1,8 @@
 package neural_network_lib.network_gui;
 
-import neural_network_lib.LayerType;
-
 import java.awt.*;
+
+import neural_network_lib.Layer.LayerType;
 
 /**
  * @author Maximilian Estfelller

@@ -2,6 +2,8 @@ package neural_network_lib;
 
 import java.util.ArrayList;
 
+import neural_network_lib.Layer.LayerType;
+
 
 /**
  * Network is a class that combines the Layers and offers some utilities
