@@ -77,6 +77,7 @@ class NetworkPanel extends JPanel {
         // Used to adjust Borders
         this.addMouseListener(new NetworkMouseListener());
 
+        // ComponentListener reacts to resizing in order to reposition components
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
