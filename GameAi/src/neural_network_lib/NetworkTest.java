@@ -2,13 +2,13 @@ package neural_network_lib;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 
 /**
  * @author Matteo Cosi
  * @since 21.05.2017
  */
 public class NetworkTest {
+
     @Test
     public void addLayer() {
 
