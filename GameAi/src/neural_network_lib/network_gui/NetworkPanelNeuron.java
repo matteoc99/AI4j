@@ -8,7 +8,7 @@ import java.awt.*;
  * @author Maximilian Estfelller
  * @since 19.05.2017
  */
-public class NetworkPanelNeuron extends NetworkPanelComponent{
+class NetworkPanelNeuron extends NetworkPanelComponent{
 
     /**
      * A Neuron is drawn with two different colors, depending on their type

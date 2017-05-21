@@ -30,7 +30,7 @@ public class Connection {
     private Neuron to;
 
     /**
-     * Describes whether this connection is Active or not. the connection behaves like she did not exist
+     * Describes whether this connection is active or not. the connection behaves like it does not exist
      */
     private boolean active;
 
