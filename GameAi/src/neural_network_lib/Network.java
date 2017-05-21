@@ -472,7 +472,7 @@ public class Network {
      * @return all Neurons
      */
     public ArrayList<Neuron> getAllNeurons() {
-        ArrayList<Neuron> ret = new ArrayList();
+        ArrayList<Neuron> ret = new ArrayList<>();
         for (Layer layer : layers) {
             for (int i = 0; i < layer.getNeuronCount(); i++) {
                 ret.add(layer.getNeuronAt(i));

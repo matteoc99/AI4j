@@ -3,6 +3,7 @@ package neural_network_lib.network_gui;
 import java.awt.*;
 
 import neural_network_lib.Layer.LayerType;
+import neural_network_lib.Neuron;
 
 /**
  * @author Maximilian Estfelller
@@ -21,7 +22,8 @@ class NetworkPanelNeuron extends NetworkPanelComponent{
     private LayerType type;
 
 
-    NetworkPanelNeuron(LayerType type) {
+    NetworkPanelNeuron(Neuron equivalent, LayerType type) {
+        super(equivalent);
         this.type = type;
         switch (type) {
             case IN:
