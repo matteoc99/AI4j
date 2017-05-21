@@ -76,6 +76,8 @@ public class ConnectionTest {
         Connection c = new Connection(from, to);
         assertEquals(to.getValue(),to.getFunction().calculate(0));
         c.send(3);
-        assertEquals(3.0*c.getWeight(),to.getValue());
+        c.send(3);
+        c.send(3);
+        assertEquals(to.getFunction().calculate(9.0*c.getWeight()),to.getValue());
     }
 }

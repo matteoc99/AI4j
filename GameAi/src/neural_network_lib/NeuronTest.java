@@ -10,10 +10,7 @@ import java.util.ArrayList;
  */
 public class NeuronTest {
 
-    @Test
-    public void getMyLayer() {
 
-    }
 
     @Test
     public void setMyLayer() {
@@ -31,25 +28,6 @@ public class NeuronTest {
 
     }
 
-    @Test
-    public void getAxons() {
-
-    }
-
-    @Test
-    public void getDendrites() {
-    }
-
-
-    @Test
-    public void setFunction() {
-
-    }
-
-    @Test
-    public void getFunction() {
-
-    }
 
     @Test
     public void getValue() {
@@ -58,16 +36,6 @@ public class NeuronTest {
 
     @Test
     public void setValue() {
-
-    }
-
-    @Test
-    public void getIndex() {
-
-    }
-
-    @Test
-    public void getBias() {
 
     }
 
@@ -101,7 +69,6 @@ public class NeuronTest {
 
     }
 
-
     @Test
     public void getAxonByToIndex() {
 
@@ -119,11 +86,6 @@ public class NeuronTest {
 
     @Test
     public void toggleDendriteByFromIndex() {
-
-    }
-
-    @Test
-    private void toggle() {
 
     }
 
