@@ -125,11 +125,9 @@ class NetworkPanel extends JPanel {
     }
 
     private void createConnections() {
-        int shouldBe = 0;
         connections = new LinkedList<>();
         for (Neuron neuron : network.getAllNeurons()) {
             for (Connection connection : neuron.getDendrites()) {
-                shouldBe++;
                 try {
                     connections.add(new NetworkPanelConnection(connection,
                             (NetworkPanelNeuron) findByEquivalent(connection.getFrom()),
@@ -137,7 +135,6 @@ class NetworkPanel extends JPanel {
                 } catch (Exception ignored) {}
             }
         }
-        System.out.println(shouldBe);
         System.out.println(connections.size());
     }
 

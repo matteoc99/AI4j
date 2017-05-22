@@ -1,7 +1,6 @@
 package neural_network_lib.network_gui;
 
 import javax.swing.*;
-import java.util.LinkedList;
 
 /**
  * @author Maximilian Estfelller

@@ -1,5 +1,7 @@
 package neural_network_lib;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * An Connection is a connection between two {@link Neuron} with a specific weight
  *
@@ -11,7 +13,15 @@ public class Connection {
     /**
      * weight also known as value or cost of a Connection
      */
-    private double weight;
+    private double weight = 0;
+    /**
+     * Constant for maximum weight of a connection
+     */
+    private static final int MAX_WEIGHT = 1;
+    /**
+     * Constant for minimum weight of a connection
+     */
+    private static final int MIN_WEIGHT = -1;
     /**
      * {@link Neuron} where the connection begins
      */
@@ -56,13 +66,15 @@ public class Connection {
      * @param weight {@link Connection#weight} of the Synapse
      *  @param active {@link #active} if the connection is active
      */
-    public Connection(Neuron from, Neuron to, double weight,boolean active) {
+    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight,boolean active) {
         if (from == null || to == null)
-            throw new NullPointerException("from or to = null");
+            return;
         this.from = from;
         this.to = to;
-        this.weight = weight;
+        setWeight(weight);
         this.active=active;
+        to.addDendrite(this);
+        from.addAxon(this);
     }
 
     /**
@@ -85,17 +97,17 @@ public class Connection {
      * sets {@link Connection#weight}
      */
     public void setWeight(double weight) {
+        if (weight <= MAX_WEIGHT || weight >= MIN_WEIGHT)
             this.weight = weight;
     }
 
     /**
      * sets {@link Connection#from}
      */
-    public void setFrom(Neuron from) {
-        if (from != null)
-            this.from = from;
-        else
-            throw new NullPointerException("from = null");
+    public void setFrom(@NotNull Neuron from) {
+        if (from == null)
+            return;
+        this.from = from;
     }
 
     /**
@@ -103,11 +115,10 @@ public class Connection {
      *
      * @param to {@link Neuron}
      */
-    public void setTo(Neuron to) {
-        if (from != null)
-            this.to = to;
-        else
-            throw new NullPointerException("from = null");
+    public void setTo(@NotNull Neuron to) {
+        if (from == null)
+            return;
+        this.to = to;
     }
 
     /**
