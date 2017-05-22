@@ -439,7 +439,6 @@ public class Network {
             ret[index] = layers.get(i).getNeuronCount();
             index++;
         }
-        System.out.println("index" + index);
         int tot = getTotalNeuronCount();
         ArrayList<Neuron> all = getAllNeurons();
 
