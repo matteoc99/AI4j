@@ -12,9 +12,11 @@ import java.util.ArrayList;
  */
 public class Layer {
 
+
     public enum LayerType {
         IN, OUT, HIDDEN
     }
+
 
     /**
      * Contains all the {@link Neuron} of this Layer

@@ -1,5 +1,7 @@
 package neural_network_lib;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.ArrayList;
 
 /**
@@ -175,9 +177,9 @@ public class Neuron {
      *
      * @param function {@link #function}
      */
-    public void setFunction(Function function) {
+    public void setFunction(@NotNull Function function) {
         if (function == null)
-            throw new NullPointerException("function = null");
+            return;
         this.function = function;
     }
 
