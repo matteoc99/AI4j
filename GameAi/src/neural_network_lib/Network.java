@@ -222,7 +222,7 @@ public class Network {
                 if (i == hiddenAmount - 1) {
                     connect(hiddenLayers[i], outLayers);
                 } else {
-                    connect(hiddenLayers[i], hiddenLayers[i + i]);
+                    connect(hiddenLayers[i], hiddenLayers[i + 1]);
                 }
             }
         } else {

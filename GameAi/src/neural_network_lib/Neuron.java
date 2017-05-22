@@ -124,8 +124,13 @@ public class Neuron {
      * @param myLayer {@link Layer}
      */
     public void setMyLayer(Layer myLayer) {
-        if (myLayer != null)
+        if (myLayer != null) {
+            if (this.myLayer != null) {
+                this.myLayer.removeNeuron(this);
+            }
             this.myLayer = myLayer;
+            myLayer.addNeuron(this);
+        }
     }
 
     /**
@@ -262,9 +267,9 @@ public class Neuron {
      * @return true if the connection was added. Otherwise false
      */
     public boolean addDendrite(Connection s) {
-        if (!dendrites.contains(s))
+        if (!dendrites.contains(s)) {
             dendrites.add(s);
-        else
+        } else
             return false;
         return true;
     }
@@ -276,9 +281,9 @@ public class Neuron {
      * @return true if the connection was removed. Otherwise false
      */
     public boolean removeAxon(Connection s) {
-        if (axons.contains(s))
+        if (axons.contains(s)) {
             axons.remove(s);
-        else
+        } else
             return false;
         return true;
     }

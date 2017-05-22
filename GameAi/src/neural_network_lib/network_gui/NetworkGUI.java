@@ -134,9 +134,9 @@ public class NetworkGUI extends JFrame{
 
     public static void main(String[] args) {
         NetworkGUI g = new NetworkGUI(new Network(2,3,3,new int[]{2,3,3}));
-        /*
+
         g.addNetwork(new Network(2,3,1,new int[]{2}));
-        // BUG! g.addNetwork(new Network(3,2,3,new int[]{4,2,2}));
+        g.addNetwork(new Network(3, 2, 3, new int[]{4, 2, 2}));
         g.addNetwork(new Network(2,3,2,new int[]{2,3}));
         g.addNetwork(new Network(2,4,2,new int[]{3,2}));
         g.addNetwork(new Network(4,1,3,new int[]{2,3,3}));
@@ -154,6 +154,6 @@ public class NetworkGUI extends JFrame{
         g.addNetwork(new Network(2,2,3,new int[]{2,1,3}));
         g.addNetwork(new Network(1,3,4,new int[]{1,3,4,2}));
         g.addNetwork(new Network(2,5,3,new int[]{2,1,3}));
-        */
+
     }
 }

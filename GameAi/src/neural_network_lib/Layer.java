@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Layer {
 
     public enum LayerType {
-        IN,OUT,HIDDEN
+        IN, OUT, HIDDEN
     }
 
     /**
@@ -92,9 +92,10 @@ public class Layer {
      * @return true if the Neuron was removed. Otherwise false
      */
     public boolean removeNeuron(Neuron neuron) {
-        if (neurons.contains(neuron))
+        if (neurons.contains(neuron)) {
+            neuron.setMyLayer(null);
             neurons.remove(neuron);
-        else
+        } else
             return false;
         return true;
     }
@@ -106,9 +107,11 @@ public class Layer {
      * @return true if the Neuron was added. Otherwise false
      */
     public boolean addNeuron(Neuron neuron) {
-        if (!neurons.contains(neuron))
+        if (!neurons.contains(neuron)) {
+            if (neuron.getMyLayer() != this)
+                neuron.setMyLayer(this);
             neurons.add(neuron);
-        else
+        } else
             return false;
         return true;
     }
@@ -120,8 +123,10 @@ public class Layer {
      */
     public void addNeurons(Neuron[] neurons) {
         for (int i = 0; i < neurons.length; i++) {
-            if (!this.neurons.contains(neurons[i]))
+            if (!this.neurons.contains(neurons[i])) {
+                neurons[i].setMyLayer(this);
                 this.neurons.add(neurons[i]);
+            }
         }
     }
 
@@ -139,7 +144,8 @@ public class Layer {
             for (int j = 0; j < layer.neurons.size(); j++) {
                 Neuron to = layer.neurons.get(j);
                 Connection con = new Connection(from, to, Math.random() * 2 - 1);
-                if (from.getAxonByToIndex(to.getIndex()) == null) {
+                if (from.getAxonByToIndex(to.getIndex()) == null
+                        || from.getAxonByToIndex(to.getIndex()).getTo().getMyLayer() != layer) {
                     from.addAxon(con);
                     to.addDendrite(con);
                 }
