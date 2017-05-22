@@ -225,6 +225,7 @@ public class Network {
                     connect(hiddenLayers[i], hiddenLayers[i + i]);
                 }
             }
+            connect(hiddenLayers[hiddenAmount - 1], outLayers);
         } else {
             connect(inLayers, outLayers);
         }
