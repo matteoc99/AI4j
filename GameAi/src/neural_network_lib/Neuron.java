@@ -53,12 +53,9 @@ public class Neuron {
      * @param index {@link Neuron#index}
      */
     public Neuron(int index) {
-        this(index, Math.random(), null, new Function() {
-            @Override
-            public double calculate(double val) {
-                double ret = 1 / (1 + Math.exp(-val));
-                return ret;
-            }
+        this(index, Math.random(), null, val -> {
+            double ret = 1 / (1 + Math.exp(-val));
+            return ret;
         });
     }
 
@@ -69,12 +66,9 @@ public class Neuron {
      * @param bias  {@link #bias}
      */
     public Neuron(int index, double bias) {
-        this(index, bias, null, new Function() {
-            @Override
-            public double calculate(double val) {
-                double ret = 1 / (1 + Math.exp(-val));
-                return ret;
-            }
+        this(index, bias, null, val -> {
+            double ret = 1 / (1 + Math.exp(-val));
+            return ret;
         });
     }
 
@@ -86,12 +80,9 @@ public class Neuron {
      * @param layer {@link Layer}
      */
     public Neuron(int index, double bias, Layer layer) {
-        this(index, bias, layer, new Function() {
-            @Override
-            public double calculate(double val) {
-                double ret = 1 / (1 + Math.exp(-val));
-                return ret;
-            }
+        this(index, bias, layer, val -> {
+            double ret = 1 / (1 + Math.exp(-val));
+            return ret;
         });
     }
 

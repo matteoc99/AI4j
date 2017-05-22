@@ -99,11 +99,11 @@ public class Network {
         //create connections
         if (hiddenAmount > 0) {
             connect(layerin, layerhid[0]);
-            for (int i = 0; i < hiddenAmount - 1; i++) {
-                if (i == hiddenAmount - 2) {
+            for (int i = 0; i < hiddenAmount; i++) {
+                if (i == hiddenAmount - 1) {
                     connect(layerhid[i], layerout);
                 } else {
-                    connect(layerhid[i], layerhid[i + i]);
+                    connect(layerhid[i], layerhid[i + 1]);
                 }
             }
         } else {
