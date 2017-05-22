@@ -1,8 +1,6 @@
 package neural_network_lib;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
+import org.junit.Test;
 
 /**
  * @author Matteo Cosi

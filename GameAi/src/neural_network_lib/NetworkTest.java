@@ -1,6 +1,6 @@
 package neural_network_lib;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 
 /**
