@@ -149,11 +149,11 @@ public class Network {
 
     /**
      * Create a Custom Network with everything set up.
-     * hiddensize.length() has to be equal to hiddenAmount
+     * hiddenSize.length() has to be equal to hiddenAmount
      *
      * @param inputSize    the preferred size of
      * @param outputSize   the preferred size of output layers
-     * @param hiddenAmount the preferred ammount of hidden layers
+     * @param hiddenAmount the preferred amount of hidden layers
      * @param hiddenSize   the preferred size of the hidden layers for every hidden layer
      */
     public Network(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {

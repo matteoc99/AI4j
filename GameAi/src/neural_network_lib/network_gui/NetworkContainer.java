@@ -42,4 +42,9 @@ class NetworkContainer extends JPanel {
         networkPanels.add(networkPanel);
         this.add(networkPanel);
     }
+
+    void toggleDeveloperMode() {
+        for (NetworkPanel networkPanel : networkPanels)
+            networkPanel.toggleDeveloperMode();
+    }
 }

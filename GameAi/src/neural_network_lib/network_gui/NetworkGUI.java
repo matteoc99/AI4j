@@ -8,7 +8,8 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
-
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 
 /**
@@ -32,6 +33,14 @@ public class NetworkGUI extends JFrame{
     private NetworkContainer networkContainer;
 
     public NetworkGUI(Network... networks) {
+        // KeyListener
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F6 && networkContainer != null)
+                    networkContainer.toggleDeveloperMode();
+            }
+        });
 
         // Settings
         this.setTitle("NetworkDisplay");
@@ -133,8 +142,10 @@ public class NetworkGUI extends JFrame{
     }
 
     public static void main(String[] args) {
-        NetworkGUI g = new NetworkGUI(new Network(2,3,3,new int[]{2,3,3}));
+        NetworkGUI g = new NetworkGUI();
 
+        g.addNetwork(new Network(1,1,0,new int[]{}));
+        g.addNetwork(new Network(2,2,0,new int[]{}));
         g.addNetwork(new Network(2,3,1,new int[]{2}));
         g.addNetwork(new Network(3, 2, 3, new int[]{4, 2, 2}));
         g.addNetwork(new Network(2,3,2,new int[]{2,3}));

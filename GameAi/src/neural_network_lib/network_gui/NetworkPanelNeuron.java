@@ -5,11 +5,15 @@ import java.awt.*;
 import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Neuron;
 
+import javax.swing.border.LineBorder;
+
 /**
  * @author Maximilian Estfelller
  * @since 19.05.2017
  */
 class NetworkPanelNeuron extends NetworkPanelComponent{
+
+    private boolean developerMode = false;
 
     /**
      * A Neuron is drawn with two different colors, depending on their type
@@ -48,6 +52,14 @@ class NetworkPanelNeuron extends NetworkPanelComponent{
     @Override
     NetworkComponentType getNetworkComponentType() {
         return NetworkComponentType.NEURON;
+    }
+
+    void toggleDeveloperMode() {
+        developerMode=!developerMode;
+        if (developerMode)
+            this.setBorder(new LineBorder(Color.RED, 1));
+        else
+            this.setBorder(null);
     }
 
     @Override

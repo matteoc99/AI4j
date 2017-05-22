@@ -135,7 +135,6 @@ class NetworkPanel extends JPanel {
                 } catch (Exception ignored) {}
             }
         }
-        System.out.println(connections.size());
     }
 
     private NetworkPanelComponent findByEquivalent(Object equivalent) throws Exception{
@@ -151,6 +150,11 @@ class NetworkPanel extends JPanel {
     }
 
     private void layoutComponents() {
+        layoutNeurons();
+        layoutConnections();
+    }
+
+    private void layoutNeurons() {
         int longestLineLength = neuronLayers.size();
         for (LinkedList<NetworkPanelNeuron> layer : neuronLayers)
             if (layer.size() > longestLineLength)
@@ -177,6 +181,62 @@ class NetworkPanel extends JPanel {
             this.add(aLayer);
             yToDraw += neuronGap;
         }
+    }
+
+    private void layoutConnections() {
+        for (NetworkPanelConnection connection : connections) {
+            int[] layoutData = createConnectionLayoutData(connection.getFrom().getX()+connection.getFrom().getWidth()/2,
+                    connection.getFrom().getY()+connection.getFrom().getHeight()/2,
+                    connection.getTo().getX()+connection.getTo().getWidth()/2,
+                    connection.getTo().getY()+connection.getTo().getHeight()/2);
+            connection.setBounds(layoutData[0], layoutData[1], layoutData[2], layoutData[3]);
+            connection.setLineDrawOrientation(layoutData[4]);
+            this.add(connection);
+        }
+    }
+
+    private int[] createConnectionLayoutData(int x1, int y1, int x2, int y2) {
+        int[] ret = new int[5];
+        if (x1<x2) {
+            ret[0] = x1;
+            ret[2] = x2-x1;
+            if (y1<y2)
+                ret[4] = NetworkPanelConnection.DOWNWARDS;
+            else if (y1>y2)
+                ret[4] = NetworkPanelConnection.UPWARDS;
+        } else if (x1>x2) {
+            ret[0] = x2;
+            ret[2] = x1-x2;
+            if (y1>y2)
+                ret[4] = NetworkPanelConnection.DOWNWARDS;
+            else if (y1<y2)
+                ret[4] = NetworkPanelConnection.UPWARDS;
+        } else {
+            ret[0] = x1-5;
+            ret[2] = 10;
+            ret[4] = NetworkPanelConnection.VERTICAL;
+        }
+
+        if (y1<y2) {
+            ret[1] = y1;
+            ret[3] = y2-y1;
+        } else if (y1>y2) {
+            ret[1] = y2;
+            ret[3] = y1-y2;
+        } else {
+            ret[1] = y1-5;
+            ret[3] = 10;
+            ret[4] = NetworkPanelConnection.HORIZONTAL;
+        }
+        return ret;
+    }
+
+    void toggleDeveloperMode() {
+        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
+                networkPanelNeuron.toggleDeveloperMode();
+        for (NetworkPanelConnection connection : connections)
+            connection.toggleDeveloperMode();
     }
 
     private class NetworkMouseListener extends MouseAdapter {
