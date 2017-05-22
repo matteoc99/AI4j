@@ -1,5 +1,7 @@
 package neural_network_lib;
 
+import com.sun.istack.internal.NotNull;
+
 /**
  * An Connection is a connection between two {@link Neuron} with a specific weight
  *
@@ -56,11 +58,13 @@ public class Connection {
      * @param weight {@link Connection#weight} of the Synapse
      *  @param active {@link #active} if the connection is active
      */
-    public Connection(Neuron from, Neuron to, double weight,boolean active) {
+    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight, boolean active) {
         if (from == null || to == null)
-            throw new NullPointerException("from or to = null");
+            return;
         this.from = from;
+        from.addAxon(this);
         this.to = to;
+        to.addDendrite(this);
         this.weight = weight;
         this.active=active;
     }
@@ -91,11 +95,12 @@ public class Connection {
     /**
      * sets {@link Connection#from}
      */
-    public void setFrom(Neuron from) {
-        if (from != null)
+    public void setFrom(@NotNull Neuron from) {
+        if (from != null) {
+            from.addAxon(this);
             this.from = from;
-        else
-            throw new NullPointerException("from = null");
+        } else
+            return;
     }
 
     /**
@@ -103,11 +108,12 @@ public class Connection {
      *
      * @param to {@link Neuron}
      */
-    public void setTo(Neuron to) {
-        if (from != null)
+    public void setTo(@NotNull Neuron to) {
+        if (from != null) {
             this.to = to;
-        else
-            throw new NullPointerException("from = null");
+            this.to.addDendrite(this);
+        } else
+            return;
     }
 
     /**

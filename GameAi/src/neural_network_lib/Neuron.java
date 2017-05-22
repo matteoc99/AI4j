@@ -95,11 +95,13 @@ public class Neuron {
      * @param layer    {@link Layer}
      * @param function {@link #function}
      */
-    public Neuron(int index, double bias, Layer layer, Function function) {
+    public Neuron(int index, double bias, @NotNull Layer layer, Function function) {
         this.index = index;
         this.bias = bias;
         this.myLayer = layer;
         this.function = function;
+        layer.addNeuron(this);
+        //TODO control if index is unique in layer
     }
 
     /**
@@ -240,20 +242,22 @@ public class Neuron {
     }
 
     /**
+     * @deprecated do not use
      * Add an Connection to {@link #axons}
      *
      * @param s {@link Connection} to add
      * @return true if the connection was added. Otherwise false
      */
     public boolean addAxon(Connection s) {
-        if (!axons.contains(s))
+        if (!axons.contains(s)) {
             axons.add(s);
-        else
+        } else
             return false;
         return true;
     }
 
     /**
+     * @deprecated do not use
      * Add a Dendride to {@link #dendrites}
      *
      * @param s {@link Connection} to add
@@ -276,6 +280,7 @@ public class Neuron {
     public boolean removeAxon(Connection s) {
         if (axons.contains(s)) {
             axons.remove(s);
+            s.getTo().removeDendrite(s);
         } else
             return false;
         return true;
@@ -288,9 +293,10 @@ public class Neuron {
      * @return true if the connection was added. Otherwise false
      */
     public boolean removeDendrite(Connection s) {
-        if (dendrites.contains(s))
+        if (dendrites.contains(s)) {
             dendrites.remove(s);
-        else
+            s.getFrom().removeAxon(s);
+        } else
             return false;
         return true;
     }

@@ -2,6 +2,7 @@ package neural_network_lib;
 
 import java.util.ArrayList;
 
+import com.sun.istack.internal.NotNull;
 import neural_network_lib.Layer.LayerType;
 
 
@@ -300,7 +301,7 @@ public class Network {
     public Layer getLayerByIndex(int index) {
         if (index < layers.size())
             return layers.get(index);
-        throw new NullPointerException("index greater than layer size");
+        throw new IndexOutOfBoundsException("index greater than layer size");
     }
 
     /**
@@ -311,9 +312,9 @@ public class Network {
      * @param layer1 first Layer
      * @param layer2 second Layer
      */
-    public void connect(Layer layer1, Layer layer2) {
+    public void connect(@NotNull Layer layer1, @NotNull Layer layer2) {
         if (layer1 == null || layer2 == null)
-            throw new NullPointerException("layer==null");
+            return;
         layer1.connectWith(layer2);
     }
 

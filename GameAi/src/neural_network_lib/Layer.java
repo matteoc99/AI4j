@@ -42,6 +42,21 @@ public class Layer {
     }
 
     /**
+     * Create a Layer some Neurons
+     *
+     * @param neuronAmount number of Neurons to create in this Layer
+     * @param type         {@link LayerType} to set for this Layer
+     */
+    public Layer(int neuronAmount, LayerType type) {
+        this(type);
+        for (int i = 0; i < neuronAmount; i++) {
+            Neuron n = new Neuron(i);
+            neurons.add(n);
+            n.setMyLayer(this);
+        }
+    }
+
+    /**
      * Create a fully functional Layer by giving a bunch of Neurons to start with
      *
      * @param neurons {@link Layer#neurons}
@@ -51,6 +66,7 @@ public class Layer {
         this(type);
         for (int i = 0; i < neurons.length; i++) {
             this.neurons.add(neurons[i]);
+            neurons[i].setMyLayer(this);
         }
         if (neurons.length <= 0) {
         }
@@ -64,8 +80,13 @@ public class Layer {
      */
     public Layer(@NotNull ArrayList<Neuron> neurons, LayerType type) {
         this(type);
-        if (neurons != null)
+        if (neurons != null) {
+            for (int i = 0; i < neurons.size(); i++) {
+                neurons.get(i).setMyLayer(this);
+            }
             this.neurons = neurons;
+
+        }
     }
 
     /**
@@ -145,12 +166,7 @@ public class Layer {
             Neuron from = neurons.get(i);
             for (int j = 0; j < layer.neurons.size(); j++) {
                 Neuron to = layer.neurons.get(j);
-                Connection con = new Connection(from, to, Math.random() * 2 - 1);
-                if (from.getAxonByToIndex(to.getIndex()) == null
-                        || from.getAxonByToIndex(to.getIndex()).getTo().getMyLayer() != layer) {
-                    from.addAxon(con);
-                    to.addDendrite(con);
-                }
+                Connection con = new Connection(from, to, Math.random() * 2 - 1,true);
             }
         }
     }
