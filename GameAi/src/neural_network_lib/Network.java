@@ -235,6 +235,7 @@ public class Network {
             layers.add(hiddenLayers[i]);
         }
         layers.add(outLayers);
+        descriptor = generateDescriptor();
     }
 
     /**
@@ -378,22 +379,22 @@ public class Network {
         if (hiddenAmount > 0) {
             //connections
             ret += inputSize * hiddenSize[0];
-            //neurons
-            ret += inputSize;
             for (int i = 0; i < hiddenAmount; i++) {
                 if (i == hiddenAmount - 1) {
                     //connection
                     ret += hiddenSize[hiddenSize.length - 1] * outputSize;
                     //neuron
                     ret += hiddenSize[hiddenSize.length - 1];
-                    ret += outputSize;
                 } else {
                     //connections
                     ret += hiddenSize[i] * hiddenSize[i + 1];
                     //neuron
-                    ret += hiddenSize.length;
+                    ret += hiddenSize[i];
                 }
             }
+            //neurons
+            ret += inputSize;
+            ret += outputSize;
 
         } else {
             ret += inputSize * outputSize;
@@ -435,10 +436,10 @@ public class Network {
         int index = 1;
         //layer description
         for (int i = 0; i < anzLayer; i++) {
-            ret[i + 1] = layers.get(i).getNeuronCount();
+            ret[index] = layers.get(i).getNeuronCount();
             index++;
         }
-
+        System.out.println("index" + index);
         int tot = getTotalNeuronCount();
         ArrayList<Neuron> all = getAllNeurons();
 

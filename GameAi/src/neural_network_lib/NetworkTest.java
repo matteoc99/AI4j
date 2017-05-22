@@ -91,11 +91,28 @@ public class NetworkTest {
         assertEquals(35, len);
         len = Network.getDescriptorLength(3, 4, 0, null);
         assertEquals(22, len);
+
+        len = Network.getDescriptorLength(3, 4, 3, new int[]{3, 3, 3});
+        assertEquals(16 + 39 + 1 + 5, len);
+
+        len = Network.getDescriptorLength(3, 4, 4, new int[]{3, 3, 3, 3});
+        assertEquals(19 + 48 + 1 + 6, len);
     }
 
     @Test
     public void generateDescriptor() {
-        System.out.println("hi");
+        Network net = Network.createDFF(3, 4, 2, 3);
+        double[] desc = net.generateDescriptor();
+        int len = desc.length;
+
+        Network net2 = new Network(desc);
+        double[] desc2 = net2.generateDescriptor();
+        int len2 = desc.length;
+
+        assertEquals(len, len2);
+        assertEquals(desc, desc2);
+        assertEquals(net.processData(new double[]{0.5, 0.5, 0.5}), net2.processData(new double[]{0.5, 0.5, 0.5}));
+
     }
 
     @Test
