@@ -3,6 +3,7 @@ package game;
 import agent.Agent;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Matteo Cosi
@@ -25,12 +26,14 @@ public class Player extends MobileObject {
         this.agent = agent;
         direction.x=0;
         direction.y=0;
+        setSize(new Dimension(5, 100));
     }
 
     @Override
     public void move() {
         super.move();
-        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y))==null) {
+        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
+                || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof Player) {
             changeLoc();
         }
     }

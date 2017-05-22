@@ -78,6 +78,7 @@ public class NetworkTest {
         assertEquals(4, n.getLayers().size());
         assertEquals(3, n.getIndexOfLayer(l));
     }
+
     @Test
     public void processData() {
 
@@ -86,7 +87,10 @@ public class NetworkTest {
 
     @Test
     public void getDescriptorLength() {
-
+        int len = Network.getDescriptorLength(3, 4, 1, new int[]{3});
+        assertEquals(35, len);
+        len = Network.getDescriptorLength(3, 4, 0, null);
+        assertEquals(22, len);
     }
 
     @Test

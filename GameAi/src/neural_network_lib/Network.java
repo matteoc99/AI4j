@@ -371,7 +371,7 @@ public class Network {
      * @param outputSize   size of the output layer
      * @param hiddenAmount amount of hidden layer
      * @param hiddenSize   size of the hidden layers
-     * @return the minimum length a descriptor must have
+     * @return the minimum length a {@link #descriptor} must have
      */
     public static int getDescriptorLength(int inputSize, int outputSize, int hiddenAmount, int[] hiddenSize) {
         int ret = 0;
@@ -380,16 +380,21 @@ public class Network {
             ret += inputSize * hiddenSize[0];
             //neurons
             ret += inputSize;
-            for (int i = 0; i < hiddenSize.length - 1; i++) {
-                //connections
-                ret += hiddenSize[i] * hiddenSize[i + 1];
-                //neuron
-                ret += hiddenSize.length;
+            for (int i = 0; i < hiddenAmount; i++) {
+                if (i == hiddenAmount - 1) {
+                    //connection
+                    ret += hiddenSize[hiddenSize.length - 1] * outputSize;
+                    //neuron
+                    ret += hiddenSize[hiddenSize.length - 1];
+                    ret += outputSize;
+                } else {
+                    //connections
+                    ret += hiddenSize[i] * hiddenSize[i + 1];
+                    //neuron
+                    ret += hiddenSize.length;
+                }
             }
-            //connection
-            ret += hiddenSize[hiddenSize.length - 1] * outputSize;
-            //neuron
-            ret += outputSize;
+
         } else {
             ret += inputSize * outputSize;
             ret += inputSize;
@@ -398,7 +403,7 @@ public class Network {
         //anzLayer
         ret++;
         //layer desc
-        ret += inputSize + outputSize + hiddenAmount;
+        ret += 2 + hiddenAmount;
         return ret;
     }
 

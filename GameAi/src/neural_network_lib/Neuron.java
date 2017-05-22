@@ -100,7 +100,8 @@ public class Neuron {
         this.bias = bias;
         this.myLayer = layer;
         this.function = function;
-        layer.addNeuron(this);
+        if (layer != null)
+            layer.addNeuron(this);
         //TODO control if index is unique in layer
     }
 
@@ -242,11 +243,10 @@ public class Neuron {
     }
 
     /**
-     * @deprecated do not use
-     * Add an Connection to {@link #axons}
-     *
      * @param s {@link Connection} to add
      * @return true if the connection was added. Otherwise false
+     * @deprecated do not use
+     * Add an Connection to {@link #axons}
      */
     public boolean addAxon(Connection s) {
         if (!axons.contains(s)) {
@@ -257,11 +257,10 @@ public class Neuron {
     }
 
     /**
-     * @deprecated do not use
-     * Add a Dendride to {@link #dendrites}
-     *
      * @param s {@link Connection} to add
      * @return true if the connection was added. Otherwise false
+     * @deprecated do not use
+     * Add a Dendride to {@link #dendrites}
      */
     public boolean addDendrite(Connection s) {
         if (!dendrites.contains(s)) {
@@ -344,7 +343,7 @@ public class Neuron {
             if (to == axons.get(i).getTo().getIndex())
                 ret = axons.get(i);
         }
-      return toggle(ret);
+        return toggle(ret);
     }
 
     /**
@@ -359,11 +358,12 @@ public class Neuron {
             if (from == dendrites.get(i).getFrom().getIndex())
                 ret = dendrites.get(i);
         }
-       return toggle(ret);
+        return toggle(ret);
     }
 
     /**
      * toggles the activation state of a Connection
+     *
      * @param ret {@link Connection}
      * @return true if everything went fine, otherwise false
      */

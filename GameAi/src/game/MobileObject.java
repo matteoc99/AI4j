@@ -14,7 +14,7 @@ public class MobileObject extends ImmobileObject {
     /**
      * Declares the maximum speed this object can have
      */
-    public static final int MAX_SPEED=8;
+    public static final int MAX_SPEED = 15;
 
     /**
      * describes the speed at which the {@link MobileObject} is moving
@@ -34,39 +34,39 @@ public class MobileObject extends ImmobileObject {
      */
     Vec2d position;
 
-
-
     /**
      * Construktor for the {@link MobileObject}
-     *add comment
+     *
      * @param dateiname image to load in the {@link JComponent}
      */
     public MobileObject(String dateiname) throws ClassNotFoundException {
         super(dateiname);
         direction = new Vec2d();
-        direction.x=(int)Math.random()*2-2;
-        direction.y=(int)Math.random()*2-2;
+        direction.x = (int) Math.random() * 2 - 2;
+        direction.y = (int) Math.random() * 2 - 2;
     }
 
     //TODO get, set, &direction
 
-    public void move(){
-        if (position==null){
-            position=new Vec2d();
-            position.x=getX();
-            position.y=getY();
+    public void move() {
+        if (position == null) {
+            position = new Vec2d();
+            position.x = getX();
+            position.y = getY();
         }
     }
+
     /**
      * Changes the Location of the current Object
      */
 
     protected void changeLoc() {
-        this.setLocation((int) (position.x + direction.x), (int) (position.y + direction.y));
+        if (PlayGround.mode == PlayGround.Mode.GRAPHIC)
+            this.setLocation((int) (position.x + direction.x), (int) (position.y + direction.y));
         position.x = (int) (position.x + direction.x);
         position.y = (int) (position.y + direction.y);
-        if(Math.abs(direction.x)<MAX_SPEED) {
-            direction.x *= 1.002;
+        if (Math.abs(direction.x) < MAX_SPEED) {
+            direction.x *= 1.0015;
         }
     }
 }

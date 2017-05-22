@@ -7,20 +7,36 @@ import javax.swing.*;
  * @since 15.05.2017
  */
 public class Ball extends MobileObject {
+
+    PlayGround playGround;
+
     /**
      * Construktor for the {@link Ball}
      *
      * @param dateiname image to load in the {@link JComponent}
      */
-    public Ball(String dateiname) throws ClassNotFoundException {
+    public Ball(String dateiname, PlayGround playGround) throws ClassNotFoundException {
         super(dateiname);
+        this.playGround = playGround;
     }
 
     @Override
     public void move() {
         super.move();
-        //TODO kill ball when border-hit
-        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null) {
+        if (getX() < 10) {
+            stirb();
+            playGround.dispose();
+            playGround.punkteRechts++;
+            new PlayGround();
+        }
+        if (getX() > 1020) {
+            stirb();
+            playGround.dispose();
+            playGround.punkteLinks++;
+            new PlayGround();
+        }
+        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
+                || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
             changeLoc();
         } else {
             if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof Player) {
@@ -30,22 +46,25 @@ public class Ball extends MobileObject {
                 int ballMid = (int) position.y + getHeight() / 2;
                 int offset = mid - ballMid;
 
-                direction.y=(-offset/15);
+                direction.y = (-offset / 10);
                 direction.x=-direction.x;
 
                 this.move();
             } else {
                 direction.x = -direction.x;
-                if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null) {
+                if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
+                        || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
                     changeLoc();
                 } else {
                     direction.x = -direction.x;
                     direction.y = -direction.y;
-                    if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null) {
+                    if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
+                            || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
                         changeLoc();
                     } else {
                         direction.x = -direction.x;
-                        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null) {
+                        if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
+                                || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
                             changeLoc();
                         }
                     }
@@ -53,6 +72,4 @@ public class Ball extends MobileObject {
             }
         }
     }
-
-
 }
