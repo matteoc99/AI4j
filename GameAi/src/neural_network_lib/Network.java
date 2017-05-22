@@ -160,7 +160,7 @@ public class Network {
 
         this();
         if (hiddenSize.length != hiddenAmount)
-            throw new IllegalArgumentException("hiddenSize count not rigth");
+            throw new IllegalArgumentException("hiddenSize count not right");
         if (hiddenAmount < 0 || outputSize <= 0 || inputSize <= 0)
             throw new IllegalArgumentException("all Sizes must be >0");
 
@@ -235,7 +235,6 @@ public class Network {
             layers.add(hiddenLayers[i]);
         }
         layers.add(outLayers);
-        descriptor = generateDescriptor();
     }
 
     /**

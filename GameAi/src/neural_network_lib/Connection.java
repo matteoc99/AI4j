@@ -13,7 +13,15 @@ public class Connection {
     /**
      * weight also known as value or cost of a Connection
      */
-    private double weight;
+    private double weight = 0;
+    /**
+     * Constant for maximum weight of a connection
+     */
+    private static final int MAX_WEIGHT = 1;
+    /**
+     * Constant for minimum weight of a connection
+     */
+    private static final int MIN_WEIGHT = -1;
     /**
      * {@link Neuron} where the connection begins
      */
@@ -58,15 +66,15 @@ public class Connection {
      * @param weight {@link Connection#weight} of the Synapse
      *  @param active {@link #active} if the connection is active
      */
-    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight, boolean active) {
+    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight,boolean active) {
         if (from == null || to == null)
             return;
         this.from = from;
-        from.addAxon(this);
         this.to = to;
-        to.addDendrite(this);
-        this.weight = weight;
+        setWeight(weight);
         this.active=active;
+        to.addDendrite(this);
+        from.addAxon(this);
     }
 
     /**
@@ -89,6 +97,7 @@ public class Connection {
      * sets {@link Connection#weight}
      */
     public void setWeight(double weight) {
+        if (weight <= MAX_WEIGHT || weight >= MIN_WEIGHT)
             this.weight = weight;
     }
 
@@ -96,11 +105,10 @@ public class Connection {
      * sets {@link Connection#from}
      */
     public void setFrom(@NotNull Neuron from) {
-        if (from != null) {
-            from.addAxon(this);
-            this.from = from;
-        } else
+        if (from == null)
             return;
+        from.addAxon(this);
+        this.from = from;
     }
 
     /**
@@ -109,11 +117,10 @@ public class Connection {
      * @param to {@link Neuron}
      */
     public void setTo(@NotNull Neuron to) {
-        if (from != null) {
-            this.to = to;
-            this.to.addDendrite(this);
-        } else
+        if (from == null)
             return;
+        to.addDendrite(this);
+        this.to = to;
     }
 
     /**
