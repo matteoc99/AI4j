@@ -41,6 +41,7 @@ class NetworkContainer extends JPanel {
         NetworkPanel networkPanel = new NetworkPanel(network);
         networkPanels.add(networkPanel);
         this.add(networkPanel);
+        repaint();
     }
 
     void toggleDeveloperMode() {
