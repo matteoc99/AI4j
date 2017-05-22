@@ -51,7 +51,7 @@ public class Layer {
         this(type);
         for (int i = 0; i < neuronAmount; i++) {
             Neuron n = new Neuron(i);
-            neurons.add(n);
+            addNeuron(n);
             n.setMyLayer(this);
         }
     }
@@ -65,7 +65,7 @@ public class Layer {
     public Layer(Neuron[] neurons, LayerType type) {
         this(type);
         for (int i = 0; i < neurons.length; i++) {
-            this.neurons.add(neurons[i]);
+            addNeuron(neurons[i]);
             neurons[i].setMyLayer(this);
         }
         if (neurons.length <= 0) {
@@ -133,7 +133,8 @@ public class Layer {
         if (!neurons.contains(neuron)) {
             if (neuron.getMyLayer() != this)
                 neuron.setMyLayer(this);
-            neurons.add(neuron);
+            if (!neurons.contains(neuron))
+                neurons.add(neuron);
         } else
             return false;
         return true;
@@ -148,7 +149,7 @@ public class Layer {
         for (int i = 0; i < neurons.length; i++) {
             if (!this.neurons.contains(neurons[i])) {
                 neurons[i].setMyLayer(this);
-                this.neurons.add(neurons[i]);
+                addNeuron(neurons[i]);
             }
         }
     }

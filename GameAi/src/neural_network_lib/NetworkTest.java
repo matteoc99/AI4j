@@ -95,12 +95,17 @@ public class NetworkTest {
 
     @Test
     public void generateDescriptor() {
-
+        System.out.println("hi");
     }
 
     @Test
     public void getTotalNeuronCount() {
-
+        Network n = new Network(3, 4, 1, new int[]{3});
+        assertEquals(3, n.getLayers().size());
+        Layer l = new Layer(Layer.LayerType.HIDDEN);
+        Neuron neuron = new Neuron(0);
+        l.addNeuron(neuron);
+        assertEquals(n.getTotalNeuronCount(), 10);
     }
 
     @Test
@@ -108,8 +113,12 @@ public class NetworkTest {
         Network n = new Network(3, 4, 1, new int[]{3});
         assertEquals(3, n.getLayers().size());
         Layer l = new Layer(Layer.LayerType.HIDDEN);
+        assertEquals(l.getNeuronCount(), 0);
         Neuron neuron = new Neuron(0);
+
         l.addNeuron(neuron);
+        assertEquals(l.getNeuronCount(), 1);
+
         assertEquals(n.getAllNeurons().size(), 10);
 
         int count = 0;
@@ -124,6 +133,7 @@ public class NetworkTest {
         assertEquals(conCount, 21);
 
         n.addLayer(l);
+        assertEquals(l.getNeuronCount(), 1);
         assertEquals(n.getAllNeurons().size(), 11);
 
         n.connect(n.getLayerByIndex(2), l);
