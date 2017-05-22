@@ -218,14 +218,13 @@ public class Network {
         //connecting all the layers
         if (hiddenAmount > 0) {
             connect(inLayers, hiddenLayers[0]);
-            for (int i = 0; i < hiddenAmount - 1; i++) {
-                if (i == hiddenAmount - 2) {
+            for (int i = 0; i < hiddenAmount; i++) {
+                if (i == hiddenAmount - 1) {
                     connect(hiddenLayers[i], outLayers);
                 } else {
                     connect(hiddenLayers[i], hiddenLayers[i + i]);
                 }
             }
-            connect(hiddenLayers[hiddenAmount - 1], outLayers);
         } else {
             connect(inLayers, outLayers);
         }

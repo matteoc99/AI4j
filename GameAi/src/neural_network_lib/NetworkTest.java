@@ -64,7 +64,7 @@ public class NetworkTest {
             count++;
         }
         assertEquals(count, 10);
-        assertEquals(conCount, 32);
+        assertEquals(conCount, 24);
 
     }
 
