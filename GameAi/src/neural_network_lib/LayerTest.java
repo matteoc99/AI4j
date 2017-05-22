@@ -2,6 +2,9 @@ package neural_network_lib;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
 
 /**
  * @author Matteo Cosi
@@ -9,18 +12,17 @@ import org.junit.Test;
  */
 public class LayerTest {
 
-    @Test
-    public void getType() {
-
-    }
-
-    @Test
-    public void setType() {
-
-    }
 
     @Test
     public void removeNeuron() {
+        Layer l = new Layer(Layer.LayerType.IN);
+        Neuron n = new Neuron(0);
+        Neuron n2 = new Neuron(0);
+        l.addNeuron(n);
+        l.addNeuron(n2);
+        l.removeNeuron(n);
+        assertEquals(l.getNeuronCount(), 1);
+        assertEquals(l.getNeuronAt(0), n2);
 
     }
 
