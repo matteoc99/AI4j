@@ -38,7 +38,7 @@ public class MobileObject extends ImmobileObject {
 
     /**
      * Construktor for the {@link MobileObject}
-     *
+     *add comment
      * @param dateiname image to load in the {@link JComponent}
      */
     public MobileObject(String dateiname) throws ClassNotFoundException {
