@@ -249,6 +249,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 networkPanelNeuron.setFocus(true);
+        this.repaint();
     }
 
     void focusOnNeuron(NetworkPanelNeuron neuron) {
@@ -259,6 +260,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
 
     void releaseFocusOnNeuron(NetworkPanelNeuron neuron) {
         neuron.setFocus(false);
+        this.repaint();
     }
 
     boolean isFocusMode() {
