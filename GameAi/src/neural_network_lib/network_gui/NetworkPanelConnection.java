@@ -19,6 +19,8 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     private boolean developerMode = false;
 
+    private boolean focus = true;
+
     private int lineDrawOrientation;
 
     private double weight = 1;
@@ -32,6 +34,9 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         this.setEquivalent(equivalent);
         this.from = from;
         this.to = to;
+
+        from.registerAsAxon(this);
+        to.registerAsDendrite(this);
     }
 
     double getWeight() {
@@ -64,7 +69,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (equivalent == null || !(equivalent instanceof Connection) || !((Connection) equivalent).isActive())
+        if (equivalent == null || !(equivalent instanceof Connection) || !((Connection) equivalent).isActive() || !focus)
             return;
         Graphics2D gAlia = (Graphics2D) g;
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -92,6 +97,10 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         double B = 0.9; // Brightness
 
         return Color.getHSBColor((float)H, (float)S, (float)B);
+    }
+
+    void setFocus(boolean focus) {
+        this.focus = focus;
     }
 
     @Override

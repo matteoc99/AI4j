@@ -36,6 +36,8 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
 
     private boolean developerMode = false;
 
+    private boolean focusMode = false;
+
     /**
      * This is the standard Border used
      * It is a TitleBorder with a CompoundBorder as Border
@@ -77,7 +79,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         // Listener
         // MouseListener reacts when the Mouse enters and leaves this NetworkPane
         // Used to adjust Borders
-        this.addMouseListener(new NetworkMouseListener());
+        this.addMouseListener(new MyMouseListener());
 
         // ComponentListener reacts to resizing in order to reposition components
         this.addComponentListener(new ComponentAdapter() {
@@ -106,20 +108,20 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
                 case IN:
                     LinkedList<NetworkPanelNeuron> inputLayer = new LinkedList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
-                        inputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.IN));
+                        inputLayer.add(new NetworkPanelNeuron(this, layer.getNeuronAt(i), LayerType.IN));
                     neuronLayers.add(inputLayer);
                     break;
                 case HIDDEN:
                     LinkedList<NetworkPanelNeuron> hiddenLayer = new LinkedList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++) {
-                        hiddenLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.HIDDEN));
+                        hiddenLayer.add(new NetworkPanelNeuron(this, layer.getNeuronAt(i), LayerType.HIDDEN));
                     }
                     neuronLayers.add(hiddenLayer);
                     break;
                 case OUT:
                     LinkedList<NetworkPanelNeuron> outputLayer = new LinkedList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
-                        outputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.OUT));
+                        outputLayer.add(new NetworkPanelNeuron(this, layer.getNeuronAt(i), LayerType.OUT));
                     neuronLayers.add(outputLayer);
                     break;
             }
@@ -233,6 +235,36 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         return ret;
     }
 
+    private void activateFocusMode() {
+        if (focusMode)
+            return;
+        this.focusMode = true;
+        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
+                networkPanelNeuron.setFocus(false);
+    }
+
+    private void deactivateFocusMode() {
+        this.focusMode = false;
+        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
+                networkPanelNeuron.setFocus(true);
+    }
+
+    void focusOnNeuron(NetworkPanelNeuron neuron) {
+        activateFocusMode();
+        neuron.setFocus(true);
+        this.repaint();
+    }
+
+    void releaseFocusOnNeuron(NetworkPanelNeuron neuron) {
+        neuron.setFocus(false);
+    }
+
+    boolean isFocusMode() {
+        return this.focusMode;
+    }
+
     @Override
     public Object getEquivalent() {
         // TODO: 23.05.2017
@@ -259,7 +291,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         return NetworkGUIComponentType.NETWORK_PANEL;
     }
 
-    private class NetworkMouseListener extends MouseAdapter {
+    private class MyMouseListener extends MouseAdapter {
         /**
          * Increases the size of this NetworkPanel significantly
          * and thereby overlaps the other NetworkPanels

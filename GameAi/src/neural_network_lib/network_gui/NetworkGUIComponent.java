@@ -4,7 +4,7 @@ package neural_network_lib.network_gui;
  * @author Maximilian Estfeller
  * @since 23.05.17
  */
-public interface NetworkGUIComponent {
+interface NetworkGUIComponent {
 
     enum NetworkGUIComponentType {
         CONNECTION,

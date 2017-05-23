@@ -1,6 +1,9 @@
 package neural_network_lib.network_gui;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 
 import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Neuron;
@@ -14,7 +17,13 @@ import javax.swing.border.LineBorder;
  */
 class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
 
+    /**
+     * Reference to the NetworkPanel within this Neuron is drawn
+     */
+    private NetworkPanel networkPanel;
+
     private boolean developerMode = false;
+    private boolean focus = true;
 
     /**
      * A Neuron is drawn with two different colors, depending on their type
@@ -28,9 +37,14 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
 
     private Object equivalent;
 
-    NetworkPanelNeuron(Neuron equivalent, LayerType type) {
+    private LinkedList<NetworkPanelConnection> axons = new LinkedList<>();
+    private LinkedList<NetworkPanelConnection> dendrites = new LinkedList<>();
+
+    NetworkPanelNeuron(NetworkPanel networkPanel, Neuron equivalent, LayerType type) {
+        this.networkPanel = networkPanel;
         this.setEquivalent(equivalent);
         this.type = type;
+        this.addMouseListener(new MyMouseListener());
         switch (type) {
             case IN:
                 innerColor = new Color(250,250,0).brighter();
@@ -45,6 +59,24 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
                 outerColor = new Color(250,125,0);
                 break;
         }
+    }
+
+    void registerAsAxon(NetworkPanelConnection axon) {
+        this.axons.add(axon);
+    }
+
+    void registerAsDendrite(NetworkPanelConnection dendrite) {
+        this.dendrites.add(dendrite);
+    }
+
+    void setFocus(boolean focus) {
+        if (this.focus == focus)
+            return;
+        this.focus = focus;
+        for (NetworkPanelConnection axon : axons)
+            axon.setFocus(this.focus);
+        for (NetworkPanelConnection dendrite : dendrites)
+            dendrite.setFocus(this.focus);
     }
 
     public LayerType getLayerType() {
@@ -92,5 +124,19 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         gAlia.drawOval(getWidth()/2-outRad, getWidth()/2-outRad, outRad*2, outRad*2);
         gAlia.setPaint(paint);
         gAlia.fillOval(getWidth()/2-inRad, getWidth()/2-inRad, inRad*2, inRad*2);
+    }
+
+    private class MyMouseListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (!NetworkPanelNeuron.this.networkPanel.isFocusMode())
+                NetworkPanelNeuron.this.networkPanel.focusOnNeuron(NetworkPanelNeuron.this);
+            else {
+                if (NetworkPanelNeuron.this.focus)
+                    NetworkPanelNeuron.this.networkPanel.releaseFocusOnNeuron(NetworkPanelNeuron.this);
+                else
+                    NetworkPanelNeuron.this.networkPanel.focusOnNeuron(NetworkPanelNeuron.this);
+            }
+        }
     }
 }
