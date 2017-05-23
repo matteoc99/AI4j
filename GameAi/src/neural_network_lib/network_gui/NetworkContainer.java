@@ -12,12 +12,14 @@ import java.util.LinkedList;
  * @author Maximilian Estfelller
  * @since 120.05.2017
  */
-class NetworkContainer extends JPanel {
+class NetworkContainer extends JPanel implements NetworkGUIComponent{
 
     /**
      * List stores all created NetworkPanels
      */
     private LinkedList<NetworkPanel> networkPanels = new LinkedList<>();
+
+    private boolean developerMode = false;
 
     NetworkContainer() {
         super();
@@ -44,8 +46,25 @@ class NetworkContainer extends JPanel {
         repaint();
     }
 
-    void toggleDeveloperMode() {
+    @Override
+    public Object getEquivalent() {
+        // TODO: 23.05.2017
+        return null;
+    }
+
+    @Override
+    public void setEquivalent(Object equivalent) {
+        // TODO: 23.05.2017
+    }
+
+    public void toggleDeveloperMode() {
+        developerMode=!developerMode;
         for (NetworkPanel networkPanel : networkPanels)
             networkPanel.toggleDeveloperMode();
+    }
+
+    @Override
+    public NetworkGUIComponentType getNetworkGUIComponentType() {
+        return NetworkGUIComponentType.NETWORK_CONTAINER;
     }
 }

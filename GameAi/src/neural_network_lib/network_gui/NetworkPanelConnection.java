@@ -2,6 +2,7 @@ package neural_network_lib.network_gui;
 
 import neural_network_lib.Connection;
 
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
@@ -9,7 +10,7 @@ import java.awt.*;
  * @author Maximilian Estfeller
  * @since 21.05.17
  */
-class NetworkPanelConnection extends NetworkPanelComponent{
+class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     static final int DOWNWARDS = 1;
     static final int UPWARDS = 2;
@@ -25,8 +26,10 @@ class NetworkPanelConnection extends NetworkPanelComponent{
     private NetworkPanelNeuron from;
     private NetworkPanelNeuron to;
 
+    private Object equivalent;
+
     public NetworkPanelConnection(Connection equivalent, NetworkPanelNeuron from, NetworkPanelNeuron to) {
-        super(equivalent);
+        this.setEquivalent(equivalent);
         this.from = from;
         this.to = to;
     }
@@ -61,6 +64,8 @@ class NetworkPanelConnection extends NetworkPanelComponent{
 
     @Override
     protected void paintComponent(Graphics g) {
+        if (equivalent == null || !(equivalent instanceof Connection) || !((Connection) equivalent).isActive())
+            return;
         Graphics2D gAlia = (Graphics2D) g;
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -76,18 +81,6 @@ class NetworkPanelConnection extends NetworkPanelComponent{
             gAlia.drawLine(getWidth()/2, 0, getWidth()/2, getHeight());
     }
 
-    @Override
-    NetworkComponentType getNetworkComponentType() {
-        return NetworkComponentType.CONNECTION;
-    }
-
-    void toggleDeveloperMode() {
-        developerMode=!developerMode;
-        if (developerMode)
-            this.setBorder(new LineBorder(Color.BLUE, 2));
-        else this.setBorder(null);
-    }
-
     public Color getGradientColor(double weight)
     {
         weight=(weight+1)/2;
@@ -99,5 +92,27 @@ class NetworkPanelConnection extends NetworkPanelComponent{
         double B = 0.9; // Brightness
 
         return Color.getHSBColor((float)H, (float)S, (float)B);
+    }
+
+    @Override
+    public Object getEquivalent() {
+        return this.equivalent;
+    }
+
+    @Override
+    public void setEquivalent(Object equivalent) {
+        this.equivalent = equivalent;
+    }
+
+    @Override
+    public NetworkGUIComponentType getNetworkGUIComponentType() {
+        return NetworkGUIComponentType.CONNECTION;
+    }
+
+    public void toggleDeveloperMode() {
+        developerMode=!developerMode;
+        if (developerMode)
+            this.setBorder(new LineBorder(Color.BLUE, 2));
+        else this.setBorder(null);
     }
 }

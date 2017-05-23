@@ -5,13 +5,14 @@ import java.awt.*;
 import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Neuron;
 
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 /**
  * @author Maximilian Estfelller
  * @since 19.05.2017
  */
-class NetworkPanelNeuron extends NetworkPanelComponent{
+class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
 
     private boolean developerMode = false;
 
@@ -25,9 +26,10 @@ class NetworkPanelNeuron extends NetworkPanelComponent{
 
     private LayerType type;
 
+    private Object equivalent;
 
     NetworkPanelNeuron(Neuron equivalent, LayerType type) {
-        super(equivalent);
+        this.setEquivalent(equivalent);
         this.type = type;
         switch (type) {
             case IN:
@@ -50,16 +52,26 @@ class NetworkPanelNeuron extends NetworkPanelComponent{
     }
 
     @Override
-    NetworkComponentType getNetworkComponentType() {
-        return NetworkComponentType.NEURON;
+    public Object getEquivalent() {
+        return this.equivalent;
     }
 
-    void toggleDeveloperMode() {
+    @Override
+    public void setEquivalent(Object equivalent) {
+        this.equivalent = equivalent;
+    }
+
+    public void toggleDeveloperMode() {
         developerMode=!developerMode;
         if (developerMode)
             this.setBorder(new LineBorder(Color.RED, 1));
         else
             this.setBorder(null);
+    }
+
+    @Override
+    public NetworkGUIComponentType getNetworkGUIComponentType() {
+        return NetworkGUIComponentType.NEURON;
     }
 
     @Override

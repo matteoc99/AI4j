@@ -22,7 +22,7 @@ import java.util.LinkedList;
  * @author Maximilian Estfelller
  * @since 18.05.2017
  */
-class NetworkPanel extends JPanel {
+class NetworkPanel extends JPanel implements NetworkGUIComponent{
 
     /**
      * Reference to the Network of this Panel
@@ -34,10 +34,12 @@ class NetworkPanel extends JPanel {
      */
     private int neuronSize;
 
+    private boolean developerMode = false;
+
     /**
      * This is the standard Border used
      * It is a TitleBorder with a CompoundBorder as Border
-     * The CompoundBorder consists of a gray LineBorder (Outer) and a EmptyBoder(Inner) as a placeHolder
+     * The CompoundBorder consists of a gray LineBorder (Outer) and a EmptyBorder(Inner) as a placeHolder
      */
     private static final Border NORMAL_BORDER = new TitledBorder(
             new CompoundBorder(
@@ -137,7 +139,7 @@ class NetworkPanel extends JPanel {
         }
     }
 
-    private NetworkPanelComponent findByEquivalent(Object equivalent) throws Exception{
+    private NetworkGUIComponent findByEquivalent(Object equivalent) throws Exception{
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 if (networkPanelNeuron.getEquivalent().equals(equivalent))
@@ -231,12 +233,30 @@ class NetworkPanel extends JPanel {
         return ret;
     }
 
-    void toggleDeveloperMode() {
+    @Override
+    public Object getEquivalent() {
+        // TODO: 23.05.2017
+        return null;
+    }
+
+    @Override
+    public void setEquivalent(Object equivalent) {
+        // TODO: 23.05.2017
+    }
+
+    public void toggleDeveloperMode() {
+        developerMode=!developerMode;
+
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 networkPanelNeuron.toggleDeveloperMode();
         for (NetworkPanelConnection connection : connections)
             connection.toggleDeveloperMode();
+    }
+
+    @Override
+    public NetworkGUIComponentType getNetworkGUIComponentType() {
+        return NetworkGUIComponentType.NETWORK_PANEL;
     }
 
     private class NetworkMouseListener extends MouseAdapter {
