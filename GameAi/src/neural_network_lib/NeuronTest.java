@@ -21,10 +21,10 @@ public class NeuronTest {
     public void construct() {
         networkOfNeuron = new Network(1,1,0, new int[]{});
         functionOfNeuron = val -> val*2/3;
-        neuronToTest = new Neuron(0, 1, networkOfNeuron.getLayerByIndex(0), functionOfNeuron);
-        neuronToTestWith = new Neuron(0, 1, networkOfNeuron.getLayerByIndex(1), functionOfNeuron);
-        assert (neuronToTest.getIndex() == 0);
-        assert (neuronToTest.getBias() == 1);
+        neuronToTest = new Neuron(1, networkOfNeuron.getLayerByIndex(0), functionOfNeuron);
+        neuronToTestWith = new Neuron(1, networkOfNeuron.getLayerByIndex(1), functionOfNeuron);
+        assertEquals(neuronToTest.getIndex(), 0);
+        assertEquals(neuronToTest.getBias(), 1, 0.0005);
         assertEquals(networkOfNeuron.getLayerByIndex(0), neuronToTest.getMyLayer());
         assertEquals(neuronToTest.getFunction(), functionOfNeuron);
     }
@@ -114,4 +114,24 @@ public class NeuronTest {
     public void receive() {
 
      }
+
+    @Test
+    public void getAxonAt() {
+    }
+
+    @Test
+    public void getDendriteAt() {
+    }
+
+    @Test
+    public void containsAxon() {
+    }
+
+    @Test
+    public void containsDendrite() {
+    }
+
+    @Test
+    public void containsConnection() {
+    }
 }

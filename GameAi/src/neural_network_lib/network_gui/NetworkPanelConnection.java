@@ -21,7 +21,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     private int lineDrawOrientation;
 
-    private double weight = -1;
+    private double weight = 1;
 
     private NetworkPanelNeuron from;
     private NetworkPanelNeuron to;

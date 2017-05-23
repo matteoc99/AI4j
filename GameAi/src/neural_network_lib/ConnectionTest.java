@@ -14,16 +14,16 @@ public class ConnectionTest {
 
     @Test
     public void isActive() {
-        Neuron from = new Neuron(1);
-        Neuron to = new Neuron(2);
+        Neuron from = new Neuron();
+        Neuron to = new Neuron();
         Connection c = new Connection(from, to);
         assertEquals(c.isActive(), true);
     }
 
     @Test
     public void setActive() {
-        Neuron from = new Neuron(1);
-        Neuron to = new Neuron(2);
+        Neuron from = new Neuron();
+        Neuron to = new Neuron();
         Connection c = new Connection(from, to);
         assertEquals(c.isActive(), true);
         c.setActive(false);
@@ -32,24 +32,24 @@ public class ConnectionTest {
 
     @Test
     public void setWeight() {
-        Neuron from = new Neuron(1);
-        Neuron to = new Neuron(2);
+        Neuron from = new Neuron();
+        Neuron to = new Neuron();
         Connection c = new Connection(from, to);
         assertEquals(c.isActive(), true);
         c.setWeight(3);
-        assertEquals(3, c.getWeight());
+        assertEquals(3.0, c.getWeight());
         c.setWeight(-3);
-        assertEquals(-3, c.getWeight());
+        assertEquals(-3.0, c.getWeight());
         c.setWeight(0);
-        assertEquals(0, c.getWeight());
+        assertEquals(0.0, c.getWeight());
     }
 
     @Test
     public void setFrom() {
-        Neuron from = new Neuron(1);
-        Neuron to = new Neuron(2);
+        Neuron from = new Neuron();
+        Neuron to = new Neuron();
         Connection c = new Connection(from, to);
-        Neuron from2 = new Neuron(3);
+        Neuron from2 = new Neuron();
         c.setFrom(from2);
         assertNotSame(from2,from);
         assertEquals(from2,c.getFrom());
@@ -58,10 +58,10 @@ public class ConnectionTest {
 
     @Test
     public void setTo() {
-        Neuron from = new Neuron(1);
-        Neuron to = new Neuron(2);
+        Neuron from = new Neuron();
+        Neuron to = new Neuron();
         Connection c = new Connection(from, to);
-        Neuron to2 = new Neuron(3);
+        Neuron to2 = new Neuron();
         assertNotSame(to,to2);
         c.setTo(to2);
         assertEquals(to2,c.getTo());
@@ -70,8 +70,8 @@ public class ConnectionTest {
 
     @Test
     public void send() {
-        Neuron from = new Neuron(1);
-        Neuron to = new Neuron(2);
+        Neuron from = new Neuron();
+        Neuron to = new Neuron();
         Connection c = new Connection(from, to);
         assertEquals(to.getValue(),to.getFunction().calculate(0));
         c.send(3);
