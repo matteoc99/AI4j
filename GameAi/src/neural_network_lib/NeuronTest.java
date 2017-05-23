@@ -114,4 +114,24 @@ public class NeuronTest {
     public void receive() {
 
      }
+
+    @Test
+    public void getAxonAt() {
+    }
+
+    @Test
+    public void getDendriteAt() {
+    }
+
+    @Test
+    public void containsAxon() {
+    }
+
+    @Test
+    public void containsDendrite() {
+    }
+
+    @Test
+    public void containsConnection() {
+    }
 }

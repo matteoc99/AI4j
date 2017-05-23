@@ -255,6 +255,25 @@ public class Network {
         return new Network(inputSize, outputSize, hiddenAmount, hidden);
     }
 
+
+    /**
+     * create a support Vector Machine
+     *
+     * @param size size of the Network
+     * @return a SVM Network
+     */
+    public static Network createSVM(int size, int hiddenAmount) {
+        Network ret = createDFF(size, 1, hiddenAmount, size);
+        for (int i = 0; i < ret.getLayerByIndex(0).getNeuronCount(); i++) {
+            Neuron in = ret.getLayerByIndex(0).getNeuronAt(i);
+            for (int j = 0; j < in.getAxons().size(); j++) {
+                if (i != j)
+                    in.getAxonAt(j).setActive(false);
+            }
+        }
+        return ret;
+    }
+
     /**
      * Adds a layer to {@link Network#layers}
      *

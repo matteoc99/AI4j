@@ -20,7 +20,7 @@ class NetworkPanelConnection extends NetworkPanelComponent{
 
     private int lineDrawOrientation;
 
-    private double weight = -1;
+    private double weight = 1;
 
     private NetworkPanelNeuron from;
     private NetworkPanelNeuron to;

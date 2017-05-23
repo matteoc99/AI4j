@@ -37,14 +37,13 @@ public class Connection {
     private boolean active;
 
     /**
-     *basic Constructor for a Connection, which connects two {@link Neuron}s
+     * basic Constructor for a Connection, which connects two {@link Neuron}s
      *
-     * @param from   {@link Neuron} where the connection begins
-     * @param to     {@link Neuron} where the connection ends
-     *
+     * @param from {@link Neuron} where the connection begins
+     * @param to   {@link Neuron} where the connection ends
      */
     public Connection(Neuron from, Neuron to) {
-        this(from,to,Math.random()*2-1,true);
+        this(from, to, Math.random() * 2 - 1, true);
     }
 
     /**
@@ -55,7 +54,7 @@ public class Connection {
      * @param weight {@link Connection#weight} of the Synapse
      */
     public Connection(Neuron from, Neuron to, double weight) {
-        this(from,to,weight,true);
+        this(from, to, weight, true);
     }
 
     /**
@@ -64,21 +63,20 @@ public class Connection {
      * @param from   {@link Neuron} where the connection begins
      * @param to     {@link Neuron} where the connection ends
      * @param weight {@link Connection#weight} of the Synapse
-     *  @param active {@link #active} if the connection is active
+     * @param active {@link #active} if the connection is active
      */
-    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight,boolean active) {
+    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight, boolean active) {
         if (from == null || to == null)
             return;
-        this.from = from;
-        this.to = to;
+        setFrom(from);
+        setTo(to);
         setWeight(weight);
-        this.active=active;
-        to.addDendrite(this);
-        from.addAxon(this);
+        setActive(active);
     }
 
     /**
      * returns if the {@link Connection} is active
+     *
      * @return {@link #active}
      */
     public boolean isActive() {
@@ -87,6 +85,7 @@ public class Connection {
 
     /**
      * activates or deactivates this {@link Connection}
+     *
      * @param active {@link #active}
      */
     public void setActive(boolean active) {
@@ -107,8 +106,10 @@ public class Connection {
     public void setFrom(@NotNull Neuron from) {
         if (from == null)
             return;
-        from.addAxon(this);
-        this.from = from;
+        if (!from.containsAxon(this)) {
+            from.addAxon(this);
+            this.from = from;
+        }
     }
 
     /**
@@ -119,8 +120,10 @@ public class Connection {
     public void setTo(@NotNull Neuron to) {
         if (from == null)
             return;
-        to.addDendrite(this);
-        this.to = to;
+        if (!to.containsDendrite(this)) {
+            to.addDendrite(this);
+            this.to = to;
+        }
     }
 
     /**
@@ -153,7 +156,24 @@ public class Connection {
      * @param value the value to forward
      */
     public void send(double value) {
-        if(isActive())
+        if (isActive())
             to.receive(value * weight);
     }
+
+    /**
+     * returns if this connection equals an other connection
+     *
+     * @param other the {@link Connection} to check if equal
+     * @return if the two connections are equal
+     */
+    public boolean equals(Connection other) {
+        boolean ret = false;
+        if (this.to.equals(other.to) && this.from.equals(other.from)
+                && this.to.getMyLayer().equals(other.to.getMyLayer())
+                && this.from.getMyLayer().equals(other.from.getMyLayer()))
+            ret = true;
+        return ret;
+
+    }
+
 }

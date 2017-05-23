@@ -15,7 +15,7 @@ public class CosiAgent extends Agent {
         NetworkGUI g = new NetworkGUI();
 
         Network[] nets = new Network[30];
-        nets[0] = Network.createDFF(5, 7, 2, 3);
+        nets[0] = Network.createSVM(5, 2);
         g.addNetwork(nets[0]);
         for (int i = 1; i < nets.length; i++) {
 

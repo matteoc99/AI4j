@@ -387,4 +387,66 @@ public class Neuron {
     public void receive(double val) {
         value += val;
     }
+
+    /**
+     * returns an Axon at a given index
+     *
+     * @param index the index of the Axon
+     */
+    public Connection getAxonAt(int index) {
+        if (index > axons.size())
+            throw new IndexOutOfBoundsException("index > axons.size()");
+        return axons.get(index);
+    }
+
+    /**
+     * returns an Dendrite at a given index
+     *
+     * @param index the index of the Dendrite
+     */
+    public Connection getDendriteAt(int index) {
+        if (index > dendrites.size())
+            throw new IndexOutOfBoundsException("index > axons.size()");
+        return dendrites.get(index);
+    }
+
+    /**
+     * searches if a connection is already present in axons
+     *
+     * @param con {@link Connection} to check
+     * @return if a connection is already present in axons
+     */
+    public boolean containsAxon(Connection con) {
+        boolean ret = false;
+        for (int i = 0; i < axons.size(); i++) {
+            if (axons.get(i).equals(con))
+                ret = true;
+        }
+        return ret;
+    }
+
+    /**
+     * searches if a connection is already present in dendrites
+     *
+     * @param con {@link Connection} to check
+     * @return if a connection is already present in dendrites
+     */
+    public boolean containsDendrite(Connection con) {
+        boolean ret = false;
+        for (int i = 0; i < dendrites.size(); i++) {
+            if (dendrites.get(i).equals(con))
+                ret = true;
+        }
+        return ret;
+    }
+
+    /**
+     * searches if a connection is already present in dendrites or axons
+     *
+     * @param con {@link Connection} to check
+     * @return if a connection is already present in dendrites or axons
+     */
+    public boolean containsConnection(Connection con) {
+        return containsAxon(con) || containsDendrite(con);
+    }
 }
