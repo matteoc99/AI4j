@@ -50,7 +50,7 @@ public class Layer {
     public Layer(int neuronAmount, LayerType type) {
         this(type);
         for (int i = 0; i < neuronAmount; i++) {
-            Neuron n = new Neuron(i);
+            Neuron n = new Neuron();
             addNeuron(n);
             n.setMyLayer(this);
         }
@@ -118,9 +118,19 @@ public class Layer {
         if (neurons.contains(neuron)) {
             neuron.setMyLayer(null);
             neurons.remove(neuron);
+            refreshIndex();
         } else
             return false;
         return true;
+    }
+
+    /**
+     * refreshes the index of all the Neurons
+     */
+    public void refreshIndex() {
+        for (int i = 0; i < neurons.size(); i++) {
+            neurons.get(i).setIndex(i);
+        }
     }
 
     /**
@@ -133,8 +143,10 @@ public class Layer {
         if (!neurons.contains(neuron)) {
             if (neuron.getMyLayer() != this)
                 neuron.setMyLayer(this);
-            if (!neurons.contains(neuron))
+            if (!neurons.contains(neuron)) {
+                neuron.setIndex(neurons.size());
                 neurons.add(neuron);
+            }
         } else
             return false;
         return true;

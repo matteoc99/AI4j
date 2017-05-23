@@ -49,11 +49,9 @@ public class Neuron {
 
     /**
      * basic constructor for a Neuron
-     *
-     * @param index {@link Neuron#index}
      */
-    public Neuron(int index) {
-        this(index, Math.random(), null, val -> {
+    public Neuron() {
+        this(Math.random(), null, val -> {
             double ret = 1 / (1 + Math.exp(-val));
             return ret;
         });
@@ -62,11 +60,10 @@ public class Neuron {
     /**
      * constructor for a Neuron
      *
-     * @param index {@link Neuron#index}
-     * @param bias  {@link #bias}
+     * @param bias {@link #bias}
      */
     public Neuron(int index, double bias) {
-        this(index, bias, null, val -> {
+        this(bias, null, val -> {
             double ret = 1 / (1 + Math.exp(-val));
             return ret;
         });
@@ -75,12 +72,11 @@ public class Neuron {
     /**
      * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
      *
-     * @param index {@link Neuron#index}
      * @param bias  {@link #bias}
      * @param layer {@link Layer}
      */
-    public Neuron(int index, double bias, Layer layer) {
-        this(index, bias, layer, val -> {
+    public Neuron(double bias, Layer layer) {
+        this(bias, layer, val -> {
             double ret = 1 / (1 + Math.exp(-val));
             return ret;
         });
@@ -90,20 +86,18 @@ public class Neuron {
      * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
      * The Activation function can also be changed
      *
-     * @param index    {@link Neuron#index}
      * @param bias     {@link #bias}
      * @param layer    {@link Layer}
      * @param function {@link #function}
      */
-    public Neuron(int index, double bias, @NotNull Layer layer, Function function) {
-        this.index = index;
-        this.bias = bias;
-        this.myLayer = layer;
-        this.function = function;
-        if (layer != null)
-            layer.addNeuron(this);
+    public Neuron(double bias, @NotNull Layer layer, Function function) {
+        setBias(bias);
+        setMyLayer(layer);
+        setFunction(function);
+        setIndex(index);
         //TODO control if index is unique in layer
     }
+
 
     /**
      * sets the Layer, in which the Neuron is into
@@ -127,6 +121,15 @@ public class Neuron {
             this.myLayer = myLayer;
             myLayer.addNeuron(this);
         }
+    }
+
+    /**
+     * setter for {@link #index}
+     *
+     * @param index index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     /**

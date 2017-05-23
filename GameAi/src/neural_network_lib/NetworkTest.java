@@ -120,7 +120,7 @@ public class NetworkTest {
         Network n = new Network(3, 4, 1, new int[]{3});
         assertEquals(3, n.getLayers().size());
         Layer l = new Layer(Layer.LayerType.HIDDEN);
-        Neuron neuron = new Neuron(0);
+        Neuron neuron = new Neuron();
         l.addNeuron(neuron);
         assertEquals(n.getTotalNeuronCount(), 10);
     }
@@ -131,7 +131,7 @@ public class NetworkTest {
         assertEquals(3, n.getLayers().size());
         Layer l = new Layer(Layer.LayerType.HIDDEN);
         assertEquals(l.getNeuronCount(), 0);
-        Neuron neuron = new Neuron(0);
+        Neuron neuron = new Neuron();
 
         l.addNeuron(neuron);
         assertEquals(l.getNeuronCount(), 1);

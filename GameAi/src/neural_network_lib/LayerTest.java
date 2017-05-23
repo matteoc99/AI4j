@@ -16,8 +16,8 @@ public class LayerTest {
     @Test
     public void removeNeuron() {
         Layer l = new Layer(Layer.LayerType.IN);
-        Neuron n = new Neuron(0);
-        Neuron n2 = new Neuron(0);
+        Neuron n = new Neuron();
+        Neuron n2 = new Neuron();
         l.addNeuron(n);
         l.addNeuron(n2);
         l.removeNeuron(n);

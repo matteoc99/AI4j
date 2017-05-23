@@ -77,7 +77,7 @@ public class Network {
         }
         Layer layerin = new Layer(LayerType.IN);
         for (int i = 0; i < inputSize; i++) {
-            Neuron neuron = new Neuron(i);
+            Neuron neuron = new Neuron();
             layerin.addNeuron(neuron);
             neuronCount++;
         }
@@ -86,14 +86,14 @@ public class Network {
         for (int i = 0; i < hiddenAmount; i++) {
             layerhid[i] = new Layer(LayerType.HIDDEN);
             for (int j = 0; j < hiddenSize[i]; j++) {
-                Neuron neuron = new Neuron(j);
+                Neuron neuron = new Neuron();
                 layerhid[i].addNeuron(neuron);
                 neuronCount++;
             }
         }
         Layer layerout = new Layer(LayerType.OUT);
         for (int i = 0; i < outputSize; i++) {
-            Neuron neuron = new Neuron(i);
+            Neuron neuron = new Neuron();
             layerout.addNeuron(neuron);
             neuronCount++;
         }
