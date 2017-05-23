@@ -37,11 +37,11 @@ public class ConnectionTest {
         Connection c = new Connection(from, to);
         assertEquals(c.isActive(), true);
         c.setWeight(3);
-        assertEquals(3, c.getWeight());
+        assertEquals(3.0, c.getWeight());
         c.setWeight(-3);
-        assertEquals(-3, c.getWeight());
+        assertEquals(-3.0, c.getWeight());
         c.setWeight(0);
-        assertEquals(0, c.getWeight());
+        assertEquals(0.0, c.getWeight());
     }
 
     @Test
