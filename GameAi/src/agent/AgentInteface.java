@@ -41,10 +41,10 @@ public class AgentInteface {
 
     //0-1
     public double getPalayer1Y() {
-        return playGround.leftPlayer.getY();
+        return playGround.leftPlayer.getY()/(double)playGroundHeight;
     }
     //0-1
     public double getPlayer2Y() {
-        return playGround.rightPlayer.getX();
+        return playGround.rightPlayer.getX()/(double)playGroundHeight;
     }
 }
