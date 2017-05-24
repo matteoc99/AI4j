@@ -61,7 +61,7 @@ public class Network {
     public Network(double[] descriptor) {
         if (descriptor[0] < 2 && descriptor[1] > 0 && descriptor[(int) (descriptor[0] - 1)] > 0)
             throw new IllegalArgumentException("descriptor format error");
-        this.descriptor = descriptor;
+
         layers = new ArrayList<>();
 
         //creating Layer structure and adding Neurons
@@ -73,7 +73,7 @@ public class Network {
 
         int neuronCount = 0;
         for (int i = 0; i < hiddenAmount; i++) {
-            hiddenSize[i ] = (int) descriptor[i+2];
+            hiddenSize[i] = (int) descriptor[i + 2];
         }
         Layer layerin = new Layer(LayerType.IN);
         for (int i = 0; i < inputSize; i++) {
@@ -120,7 +120,13 @@ public class Network {
             layerin.getNeuronAt(i).setBias(descriptor[index]);
             index++;
             for (int j = 0; j < layerin.getNeuronAt(i).getAxons().size(); j++) {
-                layerin.getNeuronAt(i).getAxons().get(j).setWeight(descriptor[index]);
+                Connection con = layerin.getNeuronAt(i).getAxons().get(j);
+                if (descriptor[index] < Connection.MIN_WEIGHT) {
+                    con.setActive(false);
+                    con.setWeight(descriptor[index] + Integer.MAX_VALUE - Connection.MAX_WEIGHT);
+                } else {
+                    con.setWeight(descriptor[index]);
+                }
                 index++;
             }
         }
@@ -129,11 +135,14 @@ public class Network {
                 for (int j = 0; j < hiddenSize[i]; j++) {
                     layerhid[i].getNeuronAt(j).setBias(descriptor[index]);
                     index++;
-                    for (int k = 0; k <  layerhid[i].getNeuronAt(i).getAxons().size(); k++) {
-                        layerhid[i].
-                                getNeuronAt(j).
-                                getAxons().get(k).
-                                setWeight(descriptor[index]);
+                    for (int k = 0; k < layerhid[i].getNeuronAt(i).getAxons().size(); k++) {
+                        Connection con = layerhid[i].getNeuronAt(j).getAxons().get(k);
+                        if (descriptor[index] < Connection.MIN_WEIGHT) {
+                            con.setActive(false);
+                            con.setWeight(descriptor[index] + Integer.MAX_VALUE - Connection.MAX_WEIGHT);
+                        } else {
+                            con.setWeight(descriptor[index]);
+                        }
                         index++;
                     }
                 }
@@ -145,6 +154,7 @@ public class Network {
             layers.add(layerhid[i]);
         }
         layers.add(layerout);
+        this.descriptor = generateDescriptor();
     }
 
     /**
@@ -271,6 +281,7 @@ public class Network {
                     in.getAxonAt(j).setActive(false);
             }
         }
+        ret.descriptor = ret.generateDescriptor();
         return ret;
     }
 
@@ -414,7 +425,6 @@ public class Network {
             //neurons
             ret += inputSize;
             ret += outputSize;
-
         } else {
             ret += inputSize * outputSize;
             ret += inputSize;
@@ -424,6 +434,7 @@ public class Network {
         ret++;
         //layer desc
         ret += 2 + hiddenAmount;
+
         return ret;
     }
 
@@ -439,14 +450,14 @@ public class Network {
         //setup useful variables
         int anzLayer = layers.size();
         int inputSize = layers.get(0).getNeuronCount();
-        int outputSize = layers.get(anzLayer-1).getNeuronCount();
-        int hiddenAmount = anzLayer-2;
+        int outputSize = layers.get(anzLayer - 1).getNeuronCount();
+        int hiddenAmount = anzLayer - 2;
         int[] hiddenSize = new int[hiddenAmount];
         for (int i = 0; i < hiddenAmount; i++) {
-            hiddenSize[i]=layers.get(i+1).getNeuronCount();
+            hiddenSize[i] = layers.get(i + 1).getNeuronCount();
         }
         //calculate length
-            ret = new double[getDescriptorLength( inputSize,outputSize, hiddenAmount,hiddenSize)];
+        ret = new double[getDescriptorLength(inputSize, outputSize, hiddenAmount, hiddenSize)];
         //write data
         ret[0] = anzLayer;
         /*
@@ -458,7 +469,6 @@ public class Network {
             ret[index] = layers.get(i).getNeuronCount();
             index++;
         }
-        int tot = getTotalNeuronCount();
         ArrayList<Neuron> all = getAllNeurons();
 
         //for all neurons add himself and the connection
@@ -467,10 +477,12 @@ public class Network {
             ret[index] = neuron.getBias();
             index++;
             for (int j = 0; j < neuron.getAxons().size(); j++) {
-                if (neuron.getAxons().get(j).isActive())
-                    ret[index] = neuron.getAxons().get(j).getWeight();
-                else
-                    ret[index] = -12345;
+                Connection con = neuron.getAxons().get(j);
+                if (con.isActive())
+                    ret[index] = con.getWeight();
+                else {
+                    ret[index] = Integer.MIN_VALUE + Connection.MAX_WEIGHT - con.getWeight();
+                }
                 index++;
             }
         }

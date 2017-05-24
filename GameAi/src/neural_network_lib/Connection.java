@@ -17,11 +17,11 @@ public class Connection {
     /**
      * Constant for maximum weight of a connection
      */
-    private static final int MAX_WEIGHT = 1;
+    public static final int MAX_WEIGHT = 1;
     /**
      * Constant for minimum weight of a connection
      */
-    private static final int MIN_WEIGHT = -1;
+    public static final int MIN_WEIGHT = -1;
     /**
      * {@link Neuron} where the connection begins
      */

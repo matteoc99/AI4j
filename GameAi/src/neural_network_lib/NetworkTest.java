@@ -125,6 +125,7 @@ public class NetworkTest {
         assertEquals(n.getTotalNeuronCount(), 10);
     }
 
+
     @Test
     public void getAllNeurons() {
         Network n = new Network(3, 4, 1, new int[]{3});

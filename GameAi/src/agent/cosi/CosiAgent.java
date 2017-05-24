@@ -24,12 +24,6 @@ public class CosiAgent extends Agent {
             for (int j = 0; j < nets[i].getDescriptor().length; j++) {
                 System.out.print(nets[i - 1].getDescriptor()[j] + " ");
             }
-            System.out.println();
-            double[] data = nets[i].processData(new double[]{0.8, 0.5, 0.8, 0.6, 0.2});
-            for (int j = 0; j < data.length; j++) {
-                System.out.print(data[j] + " ");
-            }
-            System.out.println();
             g.addNetwork(nets[i]);
         }
 
