@@ -9,7 +9,7 @@ import game.PlayGround;
 public class AgentInteface {
 
 
-    private int playGroundHeigth;
+    private int playGroundHeight;
     private int playGroundWidth;
 
     PlayGround playGround;
@@ -17,7 +17,7 @@ public class AgentInteface {
     public AgentInteface(PlayGround playGround) {
         this.playGround = playGround;
         playGroundWidth= playGround.getWidth();
-        playGroundHeigth= playGround.getHeight();
+        playGroundHeight = playGround.getHeight();
 
     }
 
@@ -31,24 +31,20 @@ public class AgentInteface {
 
     //0-1
     public double getBallX() {
-        int ret=0;
-        return ret;
+        return playGround.ball.getX()/(double)playGroundWidth;
     }
 
     //0-1
     public double getBallY() {
-        int ret=0;
-        return ret;
+        return playGround.ball.getY()/(double)playGroundHeight;
     }
 
     //0-1
     public double getPalayer1Y() {
-        int ret=0;
-        return ret;
+        return playGround.leftPlayer.getY();
     }
     //0-1
     public double getPlayer2Y() {
-        int ret=0;
-        return ret;
+        return playGround.rightPlayer.getX();
     }
 }

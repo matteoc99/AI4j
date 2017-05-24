@@ -18,13 +18,13 @@ public class PlayGround extends JFrame {
 
     //FPS control
     private static final int FPS = 120;
-    private long zeitvorsleep;
+    private long timeUntilSleep;
 
-    private Player leftPlayer, rightPlayer;
-    private Ball ball;
+    public Player leftPlayer, rightPlayer;
+    public Ball ball;
 
-    public JLabel punkte = new JLabel();
-    public static int punkteLinks = 0, punkteRechts = 0;
+    public JLabel points = new JLabel();
+    public static int pointsPlayerLeft = 0, pointsPlayerRight = 0;
     private Container c;
 
     static Mode mode = Mode.GRAPHIC;
@@ -37,10 +37,10 @@ public class PlayGround extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         c = getContentPane();
         c.setLayout(null);
-        punkte.setText(punkteLinks + " : " + punkteRechts);
+        points.setText(pointsPlayerLeft + " : " + pointsPlayerRight);
 
-        punkte.setBounds(500, 0, 100, 30);
-        c.add(punkte);
+        points.setBounds(500, 0, 100, 30);
+        c.add(points);
         //create the Objects
         try {
             leftPlayer = new Player("res/player.png", null);
@@ -59,7 +59,7 @@ public class PlayGround extends JFrame {
         c.add(ball);
         c.add(leftPlayer);
         c.add(rightPlayer);
-        System.out.println(punkteLinks + " : " + punkteRechts);
+        System.out.println(pointsPlayerLeft + " : " + pointsPlayerRight);
 
         //TODO replace with agents
         addKeyListener(new KeyAdapter() {
@@ -110,23 +110,21 @@ public class PlayGround extends JFrame {
     }
 
     private void calcOnly() {
-        System.out.println("cals");
-        zeitvorsleep = System.currentTimeMillis();
+        timeUntilSleep = System.currentTimeMillis();
 
-        Component[] komponenten = this.getContentPane().getComponents();
-        if (komponenten != null && komponenten.length > 0) {
-            for (int i = 0; i < komponenten.length; i = i + 1) {
-                Component c = komponenten[i];
+        Component[] components = this.getContentPane().getComponents();
+        if (components != null && components.length > 0) {
+            for (Component c : components) {
                 if (c instanceof MobileObject) {
                     ((MobileObject) c).move();
                 }
             }
         }
         // FPS control
-        long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
-        if (zeitvergangen < 1000.0 / FPS) {
+        long passedTime = System.currentTimeMillis() - timeUntilSleep;
+        if (passedTime < 1000.0 / FPS) {
             try {
-                Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
+                Thread.sleep((long) (1000.0 / FPS - passedTime));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -136,12 +134,11 @@ public class PlayGround extends JFrame {
 
     @Override
     public void paint(Graphics g) {
-        zeitvorsleep = System.currentTimeMillis();
+        timeUntilSleep = System.currentTimeMillis();
 
-        Component[] komponenten = this.getContentPane().getComponents();
-        if (komponenten != null && komponenten.length > 0) {
-            for (int i = 0; i < komponenten.length; i = i + 1) {
-                Component c = komponenten[i];
+        Component[] components = this.getContentPane().getComponents();
+        if (components != null && components.length > 0) {
+            for (Component c : components) {
                 if (c instanceof MobileObject)
                     ((MobileObject) c).move();
             }
@@ -149,10 +146,10 @@ public class PlayGround extends JFrame {
         super.paint(g);
 
         // FPS control
-        long zeitvergangen = (long) (System.currentTimeMillis() - zeitvorsleep);
-        if (zeitvergangen < 1000.0 / FPS) {
+        long passedTime = System.currentTimeMillis() - timeUntilSleep;
+        if (passedTime < 1000.0 / FPS) {
             try {
-                Thread.sleep((long) (1000.0 / FPS - zeitvergangen));
+                Thread.sleep((long) (1000.0 / FPS - passedTime));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

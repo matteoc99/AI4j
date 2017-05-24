@@ -26,13 +26,13 @@ public class Ball extends MobileObject {
         if (getX() < 10) {
             stirb();
             playGround.dispose();
-            playGround.punkteRechts++;
+            playGround.pointsPlayerRight++;
             new PlayGround();
         }
         if (getX() > 1020) {
             stirb();
             playGround.dispose();
-            playGround.punkteLinks++;
+            playGround.pointsPlayerLeft++;
             new PlayGround();
         }
         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
