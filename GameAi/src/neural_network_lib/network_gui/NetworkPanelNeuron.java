@@ -9,9 +9,7 @@ import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Neuron;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 
 /**
  * @author Maximilian Estfelller
@@ -26,14 +24,10 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         DENDRITES
     }
 
-    /**
-     * Reference to the NetworkPanel within this Neuron is drawn
-     */
-    private NetworkPanel networkPanel;
 
     private boolean developerMode = false;
-    private boolean focus = true;
-    private FocusState focusState = FocusState.NONE;
+
+    private FocusState focusState = FocusState.ALL;
 
     /**
      * A Neuron is drawn with two different colors, depending on their type
@@ -50,8 +44,7 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
     private LinkedList<NetworkPanelConnection> axons = new LinkedList<>();
     private LinkedList<NetworkPanelConnection> dendrites = new LinkedList<>();
 
-    NetworkPanelNeuron(NetworkPanel networkPanel, Neuron equivalent, LayerType type) {
-        this.networkPanel = networkPanel;
+    NetworkPanelNeuron(Neuron equivalent, LayerType type) {
         this.setEquivalent(equivalent);
         this.type = type;
         this.addMouseListener(new MyMouseListener());
@@ -79,16 +72,6 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         this.dendrites.add(dendrite);
     }
 
-    void setFocus(boolean focus) {
-        if (this.focus == focus)
-            return;
-        this.focus = focus;
-        for (NetworkPanelConnection axon : axons)
-            axon.setFocus(this.focus);
-        for (NetworkPanelConnection dendrite : dendrites)
-            dendrite.setFocus(this.focus);
-    }
-
     public LayerType getLayerType() {
         return this.type;
     }
@@ -112,15 +95,35 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         repaint();
     }
 
-    public void changeFocusState() {
+    private void changeFocusState() {
         if (focusState != FocusState.values()[FocusState.values().length-1])
-            focusState = FocusState.values()[focusState.ordinal() + 1];
+            setFocusStateAndPaint(FocusState.values()[focusState.ordinal() + 1]);
         else
-            focusState = FocusState.values()[0];
+            setFocusStateAndPaint(FocusState.values()[0]);
     }
 
-    public void setFocusState(FocusState state) {
+    void setFocusStateAndPaint(FocusState state) {
+        if (((NetworkPanel) getParent()).isFocusMode()) {
+            this.focusState = state;
+            for (NetworkPanelConnection dendrite : dendrites)
+                dendrite.repaint();
+            for (NetworkPanelConnection axon : axons)
+                axon.repaint();
+            repaint();
+        } else {
+            if ((state != FocusState.NONE))
+                ((NetworkPanel) this.getParent()).activateFocusMode();
+            this.focusState = FocusState.ALL;
+            getParent().repaint();
+        }
+    }
+
+    void setFocusState(FocusState state) {
         this.focusState = state;
+    }
+
+    FocusState getFocusState() {
+        return this.focusState;
     }
 
     @Override
@@ -156,16 +159,6 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         @Override
         public void mousePressed(MouseEvent e) {
             changeFocusState();
-            /*
-
-            NetworkPanelNeuron.this.networkPanel.activateFocusMode();
-            else {
-                if (NetworkPanelNeuron.this.focus)
-                    NetworkPanelNeuron.this.networkPanel.releaseFocusOnNeuron(NetworkPanelNeuron.this);
-                else
-                    NetworkPanelNeuron.this.networkPanel.focusOnNeuron(NetworkPanelNeuron.this);
-            }
-            */
         }
     }
 }

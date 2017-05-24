@@ -19,8 +19,6 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     private boolean developerMode = false;
 
-    private boolean focus = true;
-
     private int lineDrawOrientation;
 
     private double weight = 1;
@@ -69,7 +67,8 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     @Override
     protected void paintComponent(Graphics g) {
-        if (equivalent == null || !(equivalent instanceof Connection) || !((Connection) equivalent).isActive() || !focus)
+        if (equivalent == null || !(equivalent instanceof Connection) ||
+                !((Connection) equivalent).isActive() || !evaluateFocus())
             return;
         Graphics2D gAlia = (Graphics2D) g;
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -86,6 +85,13 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
             gAlia.drawLine(getWidth()/2, 0, getWidth()/2, getHeight());
     }
 
+    private boolean evaluateFocus() {
+        NetworkPanelNeuron.FocusState fromState = from.getFocusState();
+        NetworkPanelNeuron.FocusState toState = to.getFocusState();
+        return fromState == NetworkPanelNeuron.FocusState.ALL || fromState == NetworkPanelNeuron.FocusState.AXONS ||
+                toState == NetworkPanelNeuron.FocusState.ALL || toState == NetworkPanelNeuron.FocusState.DENDRITES;
+    }
+
     public Color getGradientColor(double weight)
     {
         weight=(weight+1)/2;
@@ -97,10 +103,6 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         double B = 0.9; // Brightness
 
         return Color.getHSBColor((float)H, (float)S, (float)B);
-    }
-
-    void setFocus(boolean focus) {
-        this.focus = focus;
     }
 
     @Override

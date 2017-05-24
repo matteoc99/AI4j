@@ -108,20 +108,20 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
                 case IN:
                     LinkedList<NetworkPanelNeuron> inputLayer = new LinkedList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
-                        inputLayer.add(new NetworkPanelNeuron(this, layer.getNeuronAt(i), LayerType.IN));
+                        inputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.IN));
                     neuronLayers.add(inputLayer);
                     break;
                 case HIDDEN:
                     LinkedList<NetworkPanelNeuron> hiddenLayer = new LinkedList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++) {
-                        hiddenLayer.add(new NetworkPanelNeuron(this, layer.getNeuronAt(i), LayerType.HIDDEN));
+                        hiddenLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.HIDDEN));
                     }
                     neuronLayers.add(hiddenLayer);
                     break;
                 case OUT:
                     LinkedList<NetworkPanelNeuron> outputLayer = new LinkedList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
-                        outputLayer.add(new NetworkPanelNeuron(this, layer.getNeuronAt(i), LayerType.OUT));
+                        outputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.OUT));
                     neuronLayers.add(outputLayer);
                     break;
             }
@@ -139,18 +139,6 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
                 } catch (Exception ignored) {}
             }
         }
-    }
-
-    private NetworkGUIComponent findByEquivalent(Object equivalent) throws Exception{
-        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                if (networkPanelNeuron.getEquivalent().equals(equivalent))
-                    return networkPanelNeuron;
-        for (NetworkPanelConnection connection : connections)
-            if (connection.getEquivalent().equals(equivalent))
-                return connection;
-        System.out.println("badPeep");
-        throw new Exception();
     }
 
     private void layoutComponents() {
@@ -241,25 +229,16 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         this.focusMode = true;
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                networkPanelNeuron.setFocus(false);
+                networkPanelNeuron.setFocusStateAndPaint(NetworkPanelNeuron.FocusState.NONE);
     }
 
     void deactivateFocusMode() {
+        if (!focusMode)
+            return;
         this.focusMode = false;
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                networkPanelNeuron.setFocus(true);
-        this.repaint();
-    }
-
-    void focusOnNeuron(NetworkPanelNeuron neuron) {
-        activateFocusMode();
-        neuron.setFocus(true);
-        this.repaint();
-    }
-
-    void releaseFocusOnNeuron(NetworkPanelNeuron neuron) {
-        neuron.setFocus(false);
+                networkPanelNeuron.setFocusState(NetworkPanelNeuron.FocusState.ALL);
         this.repaint();
     }
 
@@ -290,6 +269,18 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     @Override
     public NetworkGUIComponentType getNetworkGUIComponentType() {
         return NetworkGUIComponentType.NETWORK_PANEL;
+    }
+
+    private NetworkGUIComponent findByEquivalent(Object equivalent) throws Exception{
+        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
+                if (networkPanelNeuron.getEquivalent().equals(equivalent))
+                    return networkPanelNeuron;
+        for (NetworkPanelConnection connection : connections)
+            if (connection.getEquivalent().equals(equivalent))
+                return connection;
+        System.out.println("badPeep");
+        throw new Exception();
     }
 
     private class MyMouseListener extends MouseAdapter {
