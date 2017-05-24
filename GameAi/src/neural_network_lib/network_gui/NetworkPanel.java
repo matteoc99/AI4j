@@ -235,7 +235,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         return ret;
     }
 
-    private void activateFocusMode() {
+    void activateFocusMode() {
         if (focusMode)
             return;
         this.focusMode = true;
@@ -244,7 +244,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
                 networkPanelNeuron.setFocus(false);
     }
 
-    private void deactivateFocusMode() {
+    void deactivateFocusMode() {
         this.focusMode = false;
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
@@ -284,8 +284,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 networkPanelNeuron.toggleDeveloperMode();
-        for (NetworkPanelConnection connection : connections)
-            connection.toggleDeveloperMode();
+        connections.forEach(NetworkPanelConnection::toggleDeveloperMode);
     }
 
     @Override
@@ -317,6 +316,8 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
          */
         @Override
         public void mouseExited(MouseEvent e) {
+            if (NetworkPanel.this.contains(e.getPoint()))
+                return;
             // changes the Border
             NetworkPanel.this.setBorder(NORMAL_BORDER);
         }

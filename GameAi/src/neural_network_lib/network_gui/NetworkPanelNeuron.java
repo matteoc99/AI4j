@@ -9,13 +9,22 @@ import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Neuron;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 /**
  * @author Maximilian Estfelller
  * @since 19.05.2017
  */
 class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
+
+    enum FocusState {
+        NONE,
+        ALL,
+        AXONS,
+        DENDRITES
+    }
 
     /**
      * Reference to the NetworkPanel within this Neuron is drawn
@@ -24,6 +33,7 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
 
     private boolean developerMode = false;
     private boolean focus = true;
+    private FocusState focusState = FocusState.NONE;
 
     /**
      * A Neuron is drawn with two different colors, depending on their type
@@ -99,6 +109,18 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
             this.setBorder(new LineBorder(Color.RED, 1));
         else
             this.setBorder(null);
+        repaint();
+    }
+
+    public void changeFocusState() {
+        if (focusState != FocusState.values()[FocusState.values().length-1])
+            focusState = FocusState.values()[focusState.ordinal() + 1];
+        else
+            focusState = FocusState.values()[0];
+    }
+
+    public void setFocusState(FocusState state) {
+        this.focusState = state;
     }
 
     @Override
@@ -124,19 +146,26 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         gAlia.drawOval(getWidth()/2-outRad, getWidth()/2-outRad, outRad*2, outRad*2);
         gAlia.setPaint(paint);
         gAlia.fillOval(getWidth()/2-inRad, getWidth()/2-inRad, inRad*2, inRad*2);
+        if (developerMode) {
+            gAlia.setPaint(Color.BLACK);
+            gAlia.drawString(focusState.ordinal() + "", 0, 10);
+        }
     }
 
     private class MyMouseListener extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            if (!NetworkPanelNeuron.this.networkPanel.isFocusMode())
-                NetworkPanelNeuron.this.networkPanel.focusOnNeuron(NetworkPanelNeuron.this);
+            changeFocusState();
+            /*
+
+            NetworkPanelNeuron.this.networkPanel.activateFocusMode();
             else {
                 if (NetworkPanelNeuron.this.focus)
                     NetworkPanelNeuron.this.networkPanel.releaseFocusOnNeuron(NetworkPanelNeuron.this);
                 else
                     NetworkPanelNeuron.this.networkPanel.focusOnNeuron(NetworkPanelNeuron.this);
             }
+            */
         }
     }
 }
