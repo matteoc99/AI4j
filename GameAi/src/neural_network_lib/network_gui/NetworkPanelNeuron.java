@@ -95,6 +95,7 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         repaint();
     }
 
+    // TODO: 24.05.2017 Spaghetti!
     private void changeFocusState() {
         if (focusState != FocusState.values()[FocusState.values().length-1])
             setFocusStateAndPaint(FocusState.values()[focusState.ordinal() + 1]);

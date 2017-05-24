@@ -223,6 +223,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         return ret;
     }
 
+    // TODO: 24.05.2017 Spaghetti!
     void activateFocusMode() {
         if (focusMode)
             return;
