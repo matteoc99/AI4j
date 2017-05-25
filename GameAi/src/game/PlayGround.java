@@ -1,6 +1,8 @@
 package game;
 
 import agent.Agent;
+import agent.cosi.CosiAgent;
+import agent.est.EstAgent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +24,7 @@ public class PlayGround extends JFrame {
     private static final int FPS = 120;
     private long timeUntilSleep;
 
-    public Player leftPlayer, rightPlayer;
+    public Player leftPlayer[], rightPlayer[];
     public Ball ball;
 
     public JLabel points = new JLabel();
@@ -31,7 +33,7 @@ public class PlayGround extends JFrame {
 
     static Mode mode = Mode.GRAPHIC;
 
-    public PlayGround(Agent[] agents) {
+    public PlayGround(Agent[] agentsLeft, Agent[] agentsRigth) {
         setTitle("Pong game");
         setBounds(0, 0, 1080, 720);
         setResizable(false);
@@ -40,27 +42,52 @@ public class PlayGround extends JFrame {
         c = getContentPane();
         c.setLayout(null);
         points.setText(pointsPlayerLeft + " : " + pointsPlayerRight);
-
         points.setBounds(500, 0, 100, 30);
         c.add(points);
+
+        if (agentsRigth == null) {
+            agentsRigth = new Agent[1];
+            agentsRigth[0] = new EstAgent(null);
+        }
+        if (agentsLeft == null) {
+            agentsLeft = new Agent[1];
+            agentsLeft[0] = new CosiAgent(null);
+        }
         //create the Objects
+        leftPlayer = new Player[agentsLeft.length];
+        for (int i = 0; i < agentsLeft.length; i++) {
+            try {
+                leftPlayer[i] = new Player("res/player.png", null);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            leftPlayer[i].setLocation(20, 250);
+            c.add(leftPlayer[i]);
+        }
+
+
+        rightPlayer = new Player[agentsRigth.length];
+        for (int i = 0; i < rightPlayer.length; i++) {
+            try {
+                rightPlayer[i] = new Player("res/player.png", null);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            rightPlayer[i].setLocation(1040, 250);
+            c.add(rightPlayer[i]);
+        }
         try {
-            leftPlayer = new Player("res/player.png", null);
-            rightPlayer = new Player("res/player.png", null);
             ball = new Ball("res/ball.png", this);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         //locate the Objects
-        leftPlayer.setLocation(20, 250);
-        rightPlayer.setLocation(1040, 250);
         ball.setLocation(500, 300);
 
         //add the Objects to the Container
         c.add(ball);
-        c.add(leftPlayer);
-        c.add(rightPlayer);
+
         System.out.println(pointsPlayerLeft + " : " + pointsPlayerRight);
 
         //TODO replace with agents
@@ -69,17 +96,17 @@ public class PlayGround extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_W:
-                        leftPlayer.direction.y = -6;
+                        leftPlayer[0].direction.y = -6;
                         break;
                     case KeyEvent.VK_S:
-                        leftPlayer.direction.y = +6;
+                        leftPlayer[0].direction.y = +6;
                         break;
                     case KeyEvent.VK_UP:
-                        rightPlayer.direction.y = -6;
+                        rightPlayer[0].direction.y = -6;
 
                         break;
                     case KeyEvent.VK_DOWN:
-                        rightPlayer.direction.y = +6;
+                        rightPlayer[0].direction.y = +6;
 
                         break;
                 }
@@ -89,16 +116,16 @@ public class PlayGround extends JFrame {
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_W:
-                        leftPlayer.direction.y = 0;
+                        leftPlayer.direction[0].y = 0;
                         break;
                     case KeyEvent.VK_S:
-                        leftPlayer.direction.y = 0;
+                        leftPlayer.direction[0].y = 0;
                         break;
                     case KeyEvent.VK_UP:
-                        rightPlayer.direction.y = 0;
+                        rightPlayer.direction[0].y = 0;
                         break;
                     case KeyEvent.VK_DOWN:
-                        rightPlayer.direction.y = 0;
+                        rightPlayer.direction[0].y = 0;
                         break;
                 }
             }

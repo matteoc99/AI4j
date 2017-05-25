@@ -2,6 +2,7 @@ package agent.cosi;
 
 import agent.Agent;
 import game.PlayGround;
+import game.Player;
 import neural_network_lib.Network;
 import neural_network_lib.Neuron;
 import neural_network_lib.Utils;
@@ -14,8 +15,8 @@ import neural_network_lib.network_gui.NetworkGUI;
 public class PopulationOrganizer {
     public static double[] bestDescriptor;
 
-    public static int Generations = 5000;
-    public static int population = 100;
+    public static int Generations = 50000;
+    public static int population = 1000;
     public static double bestFitness = -1;
 
 
@@ -33,9 +34,10 @@ public class PopulationOrganizer {
                     //other generations
                     agent[j] = new CosiAgent(new Network(bestDescriptor));
                     agent[j] = new CosiAgent(new Network(Utils.mutate(agent[j].getNet().getDescriptor())));
-                    agent[j].setFitness(agent[j].processData(new double[]{0.5, 0.5, 0.5, 0.5, 0.5})[0]);
                 }
             }
+
+            PlayGround p = new PlayGround(agent);
 
             for (int j = 0; j < population; j++) {
                 if (agent[j].getFitness() > bestFitness) {
