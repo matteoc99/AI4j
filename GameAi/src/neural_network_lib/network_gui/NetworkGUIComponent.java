@@ -19,5 +19,7 @@ interface NetworkGUIComponent {
 
     void toggleDeveloperMode();
 
+    void refresh();
+
     NetworkGUIComponentType getNetworkGUIComponentType();
 }

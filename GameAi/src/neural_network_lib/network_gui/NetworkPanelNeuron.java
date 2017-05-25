@@ -166,4 +166,9 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
             changeFocusState();
         }
     }
+
+    @Override
+    public void refresh() {
+
+    }
 }

@@ -141,11 +141,9 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         connections = new ArrayList<>();
         for (Neuron neuron : network.getAllNeurons()) {
             for (Connection connection : neuron.getDendrites()) {
-                try {
-                    connections.add(new NetworkPanelConnection(connection,
-                            (NetworkPanelNeuron) findByEquivalent(connection.getFrom()),
-                            (NetworkPanelNeuron) findByEquivalent(connection.getTo())));
-                } catch (Exception ignored) {}
+                connections.add(new NetworkPanelConnection(connection,
+                        (NetworkPanelNeuron) findByEquivalent(connection.getFrom()),
+                        (NetworkPanelNeuron) findByEquivalent(connection.getTo())));
             }
         }
     }
@@ -259,13 +257,12 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
 
     @Override
     public Object getEquivalent() {
-        // TODO: 23.05.2017
-        return null;
+        return this.network;
     }
 
     @Override
     public void setEquivalent(Object equivalent) {
-        // TODO: 23.05.2017
+        // Can't change Equivalent of a NetworkPanel
     }
 
     public ArrayList<ArrayList<NetworkPanelNeuron>> getNeuronLayers() {
@@ -286,11 +283,20 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     }
 
     @Override
+    public void refresh() {
+        for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
+                networkPanelNeuron.refresh();
+        connections.forEach(NetworkPanelConnection::refresh);
+        repaint();
+    }
+
+    @Override
     public NetworkGUIComponentType getNetworkGUIComponentType() {
         return NetworkGUIComponentType.NETWORK_PANEL;
     }
 
-    private NetworkGUIComponent findByEquivalent(Object equivalent) throws Exception{
+    private NetworkGUIComponent findByEquivalent(Object equivalent){
         for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 if (networkPanelNeuron.getEquivalent().equals(equivalent))
@@ -298,7 +304,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         for (NetworkPanelConnection connection : connections)
             if (connection.getEquivalent().equals(equivalent))
                 return connection;
-        throw new Exception();
+        return null;
     }
 
     private class MyMouseListener extends MouseAdapter {

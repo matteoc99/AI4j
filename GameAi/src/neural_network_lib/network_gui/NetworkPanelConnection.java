@@ -74,7 +74,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         Graphics2D gAlia = (Graphics2D) g;
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(getRGBColor(((Connection) equivalent).getWeight()));
+        g.setColor(getRGBColor(this.weight));
         //g.setColor(getHSBColor((float)((Connection) equivalent).getWeight()));
         gAlia.setStroke(new BasicStroke(3));
         if (lineDrawOrientation == DOWNWARDS)
@@ -137,5 +137,10 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         if (developerMode)
             this.setBorder(new LineBorder(Color.BLUE, 2));
         else this.setBorder(null);
+    }
+
+    @Override
+    public void refresh() {
+        this.weight = ((Connection) getEquivalent()).getWeight();
     }
 }

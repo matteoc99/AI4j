@@ -40,27 +40,51 @@ class NetworkContainer extends JPanel implements NetworkGUIComponent{
      */
     void addNetwork(@NotNull Network network) {
         if (network == null) return;
+        for (NetworkPanel networkPanel : networkPanels)
+            if (networkPanel.getEquivalent().equals(network))
+                return;
         NetworkPanel networkPanel = new NetworkPanel(network);
         networkPanels.add(networkPanel);
         this.add(networkPanel);
         repaint();
     }
 
+    void refreshNetwork(@NotNull Network network) {
+        if (network == null)
+            return;
+        NetworkPanel networkPanel = ((NetworkPanel) findPanelByEquivalent(network));
+        if (networkPanel != null)
+            networkPanel.refresh();
+    }
+
+    NetworkGUIComponent findPanelByEquivalent(Object equivalent){
+        for (NetworkPanel networkPanel : networkPanels)
+            if (networkPanel.getEquivalent().equals(equivalent))
+                return networkPanel;
+        return null;
+    }
+
     @Override
     public Object getEquivalent() {
-        // TODO: 23.05.2017
+        // There is no equivalent for a NetworkContainer
         return null;
     }
 
     @Override
     public void setEquivalent(Object equivalent) {
-        // TODO: 23.05.2017
+        // There is no equivalent for a NetworkContainer
     }
 
     public void toggleDeveloperMode() {
         developerMode=!developerMode;
         for (NetworkPanel networkPanel : networkPanels)
             networkPanel.toggleDeveloperMode();
+    }
+
+    @Override
+    public void refresh() {
+        for (NetworkPanel networkPanel : networkPanels)
+            networkPanel.refresh();
     }
 
     @Override
