@@ -59,11 +59,13 @@ public class Utils
      * @return the mutated descriptor
      */
     public static double[] mutate(double[] descriptor) {
-        int probability = (int) (Math.random() * 5);
-        int index = (int) (Math.random() * descriptor.length);
+        int offset = (int) (descriptor[0]) + 1;
+        int probability = (int) (Math.random() * 8);
+        int index = (int) (Math.random() * (descriptor.length - offset)) + offset;
         descriptor[index] = Math.random();
-        if (probability == 0)
-            descriptor[index] = 0;
+        if (probability == 0) {
+            descriptor[index] = Integer.MIN_VALUE + Connection.MAX_WEIGHT;
+        }
         return descriptor;
     }
 }

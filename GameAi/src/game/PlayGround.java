@@ -1,5 +1,7 @@
 package game;
 
+import agent.Agent;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -29,7 +31,7 @@ public class PlayGround extends JFrame {
 
     static Mode mode = Mode.GRAPHIC;
 
-    public PlayGround() {
+    public PlayGround(Agent[] agents) {
         setTitle("Pong game");
         setBounds(0, 0, 1080, 720);
         setResizable(false);
@@ -67,17 +69,17 @@ public class PlayGround extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_W:
-                        leftPlayer.direction.y = -10;
+                        leftPlayer.direction.y = -6;
                         break;
                     case KeyEvent.VK_S:
-                        leftPlayer.direction.y = +10;
+                        leftPlayer.direction.y = +6;
                         break;
                     case KeyEvent.VK_UP:
-                        rightPlayer.direction.y = -10;
+                        rightPlayer.direction.y = -6;
 
                         break;
                     case KeyEvent.VK_DOWN:
-                        rightPlayer.direction.y = +10;
+                        rightPlayer.direction.y = +6;
 
                         break;
                 }
@@ -159,6 +161,6 @@ public class PlayGround extends JFrame {
     }
 
     public static void main(String args[]) {
-        new PlayGround();
+        new PlayGround(null);
     }
 }

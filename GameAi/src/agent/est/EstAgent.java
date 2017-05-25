@@ -1,6 +1,7 @@
 package agent.est;
 
 import agent.Agent;
+import neural_network_lib.Network;
 
 /**
  *
@@ -9,4 +10,7 @@ import agent.Agent;
  */
 public class EstAgent extends Agent {
 
+    public EstAgent(Network net) {
+        super(net);
+    }
 }
