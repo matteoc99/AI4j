@@ -74,7 +74,8 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         Graphics2D gAlia = (Graphics2D) g;
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(getGradientColor(((Connection) equivalent).getWeight()));
+        g.setColor(getRGBColor(((Connection) equivalent).getWeight()));
+        //g.setColor(getHSBColor((float)((Connection) equivalent).getWeight()));
         gAlia.setStroke(new BasicStroke(3));
         if (lineDrawOrientation == DOWNWARDS)
             gAlia.drawLine(0,0,getWidth(),getHeight());
@@ -93,24 +94,27 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
                 toState == NetworkPanelNeuron.FocusState.ALL || toState == NetworkPanelNeuron.FocusState.DENDRITES;
     }
 
-    public Color getGradientColor(double weight)
+    private Color getRGBColor(double weight)
     {
-        /*
-        weight=(weight+1)/2;
-        if (weight<0.4 && weight>0.6)
-            return Color.LIGHT_GRAY;
-
-        double H = weight * 0.4; // 0.0 = red, 0.4 = green
-        double S = 0.9; // Saturation
-        double B = 0.9; // Brightness
-
-        return Color.getHSBColor((float)H, (float)S, (float)B);
-        */
         if(weight<0){
             return new Color(255,(int)(255*(1-Math.abs(weight))),(int)(255*(1-Math.abs(weight))));
         }else{
             return new Color((int)(255*(1-Math.abs(weight))),255,(int)(255*(1-Math.abs(weight))));
         }
+    }
+
+    private Color getHSBColor(float weight) {
+        float h,b,s;
+        if (weight>=0) {
+            h=.4f;
+            b = 1-Math.abs(weight)*.5f;
+        } else {
+            h =.0f;
+            b = 1-Math.abs(weight)*.2f;
+            weight = Math.abs(weight);
+        }
+        s = 1-1/(weight*10+1);
+        return Color.getHSBColor(h,s,b);
     }
 
     @Override
