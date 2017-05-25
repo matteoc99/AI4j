@@ -13,7 +13,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * A NetworkPanel contains all components to display a network
@@ -23,6 +23,15 @@ import java.util.LinkedList;
  * @since 18.05.2017
  */
 class NetworkPanel extends JPanel implements NetworkGUIComponent{
+
+    private final int rightPadding = 8;
+    private final int leftPadding = 8;
+    private final int topPadding = 18;
+    private final int botPadding = 8;
+
+    private int width;
+    private int height;
+
 
     /**
      * Reference to the Network of this Panel
@@ -63,9 +72,9 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
             "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
             new Font("Arial Black", Font.PLAIN, 14));
 
-    private LinkedList<LinkedList<NetworkPanelNeuron>> neuronLayers;
+    private ArrayList<ArrayList<NetworkPanelNeuron>> neuronLayers;
 
-    private LinkedList<NetworkPanelConnection> connections;
+    private ArrayList<NetworkPanelConnection> connections;
 
     NetworkPanel(Network network) {
         this.network = network;
@@ -102,24 +111,24 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     }
 
     private void createNeurons() {
-        neuronLayers = new LinkedList<>();
+        neuronLayers = new ArrayList<>();
         for (Layer layer : network.getLayers()) {
             switch (layer.getType()) {
                 case IN:
-                    LinkedList<NetworkPanelNeuron> inputLayer = new LinkedList<>();
+                    ArrayList<NetworkPanelNeuron> inputLayer = new ArrayList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
                         inputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.IN));
                     neuronLayers.add(inputLayer);
                     break;
                 case HIDDEN:
-                    LinkedList<NetworkPanelNeuron> hiddenLayer = new LinkedList<>();
+                    ArrayList<NetworkPanelNeuron> hiddenLayer = new ArrayList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++) {
                         hiddenLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.HIDDEN));
                     }
                     neuronLayers.add(hiddenLayer);
                     break;
                 case OUT:
-                    LinkedList<NetworkPanelNeuron> outputLayer = new LinkedList<>();
+                    ArrayList<NetworkPanelNeuron> outputLayer = new ArrayList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
                         outputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.OUT));
                     neuronLayers.add(outputLayer);
@@ -129,7 +138,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     }
 
     private void createConnections() {
-        connections = new LinkedList<>();
+        connections = new ArrayList<>();
         for (Neuron neuron : network.getAllNeurons()) {
             for (Connection connection : neuron.getDendrites()) {
                 try {
@@ -142,34 +151,39 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     }
 
     private void layoutComponents() {
+        width = getWidth()-rightPadding-leftPadding;
+        height = getHeight()-topPadding-botPadding;
         layoutNeurons();
         layoutConnections();
     }
 
     private void layoutNeurons() {
+
         int longestLineLength = neuronLayers.size();
-        for (LinkedList<NetworkPanelNeuron> layer : neuronLayers)
+        for (ArrayList<NetworkPanelNeuron> layer : neuronLayers)
             if (layer.size() > longestLineLength)
                 longestLineLength = layer.size();
 
-        neuronSize = getWidth()>getHeight()? (int)(this.getHeight()/(longestLineLength*1.75)) :
-                (int)(this.getWidth()/(longestLineLength*1.75));
+        neuronSize = width>height? (int)(height/(longestLineLength*1.75)) :
+                (int)(width/(longestLineLength*1.75));
 
-        double layerGap = (this.getWidth()+0.0)/network.getLayers().size();
+        double layerGap = (width+0.0)/network.getLayers().size();
         double xToDraw = layerGap/2;
 
-        for (LinkedList<NetworkPanelNeuron> layer : neuronLayers) {
+        for (ArrayList<NetworkPanelNeuron> layer : neuronLayers) {
             layoutLayer(layer, (int)xToDraw);
             xToDraw+=layerGap;
         }
     }
 
-    private void layoutLayer(LinkedList<NetworkPanelNeuron> layer, int xToDraw) {
-        double neuronGap = (this.getHeight()+0.0)/layer.size();
+    private void layoutLayer(ArrayList<NetworkPanelNeuron> layer, int xToDraw) {
+        double neuronGap = (height+0.0)/layer.size();
         double yToDraw = neuronGap/2;
 
         for (NetworkPanelNeuron aLayer : layer) {
-            aLayer.setBounds(xToDraw - neuronSize / 2, (int) yToDraw - neuronSize / 2, neuronSize, neuronSize);
+            aLayer.setBounds(xToDraw - neuronSize / 2 + leftPadding,
+                    (int) yToDraw - neuronSize / 2 + topPadding,
+                    neuronSize, neuronSize);
             this.add(aLayer);
             yToDraw += neuronGap;
         }
@@ -223,28 +237,24 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         return ret;
     }
 
-    // TODO: 24.05.2017 Spaghetti!
-    void activateFocusMode() {
-        if (focusMode)
-            return;
-        this.focusMode = true;
-        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                networkPanelNeuron.setFocusStateAndPaint(NetworkPanelNeuron.FocusState.NONE);
-    }
-
-    void deactivateFocusMode() {
-        if (!focusMode)
-            return;
-        this.focusMode = false;
-        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                networkPanelNeuron.setFocusState(NetworkPanelNeuron.FocusState.ALL);
-        this.repaint();
-    }
-
     boolean isFocusMode() {
         return this.focusMode;
+    }
+
+    void setFocusMode(boolean focus) {
+        this.focusMode = focus;
+    }
+
+    void tryDeactivateFocusMode() {
+        for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron neuron : neuronLayer)
+                if (neuron.getFocusState() != NetworkPanelNeuron.FocusState.NONE)
+                    return;
+        for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron neuron : neuronLayer)
+                neuron.setFocusState(NetworkPanelNeuron.FocusState.ALL);
+        focusMode = false;
+        repaint();
     }
 
     @Override
@@ -258,10 +268,18 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         // TODO: 23.05.2017
     }
 
+    public ArrayList<ArrayList<NetworkPanelNeuron>> getNeuronLayers() {
+        return neuronLayers;
+    }
+
+    public ArrayList<NetworkPanelConnection> getConnections() {
+        return connections;
+    }
+
     public void toggleDeveloperMode() {
         developerMode=!developerMode;
 
-        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+        for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 networkPanelNeuron.toggleDeveloperMode();
         connections.forEach(NetworkPanelConnection::toggleDeveloperMode);
@@ -273,14 +291,13 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     }
 
     private NetworkGUIComponent findByEquivalent(Object equivalent) throws Exception{
-        for (LinkedList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+        for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
             for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
                 if (networkPanelNeuron.getEquivalent().equals(equivalent))
                     return networkPanelNeuron;
         for (NetworkPanelConnection connection : connections)
             if (connection.getEquivalent().equals(equivalent))
                 return connection;
-        System.out.println("badPeep");
         throw new Exception();
     }
 

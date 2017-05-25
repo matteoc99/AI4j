@@ -3,7 +3,7 @@ package neural_network_lib.network_gui;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import neural_network_lib.Layer.LayerType;
 import neural_network_lib.Neuron;
@@ -41,8 +41,8 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
 
     private Object equivalent;
 
-    private LinkedList<NetworkPanelConnection> axons = new LinkedList<>();
-    private LinkedList<NetworkPanelConnection> dendrites = new LinkedList<>();
+    private ArrayList<NetworkPanelConnection> axons = new ArrayList<>();
+    private ArrayList<NetworkPanelConnection> dendrites = new ArrayList<>();
 
     NetworkPanelNeuron(Neuron equivalent, LayerType type) {
         this.setEquivalent(equivalent);
@@ -95,26 +95,30 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         repaint();
     }
 
-    // TODO: 24.05.2017 Spaghetti!
+    @Deprecated
     private void changeFocusState() {
-        if (focusState != FocusState.values()[FocusState.values().length-1])
-            setFocusStateAndPaint(FocusState.values()[focusState.ordinal() + 1]);
-        else
-            setFocusStateAndPaint(FocusState.values()[0]);
-    }
-
-    void setFocusStateAndPaint(FocusState state) {
         if (((NetworkPanel) getParent()).isFocusMode()) {
-            this.focusState = state;
-            for (NetworkPanelConnection dendrite : dendrites)
-                dendrite.repaint();
-            for (NetworkPanelConnection axon : axons)
-                axon.repaint();
+            // changes the State of this Neuron only
+            if (focusState != FocusState.values()[FocusState.values().length-1])
+                focusState = FocusState.values()[focusState.ordinal() + 1];
+            else
+                focusState = FocusState.values()[0];
+            if (focusState == FocusState.NONE)
+                ((NetworkPanel) getParent()).tryDeactivateFocusMode();
+            // repaint the Neuron and all affected Connections
             repaint();
+            axons.forEach(Component::repaint);
+            dendrites.forEach(Component::repaint);
         } else {
-            if ((state != FocusState.NONE))
-                ((NetworkPanel) this.getParent()).activateFocusMode();
-            this.focusState = FocusState.ALL;
+            // activates the focusMode of the NetworkPanel
+            // and sets the focusState of all Neurons within the networkPanel to NONE
+            // except for this one
+            ((NetworkPanel) getParent()).setFocusMode(true);
+            for (ArrayList<NetworkPanelNeuron> networkPanelNeurons : ((NetworkPanel) getParent()).getNeuronLayers())
+                for (NetworkPanelNeuron networkPanelNeuron : networkPanelNeurons)
+                    networkPanelNeuron.setFocusState(FocusState.NONE);
+            this.setFocusState(FocusState.ALL);
+            // repaints all components of this the NetworkPanel
             getParent().repaint();
         }
     }

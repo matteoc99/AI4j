@@ -4,6 +4,7 @@ import neural_network_lib.Connection;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.plaf.basic.BasicBorders;
 import java.awt.*;
 
 /**
@@ -73,7 +74,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         Graphics2D gAlia = (Graphics2D) g;
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g.setColor(getGradientColor(weight));
+        g.setColor(getGradientColor(((Connection) equivalent).getWeight()));
         gAlia.setStroke(new BasicStroke(3));
         if (lineDrawOrientation == DOWNWARDS)
             gAlia.drawLine(0,0,getWidth(),getHeight());
@@ -94,6 +95,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     public Color getGradientColor(double weight)
     {
+        /*
         weight=(weight+1)/2;
         if (weight<0.4 && weight>0.6)
             return Color.LIGHT_GRAY;
@@ -103,6 +105,12 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         double B = 0.9; // Brightness
 
         return Color.getHSBColor((float)H, (float)S, (float)B);
+        */
+        if(weight<0){
+            return new Color(255,(int)(255*(1-Math.abs(weight))),(int)(255*(1-Math.abs(weight))));
+        }else{
+            return new Color((int)(255*(1-Math.abs(weight))),255,(int)(255*(1-Math.abs(weight))));
+        }
     }
 
     @Override

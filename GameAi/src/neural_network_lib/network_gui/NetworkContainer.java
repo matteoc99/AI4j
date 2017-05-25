@@ -6,7 +6,7 @@ import neural_network_lib.Network;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /**
  * @author Maximilian Estfelller
@@ -17,7 +17,7 @@ class NetworkContainer extends JPanel implements NetworkGUIComponent{
     /**
      * List stores all created NetworkPanels
      */
-    private LinkedList<NetworkPanel> networkPanels = new LinkedList<>();
+    private ArrayList<NetworkPanel> networkPanels = new ArrayList<>();
 
     private boolean developerMode = false;
 

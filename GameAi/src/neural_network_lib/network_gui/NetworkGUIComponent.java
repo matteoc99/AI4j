@@ -14,6 +14,7 @@ interface NetworkGUIComponent {
     }
 
     Object getEquivalent();
+
     void setEquivalent(Object equivalent);
 
     void toggleDeveloperMode();
