@@ -12,7 +12,7 @@ import java.util.Comparator;
 public class NetworkTrainer {
 
     final int amountOfChildren = 100;
-    final int amountOfSurvivers = 5;
+    final int amountOfSurvivors = 5;
 
     private ArrayList<EstAgent> agents = new ArrayList<>();
 
@@ -22,7 +22,7 @@ public class NetworkTrainer {
 
     void init() {
         // create startNetworks
-        for (int i = 0; i < amountOfSurvivers; i++) {
+        for (int i = 0; i < amountOfSurvivors; i++) {
             agents.add(new EstAgent(Network.createDFF(5,2,2,5)));
         }
     }
@@ -34,24 +34,15 @@ public class NetworkTrainer {
                 return o1.getFitness()>=o2.getFitness()? 1:-1;
             }
         });
-        for (int i = amountOfSurvivers; i < agents.size(); i++) {
+        for (int i = amountOfSurvivors; i < agents.size(); i++) {
             agents.remove(i);
         }
     }
 
     void cloneAgents() {
-        for (int i = 0; i < amountOfChildren/amountOfSurvivers; i++) {
+        for (int i = 0; i < amountOfChildren/ amountOfSurvivors; i++) {
             double[] descriptor = agents.get(i).getNet().getDescriptor();
 
         }
-
-        /*
-        double[] descriptor = network.getDescriptor();
-        Network[] ret = new Network[amountOfChildren];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = new Network(descriptor);
-        }
-        return ret;
-        */
     }
 }
