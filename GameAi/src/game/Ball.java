@@ -27,13 +27,13 @@ public class Ball extends MobileObject {
             stirb();
             playGround.dispose();
             playGround.pointsPlayerRight++;
-            new PlayGround(null);
+            new PlayGround(null, null);
         }
         if (getX() > 1020) {
             stirb();
             playGround.dispose();
             playGround.pointsPlayerLeft++;
-            new PlayGround(null);
+            new PlayGround(null, null);
         }
         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                 || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {

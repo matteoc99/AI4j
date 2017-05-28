@@ -1,10 +1,7 @@
 package agent.cosi;
 
-import agent.Agent;
 import game.PlayGround;
-import game.Player;
 import neural_network_lib.Network;
-import neural_network_lib.Neuron;
 import neural_network_lib.Utils;
 import neural_network_lib.network_gui.NetworkGUI;
 
@@ -37,7 +34,7 @@ public class PopulationOrganizer {
                 }
             }
 
-            PlayGround p = new PlayGround(agent);
+            PlayGround p = new PlayGround(agent, null);
 
             for (int j = 0; j < population; j++) {
                 if (agent[j].getFitness() > bestFitness) {
