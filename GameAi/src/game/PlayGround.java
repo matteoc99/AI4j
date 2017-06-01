@@ -33,7 +33,7 @@ public class PlayGround extends JFrame {
 
     static Mode mode = Mode.GRAPHIC;
 
-    public PlayGround(Agent[] agentsLeft, Agent[] agentsRigth) {
+    public PlayGround(Agent[] agentsLeft, Agent[] agentsRight) {
         setTitle("Pong game");
         setBounds(0, 0, 1080, 720);
         setResizable(false);
@@ -45,9 +45,9 @@ public class PlayGround extends JFrame {
         points.setBounds(500, 0, 100, 30);
         c.add(points);
 
-        if (agentsRigth == null) {
-            agentsRigth = new Agent[1];
-            agentsRigth[0] = new EstAgent(null);
+        if (agentsRight == null) {
+            agentsRight = new Agent[1];
+            agentsRight[0] = new EstAgent(null);
         }
         if (agentsLeft == null) {
             agentsLeft = new Agent[1];
@@ -66,7 +66,7 @@ public class PlayGround extends JFrame {
         }
 
 
-        rightPlayer = new Player[agentsRigth.length];
+        rightPlayer = new Player[agentsRight.length];
         for (int i = 0; i < rightPlayer.length; i++) {
             try {
                 rightPlayer[i] = new Player("res/player.png", null);
@@ -112,6 +112,7 @@ public class PlayGround extends JFrame {
                 }
             }
 
+            /*
             @Override
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
@@ -129,7 +130,9 @@ public class PlayGround extends JFrame {
                         break;
                 }
             }
+            */
         });
+
         requestFocus();
         if (mode == Mode.GRAPHIC) {
             setVisible(true);
@@ -188,6 +191,6 @@ public class PlayGround extends JFrame {
     }
 
     public static void main(String args[]) {
-        new PlayGround(null);
+        new PlayGround(null, null);
     }
 }

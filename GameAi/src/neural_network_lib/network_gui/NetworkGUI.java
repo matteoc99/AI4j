@@ -148,7 +148,7 @@ public class NetworkGUI extends JFrame{
     public static void main(String[] args) {
         NetworkGUI g = new NetworkGUI();
 
-        /*
+
         g.addNetwork(new Network(1,1,0,new int[]{}));
         g.addNetwork(new Network(2,2,0,new int[]{}));
         g.addNetwork(new Network(2,3,1,new int[]{2}));
@@ -170,8 +170,8 @@ public class NetworkGUI extends JFrame{
         g.addNetwork(new Network(2,2,3,new int[]{2,1,3}));
         g.addNetwork(new Network(7,2,4, new int[]{6, 5, 4, 3}));
         g.addNetwork(new Network(2,5,3,new int[]{2,1,3}));
-        */
 
+        /*
         Network network = new Network(2,2,2, new int[]{3,3});
         g.addNetwork(network);
         for(;;) {
@@ -190,5 +190,6 @@ public class NetworkGUI extends JFrame{
             network.getAllNeurons().get(0).getAxons().get(0).setWeight(1);
             g.refreshNetwork(network);
         }
+        */
     }
 }

@@ -36,6 +36,8 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
         from.registerAsAxon(this);
         to.registerAsDendrite(this);
+
+        refresh();
     }
 
     double getWeight() {
