@@ -3,6 +3,7 @@ package game;
 import com.sun.javafx.geom.Vec2d;
 
 import javax.swing.*;
+import java.awt.geom.Arc2D;
 
 /**
  * @author Matteo Cosi
@@ -14,16 +15,14 @@ public class MobileObject extends ImmobileObject {
     /**
      * Declares the maximum speed this object can have
      */
-    public static final int MAX_SPEED = 12;
+    public static final int MAX_SPEED = 15;
 
     /**
      * describes the speed at which the {@link MobileObject} is moving
      */
     private double speed;
 
-    /**
-     * Describes the current direction of this {@link MobileObject}
-     */
+
     /**
      * stores the current direction of the Object
      */
@@ -42,8 +41,8 @@ public class MobileObject extends ImmobileObject {
     public MobileObject(String dateiname) throws ClassNotFoundException {
         super(dateiname);
         direction = new Vec2d();
-        direction.x = (int) Math.random() * 2 - 2;
-        direction.y = (int) Math.random() * 2 - 2;
+        direction.x = (int) (Math.random() * 8) - 4;
+        direction.y = (int) (Math.random() * 8) - 4;
     }
 
     //TODO get, set, &direction
@@ -60,13 +59,13 @@ public class MobileObject extends ImmobileObject {
      * Changes the Location of the current Object
      */
 
-    protected void changeLoc() {
-        if (PlayGround.mode == PlayGround.Mode.GRAPHIC)
-            this.setLocation((int) (position.x + direction.x), (int) (position.y + direction.y));
+    protected void changeLoc(MobileObject mobileObject) {
+        if (mobileObject instanceof Ball)
+            if (direction.y < 0.1 && direction.y > -0.1)
+                direction.y = Math.random() * 2 - 1;
+        this.setLocation((int) (position.x + direction.x), (int) (position.y + direction.y));
         position.x = (int) (position.x + direction.x);
         position.y = (int) (position.y + direction.y);
-        if (Math.abs(direction.x) < MAX_SPEED) {
-            direction.x *= 1.0001;
-        }
+
     }
 }

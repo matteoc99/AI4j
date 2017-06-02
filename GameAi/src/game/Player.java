@@ -4,6 +4,7 @@ import agent.Agent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Array;
 
 /**
  * @author Matteo Cosi
@@ -40,13 +41,15 @@ public class Player extends MobileObject {
     public void move() {
         super.move();
         if (agent != null) {
-            double value = agent.processData(new double[]{calcPlayerY(position.y), calcBallY(ball), calcBallX(ball), calcballYSpeed(ball), calcBallXSpeed(ball)})[0];
+            double[] data = new double[]{calcPlayerY(position.y), calcBallY(ball)};
+
+            double value = agent.processData(data)[0];
             value -= 0.5;
             direction.y = 10 * value;
         }
         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                 || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof Player) {
-            changeLoc();
+            changeLoc(this);
         }
     }
 
