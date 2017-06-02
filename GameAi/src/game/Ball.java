@@ -21,6 +21,7 @@ public class Ball extends MobileObject {
     public Ball(String dateiname, PlayGround playGround) throws ClassNotFoundException {
         super(dateiname);
         this.playGround = playGround;
+
     }
 
     @Override
@@ -39,7 +40,7 @@ public class Ball extends MobileObject {
         }
         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                 || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
-            changeLoc();
+            changeLoc(this);
         } else {
             if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof Player) {
                 Player p = (Player) getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y));
@@ -50,7 +51,7 @@ public class Ball extends MobileObject {
                 int ballMid = (int) position.y + getHeight() / 2;
                 int offset = mid - ballMid;
 
-                direction.y = (-offset / 10) + (Math.random() - 0.5);
+                direction.y = (-offset / 6);
                 direction.x = -direction.x;
 
 
@@ -59,18 +60,18 @@ public class Ball extends MobileObject {
                 direction.x = -direction.x;
                 if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                         || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
-                    changeLoc();
+                    changeLoc(this);
                 } else {
                     direction.x = -direction.x;
                     direction.y = -direction.y;
                     if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                             || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
-                        changeLoc();
+                        changeLoc(this);
                     } else {
                         direction.x = -direction.x;
                         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                                 || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
-                            changeLoc();
+                            changeLoc(this);
                         }
                     }
                 }
