@@ -12,7 +12,11 @@ public class OpKi extends Agent {
         super(net);
     }
 
-    public void getDir(double[] in) {
-
+    public double[] processData(double[] in) {
+        if (in[0] > in[1])
+            return new double[]{-1};
+        else
+            return new double[]{1};
     }
+
 }

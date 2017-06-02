@@ -1,6 +1,9 @@
 package game;
 
+import com.sun.corba.se.spi.oa.NullServant;
+
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Matteo Cosi
@@ -26,14 +29,13 @@ public class Ball extends MobileObject {
         if (getX() < 10) {
             stirb();
             playGround.dispose();
-            playGround.pointsPlayerRight++;
-            new PlayGround(null, null);
+            PlayGround.trainingOver = true;
+
         }
         if (getX() > 1020) {
             stirb();
             playGround.dispose();
-            playGround.pointsPlayerLeft++;
-            new PlayGround(null, null);
+            PlayGround.trainingOver = true;
         }
         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                 || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof JLabel) {
@@ -41,13 +43,16 @@ public class Ball extends MobileObject {
         } else {
             if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof Player) {
                 Player p = (Player) getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y));
+                if (p.agent != null)
+                    increaseFitnessOfAllPlayersThouched((int) (position.x + direction.x), (int) (position.y + direction.y));
                 //calculate offset
                 int mid = p.getY() + p.getHeight() / 2;
                 int ballMid = (int) position.y + getHeight() / 2;
                 int offset = mid - ballMid;
 
-                direction.y = (-offset / 10);
-                direction.x=-direction.x;
+                direction.y = (-offset / 10) + (Math.random() - 0.5);
+                direction.x = -direction.x;
+
 
                 this.move();
             } else {
@@ -70,6 +75,22 @@ public class Ball extends MobileObject {
                     }
                 }
             }
+        }
+    }
+
+    private void increaseFitnessOfAllPlayersThouched(int x, int y) {
+        Component[] komponenten;
+        komponenten = this.getParent().getComponents();
+        int i = 0;
+        Rectangle nextPos =
+                new Rectangle(x, y, this.getWidth(), this.getHeight());
+        while (komponenten != null && i < komponenten.length) {
+            if (komponenten[i] != this &&
+                    nextPos.intersects(komponenten[i].getBounds())) {
+                Player p = (Player) komponenten[i];
+                p.agent.increaseFitness();
+            }
+            i++;
         }
     }
 }

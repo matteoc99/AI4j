@@ -14,7 +14,7 @@ public class MobileObject extends ImmobileObject {
     /**
      * Declares the maximum speed this object can have
      */
-    public static final int MAX_SPEED = 15;
+    public static final int MAX_SPEED = 12;
 
     /**
      * describes the speed at which the {@link MobileObject} is moving
@@ -66,7 +66,7 @@ public class MobileObject extends ImmobileObject {
         position.x = (int) (position.x + direction.x);
         position.y = (int) (position.y + direction.y);
         if (Math.abs(direction.x) < MAX_SPEED) {
-            direction.x *= 1.0015;
+            direction.x *= 1.0001;
         }
     }
 }
