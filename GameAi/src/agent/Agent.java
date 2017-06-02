@@ -36,7 +36,7 @@ public abstract class Agent {
      * @param in values for the input Neuron
      * @return values of the output Neuron
      */
-    public double[] processData(double[] in) {
+    public double[] processData(double[] in) { 
         return net.processData(in);
     }
 
@@ -65,6 +65,13 @@ public abstract class Agent {
      */
     public void setFitness(double fitness) {
         this.fitness = fitness;
+    }
+
+    /**
+     * Method used to increase the fitness. can or should be overwritten in the specific agents
+     */
+    public void increaseFitness() {
+        fitness++;
     }
 }
 

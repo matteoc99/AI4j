@@ -10,7 +10,5 @@ import neural_network_lib.Network;
 public class CosiAgent extends Agent {
     public CosiAgent(Network net) {
         super(net);
-
-
     }
 }

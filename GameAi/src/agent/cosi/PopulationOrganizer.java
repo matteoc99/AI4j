@@ -21,7 +21,7 @@ public class PopulationOrganizer {
 
 
     public static void main(String[] args) {
-        NetworkGUI n = new NetworkGUI();
+        //NetworkGUI n = new NetworkGUI();
         for (int i = 0; i < Generations; i++) {
 
             CosiAgent[] agent = new CosiAgent[population];
@@ -29,7 +29,6 @@ public class PopulationOrganizer {
                 if (i == 0) {
                     //first generation
                     agent[j] = new CosiAgent(Network.createDFF(5, 1, 2, 5));
-                    agent[j].setFitness(agent[j].processData(new double[]{0.5, 0.5, 0.5, 0.5, 0.5})[0]);
                 } else {
                     //other generations
                     agent[j] = new CosiAgent(new Network(bestDescriptor));
@@ -37,18 +36,28 @@ public class PopulationOrganizer {
                 }
             }
 
-            PlayGround p = new PlayGround(agent);
+            PlayGround p = new PlayGround(agent, null);
+
+            while (!PlayGround.trainingOver) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
 
             for (int j = 0; j < population; j++) {
                 if (agent[j].getFitness() > bestFitness) {
-                    n.addNetwork(agent[j].getNet());
+                    //  n.addNetwork(agent[j].getNet());
+                    //  n.repaint();
                     bestDescriptor = agent[j].getNet().getDescriptor();
                     bestFitness = agent[j].getFitness();
-                    try {
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    System.out.print("{");
+                    for (int k = 0; k < bestDescriptor.length; k++) {
+                        System.out.print(bestDescriptor[k] + ",");
                     }
+                    System.out.println("}");
                 }
             }
         }
