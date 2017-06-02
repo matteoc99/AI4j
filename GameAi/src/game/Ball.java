@@ -89,8 +89,6 @@ public class Ball extends MobileObject {
                     nextPos.intersects(komponenten[i].getBounds())) {
                 Player p = (Player) komponenten[i];
                 p.agent.increaseFitness();
-                System.out.println("fit increase");
-                System.out.println(p.agent.getFitness());
             }
             i++;
         }

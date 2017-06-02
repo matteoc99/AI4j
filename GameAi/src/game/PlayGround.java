@@ -24,13 +24,12 @@ public class PlayGround extends JFrame {
     }
 
     //FPS control
-    private static final int FPS = 120;
+    private static final int FPS = 1200;
     private long timeUntilSleep;
 
     public Player leftPlayer[], rightPlayer[];
     public Ball ball;
 
-    public JLabel points = new JLabel();
     public static int pointsPlayerLeft = 0, pointsPlayerRight = 0;
     private Container c;
 
@@ -48,10 +47,6 @@ public class PlayGround extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         c = getContentPane();
         c.setLayout(null);
-        points.setText(pointsPlayerLeft + " : " + pointsPlayerRight);
-        points.setBounds(500, 0, 100, 30);
-        c.add(points);
-
         try {
             ball = new Ball("res/ball.png", this);
         } catch (ClassNotFoundException e) {

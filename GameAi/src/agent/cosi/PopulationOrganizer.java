@@ -15,15 +15,15 @@ import neural_network_lib.network_gui.NetworkGUI;
 public class PopulationOrganizer {
     public static double[] bestDescriptor;
 
-    public static int Generations = 50000;
-    public static int population = 1000;
+    public static int Generations = 5000;
+    public static int population = 100;
     public static double bestFitness = -1;
 
 
     public static void main(String[] args) {
         //NetworkGUI n = new NetworkGUI();
         for (int i = 0; i < Generations; i++) {
-
+            System.out.println(i);
             CosiAgent[] agent = new CosiAgent[population];
             for (int j = 0; j < population; j++) {
                 if (i == 0) {
@@ -31,8 +31,13 @@ public class PopulationOrganizer {
                     agent[j] = new CosiAgent(Network.createDFF(5, 1, 2, 5));
                 } else {
                     //other generations
-                    agent[j] = new CosiAgent(new Network(bestDescriptor));
-                    agent[j] = new CosiAgent(new Network(Utils.mutate(agent[j].getNet().getDescriptor())));
+                    int ran = (int) (Math.random() * 10);
+                    if (ran == 8) {
+                        agent[j] = new CosiAgent(Network.createDFF(5, 1, 2, 5));
+                    } else {
+                        agent[j] = new CosiAgent(new Network(bestDescriptor));
+                        agent[j] = new CosiAgent(new Network(Utils.mutate(agent[j].getNet().getDescriptor())));
+                    }
                 }
             }
 
