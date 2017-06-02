@@ -41,7 +41,10 @@ public class MobileObject extends ImmobileObject {
     public MobileObject(String dateiname) throws ClassNotFoundException {
         super(dateiname);
         direction = new Vec2d();
-        direction.x = (int) (Math.random() * 8) - 4;
+        direction.x = 0;
+        while (direction.x == 0) {
+            direction.x = (int) (Math.random() * 8) - 4;
+        }
         direction.y = (int) (Math.random() * 8) - 4;
     }
 

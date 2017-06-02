@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AI4j.iml" filepath="$PROJECT_DIR$/AI4j.iml" />
-      <module fileurl="file://$PROJECT_DIR$/EvoSniper/EvoSniper.iml" filepath="$PROJECT_DIR$/EvoSniper/EvoSniper.iml" />
+      <module fileurl="file://C:\Users\matte\IdeaProjects\AI4j\EvoSniper\EvoSniper.iml" filepath="C:\Users\matte\IdeaProjects\AI4j\EvoSniper\EvoSniper.iml" />
       <module fileurl="file://$PROJECT_DIR$/GameAi/GameAi.iml" filepath="$PROJECT_DIR$/GameAi/GameAi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NeuralNetworkLibrary/NeuralNetworkLibrary.iml" filepath="$PROJECT_DIR$/NeuralNetworkLibrary/NeuralNetworkLibrary.iml" />
+      <module fileurl="file://C:\Users\matte\IdeaProjects\AI4j\NeuralNetworkLibrary\NeuralNetworkLibrary.iml" filepath="C:\Users\matte\IdeaProjects\AI4j\NeuralNetworkLibrary\NeuralNetworkLibrary.iml" />
     </modules>
   </component>
 </project>

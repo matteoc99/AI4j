@@ -17,14 +17,14 @@ import java.util.ArrayList;
 public class PopulationOrganizer {
     public static double[] bestDescriptor;
 
-    public static int Generations = 5000;
-    public static int population = 1000;
+    public static int Generations = 10000;
+    public static int population = 200;
     public static double bestFitness = -1;
 
     public static ArrayList<Agent> bests = new ArrayList<>();
 
     public static void main(String[] args) {
-        //NetworkGUI n = new NetworkGUI();
+        NetworkGUI n = new NetworkGUI();
         for (int i = 0; i < Generations; i++) {
             try {
                 System.out.println(i);
@@ -70,8 +70,8 @@ public class PopulationOrganizer {
                 bests = new ArrayList<>();
                 for (int j = 0; j < population; j++) {
                     if (agent[j].getFitness() >= bestFitness) {
-                        //n.addNetwork(agent[j].getNet());
-                        //n.repaint();
+                        n.addNetwork(agent[j].getNet());
+                        n.repaint();
                         bestDescriptor = agent[j].getNet().getDescriptor();
                         bestFitness = agent[j].getFitness();
                         bests.add(agent[j]);
