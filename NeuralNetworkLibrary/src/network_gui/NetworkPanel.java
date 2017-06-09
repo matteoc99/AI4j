@@ -1,10 +1,9 @@
 package network_gui;
 
-import neural_network_lib.Connection;
-import neural_network_lib.Layer;
-import neural_network_lib.Layer.LayerType;
-import neural_network_lib.Network;
-import neural_network_lib.Neuron;
+import network.Connection;
+import network.Layer;
+import network.Network;
+import network.Neuron;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -14,6 +13,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * A NetworkPanel contains all components to display a network
@@ -34,7 +34,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
 
 
     /**
-     * Reference to the Network of this Panel
+     * Reference to the network.Network of this Panel
      */
     private Network network;
 
@@ -56,7 +56,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
             new CompoundBorder(
                     new LineBorder(Color.GRAY,3,true),
                     new EmptyBorder(2,2,2,2)),
-            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+            "network.Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
             new Font("Arial Black", Font.PLAIN, 14));
 
     /**
@@ -69,7 +69,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
             new CompoundBorder(
                     new LineBorder(Color.GRAY,3,true),
                     new LineBorder(Color.GRAY,2,false)),
-            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+            "network.Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
             new Font("Arial Black", Font.PLAIN, 14));
 
     private ArrayList<ArrayList<NetworkPanelNeuron>> neuronLayers;
@@ -117,20 +117,20 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
                 case IN:
                     ArrayList<NetworkPanelNeuron> inputLayer = new ArrayList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
-                        inputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.IN));
+                        inputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), Layer.LayerType.IN));
                     neuronLayers.add(inputLayer);
                     break;
                 case HIDDEN:
                     ArrayList<NetworkPanelNeuron> hiddenLayer = new ArrayList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++) {
-                        hiddenLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.HIDDEN));
+                        hiddenLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), Layer.LayerType.HIDDEN));
                     }
                     neuronLayers.add(hiddenLayer);
                     break;
                 case OUT:
                     ArrayList<NetworkPanelNeuron> outputLayer = new ArrayList<>();
                     for (int i = 0; i < layer.getNeuronCount(); i++)
-                        outputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), LayerType.OUT));
+                        outputLayer.add(new NetworkPanelNeuron(layer.getNeuronAt(i), Layer.LayerType.OUT));
                     neuronLayers.add(outputLayer);
                     break;
             }
@@ -140,11 +140,9 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
     private void createConnections() {
         connections = new ArrayList<>();
         for (Neuron neuron : network.getAllNeurons()) {
-            for (Connection connection : neuron.getDendrites()) {
-                connections.add(new NetworkPanelConnection(connection,
-                        (NetworkPanelNeuron) findByEquivalent(connection.getFrom()),
-                        (NetworkPanelNeuron) findByEquivalent(connection.getTo())));
-            }
+            connections.addAll(neuron.getDendrites().stream().map(connection -> new NetworkPanelConnection(connection,
+                    (NetworkPanelNeuron) findByEquivalent(connection.getFrom()),
+                    (NetworkPanelNeuron) findByEquivalent(connection.getTo()))).collect(Collectors.toList()));
         }
     }
 

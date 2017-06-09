@@ -1,7 +1,7 @@
 package network_gui;
 
 import com.sun.istack.internal.NotNull;
-import neural_network_lib.Network;
+import network.Network;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  * @author Maximilian Estfelller
- * @since 120.05.2017
+ * @since 12.05.2017
  */
 class NetworkContainer extends JPanel implements NetworkGUIComponent{
 
@@ -33,8 +33,8 @@ class NetworkContainer extends JPanel implements NetworkGUIComponent{
     }
 
     /**
-     * Adds a Network to this Container
-     * A Network is displayed in form of a NetworkPanel
+     * Adds a network.Network to this Container
+     * A network.Network is displayed in form of a NetworkPanel
      *
      * @param network to add
      */

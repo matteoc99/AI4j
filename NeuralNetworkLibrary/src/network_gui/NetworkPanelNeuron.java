@@ -1,7 +1,7 @@
 package network_gui;
 
-import neural_network_lib.Layer.LayerType;
-import neural_network_lib.Neuron;
+import network.Layer;
+import network.Neuron;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -29,21 +29,21 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
     private FocusState focusState = FocusState.ALL;
 
     /**
-     * A Neuron is drawn with two different colors, depending on their type
+     * A network.Neuron is drawn with two different colors, depending on their type
      * The outerColor is the color of the border
      */
     private Color innerColor;
     private Color outerColor;
     private RadialGradientPaint paint;
 
-    private LayerType type;
+    private Layer.LayerType type;
 
     private Object equivalent;
 
     private ArrayList<NetworkPanelConnection> axons = new ArrayList<>();
     private ArrayList<NetworkPanelConnection> dendrites = new ArrayList<>();
 
-    NetworkPanelNeuron(Neuron equivalent, LayerType type) {
+    NetworkPanelNeuron(Neuron equivalent, Layer.LayerType type) {
         this.setEquivalent(equivalent);
         this.type = type;
         this.addMouseListener(new MyMouseListener());
@@ -71,7 +71,7 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         this.dendrites.add(dendrite);
     }
 
-    public LayerType getLayerType() {
+    public Layer.LayerType getLayerType() {
         return this.type;
     }
 
@@ -97,14 +97,14 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
     @Deprecated
     private void changeFocusState() {
         if (((NetworkPanel) getParent()).isFocusMode()) {
-            // changes the State of this Neuron only
+            // changes the State of this network.Neuron only
             if (focusState != FocusState.values()[FocusState.values().length-1])
                 focusState = FocusState.values()[focusState.ordinal() + 1];
             else
                 focusState = FocusState.values()[0];
             if (focusState == FocusState.NONE)
                 ((NetworkPanel) getParent()).tryDeactivateFocusMode();
-            // repaint the Neuron and all affected Connections
+            // repaint the network.Neuron and all affected Connections
             repaint();
             axons.forEach(Component::repaint);
             dendrites.forEach(Component::repaint);

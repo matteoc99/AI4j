@@ -1,11 +1,13 @@
+package network;
+
 import com.sun.istack.internal.NotNull;
-import neural_network_lib.Layer.LayerType;
+import network.Layer.LayerType;
 
 import java.util.ArrayList;
 
 
 /**
- * Network is a class that combines the Layers and offers some utilities
+ * network.Network is a class that combines the Layers and offers some utilities
  * <p>
  * TODO training and learning. for now it only processes some values
  *
@@ -15,13 +17,13 @@ import java.util.ArrayList;
 public class Network {
 
     /**
-     * the {@link Layer} of witch the Network is build
+     * the {@link Layer} of witch the network.Network is build
      */
     private ArrayList<Layer> layers;
 
     /**
-     * used to describe a Network. The length equals {@link #getDescriptorLength(int, int, int, int[])}.
-     * it consists of a Network bias and all the connection weights for all the Neurons
+     * used to describe a network.Network. The length equals {@link #getDescriptorLength(int, int, int, int[])}.
+     * it consists of a network.Network bias and all the connection weights for all the Neurons
      * [0]...layercount
      * [1-layercount]...size of the layers
      * 0...layer is deactivated
@@ -30,14 +32,14 @@ public class Network {
 
 
     /**
-     * Create an empty Network
+     * Create an empty network.Network
      */
     public Network() {
         layers = new ArrayList<>();
     }
 
     /**
-     * Create a Network with some Layers and connects them in the order they arrive
+     * Create a network.Network with some Layers and connects them in the order they arrive
      *
      * @param layerSet
      */
@@ -52,7 +54,7 @@ public class Network {
     }
 
     /**
-     * Create a Network given the descriptor of another {@link Network}
+     * Create a network.Network given the descriptor of another {@link Network}
      *
      * @param descriptor {@link #descriptor}
      */
@@ -62,7 +64,7 @@ public class Network {
 
         layers = new ArrayList<>();
 
-        //creating Layer structure and adding Neurons
+        //creating network.Layer structure and adding Neurons
         int anzLayer = (int) descriptor[0];
         int inputSize = (int) descriptor[1];
         int outputSize = (int) descriptor[(int) descriptor[0]];
@@ -146,7 +148,7 @@ public class Network {
                 }
             }
         }
-        //add the Layers to the Network
+        //add the Layers to the network.Network
         layers.add(layerin);
         for (int i = 0; i < hiddenAmount; i++) {
             layers.add(layerhid[i]);
@@ -156,7 +158,7 @@ public class Network {
     }
 
     /**
-     * Create a Custom Network with everything set up.
+     * Create a Custom network.Network with everything set up.
      * hiddenSize.length() has to be equal to hiddenAmount
      *
      * @param inputSize    the preferred size of
@@ -178,10 +180,10 @@ public class Network {
         }
 
 
-        //IN Layer setup
+        //IN network.Layer setup
         Layer inLayers = new Layer(LayerType.IN);
 
-        //IN Neuron setup&initialization
+        //IN network.Neuron setup&initialization
         Neuron[] inNeurons = new Neuron[inputSize];
         for (int i = 0; i < inNeurons.length; i++) {
             inNeurons[i] = new Neuron(i, Math.random());
@@ -190,11 +192,11 @@ public class Network {
         Neuron[][] hiddenNeurons = null;
         if (hiddenAmount > 0) {
 
-            //HIDDEN Layer setup
+            //HIDDEN network.Layer setup
             hiddenLayers = new Layer[hiddenAmount];
 
 
-            //HIDDEN Neuron setup
+            //HIDDEN network.Neuron setup
             hiddenNeurons = new Neuron[hiddenAmount][];
             for (int i = 0; i < hiddenAmount; i++) {
                 hiddenLayers[i] = new Layer(LayerType.HIDDEN);
@@ -208,10 +210,10 @@ public class Network {
             }
         }
 
-        //OUT Layer setup
+        //OUT network.Layer setup
         Layer outLayers = new Layer(LayerType.OUT);
 
-        //OUT Neuron setup&initialization
+        //OUT network.Neuron setup&initialization
         Neuron[] outNeurons = new Neuron[outputSize];
         for (int i = 0; i < outNeurons.length; i++) {
             outNeurons[i] = new Neuron(i, Math.random());
@@ -237,7 +239,7 @@ public class Network {
         } else {
             connect(inLayers, outLayers);
         }
-        //adding The Layers to the Network used to calculate later
+        //adding The Layers to the network.Network used to calculate later
         layers.add(inLayers);
         for (int i = 0; i < hiddenAmount; i++) {
             layers.add(hiddenLayers[i]);
@@ -247,13 +249,13 @@ public class Network {
     }
 
     /**
-     * Create a Deep Feed Forward Network with everything set up.
+     * Create a Deep Feed Forward network.Network with everything set up.
      *
      * @param inputSize    the preferred size of
      * @param outputSize   the preferred size of output layers
      * @param hiddenAmount the preferred ammount of hidden layers
      * @param hiddenSize   the preferred size of the hidden layers for every hidden layer
-     * @return a DFF Network with everything set up.
+     * @return a DFF network.Network with everything set up.
      */
     public static Network createDFF(int inputSize, int outputSize, int hiddenAmount, int hiddenSize) {
         int[] hidden = new int[hiddenAmount];
@@ -267,8 +269,8 @@ public class Network {
     /**
      * create a support Vector Machine
      *
-     * @param size size of the Network
-     * @return a SVM Network
+     * @param size size of the network.Network
+     * @return a SVM network.Network
      */
     public static Network createSVM(int size, int hiddenAmount) {
         Network ret = createDFF(size, 1, hiddenAmount, size);
@@ -287,7 +289,7 @@ public class Network {
      * Adds a layer to {@link Network#layers}
      *
      * @param layer {@link Layer} to add to {@link #layers}
-     * @return true if the Layer was added. Otherwise false
+     * @return true if the network.Layer was added. Otherwise false
      */
     public boolean addLayer(Layer layer) {
         if (!layers.contains(layer))
@@ -301,7 +303,7 @@ public class Network {
      * Removes a layer from {@link Network#layers}
      *
      * @param layer {@link Layer} to remove from {@link #layers}
-     * @return true if the Layer was removed. Otherwise false
+     * @return true if the network.Layer was removed. Otherwise false
      */
     public boolean removeLayer(Layer layer) {
         if (layers.contains(layer))
@@ -312,7 +314,7 @@ public class Network {
     }
 
     /**
-     * Returns the Layers of this Network
+     * Returns the Layers of this network.Network
      *
      * @return {@link #layers}
      */
@@ -321,10 +323,10 @@ public class Network {
     }
 
     /**
-     * Returns the Layer at a given index
+     * Returns the network.Layer at a given index
      *
-     * @param index index of the Layer
-     * @return the requested Layer
+     * @param index index of the network.Layer
+     * @return the requested network.Layer
      */
     public Layer getLayerByIndex(int index) {
         if (index < layers.size())
@@ -333,12 +335,12 @@ public class Network {
     }
 
     /**
-     * Connects the first Layer with the second
+     * Connects the first network.Layer with the second
      * from layer1 -> layer2 axon
      * from layer1 <- layer2 dendrites
      *
-     * @param layer1 first Layer
-     * @param layer2 second Layer
+     * @param layer1 first network.Layer
+     * @param layer2 second network.Layer
      */
     public void connect(@NotNull Layer layer1, @NotNull Layer layer2) {
         if (layer1 == null || layer2 == null)
@@ -350,7 +352,7 @@ public class Network {
      * Returns the index of a layer in {@link #layers}
      *
      * @param layer The {@link Layer} whose index is requested
-     * @return -1 if the index was not found. Otherwise the index of the Layer
+     * @return -1 if the index was not found. Otherwise the index of the network.Layer
      */
     public int getIndexOfLayer(Layer layer) {
         if (layers.contains(layer))
@@ -362,19 +364,19 @@ public class Network {
     /**
      * Process Data through all the Layers, and return the
      *
-     * @param in Data for the Input Layer
-     * @return the Data that the Network Processes
+     * @param in Data for the Input network.Layer
+     * @return the Data that the network.Network Processes
      */
     public double[] processData(double[] in) {
         double[] ret = new double[layers.get(layers.size() - 1).getNeuronCount()];
 
         if (layers.size() <= 0)
-            throw new IllegalStateException("Network is still empty, cant process Data");
+            throw new IllegalStateException("network.Network is still empty, cant process Data");
         if (in.length != layers.get(0).getNeuronCount())
             throw new IllegalArgumentException("input size not right");
         Layer inLayer = layers.get(0);
         if (inLayer.getType() != LayerType.IN)
-            throw new IllegalStateException("cant find the in-Layer");
+            throw new IllegalStateException("cant find the in-network.Layer");
         for (int i = 0; i < in.length; i++) {
             if (in[i] > 1)
                 throw new IllegalArgumentException("Inputs have to be smaller than1");
@@ -488,7 +490,7 @@ public class Network {
     }
 
     /**
-     * Returns the total Neurons number contained in this Network
+     * Returns the total Neurons number contained in this network.Network
      *
      * @return total Neurons number
      */
@@ -501,7 +503,7 @@ public class Network {
     }
 
     /**
-     * Returns all the Neurons contained in this Network
+     * Returns all the Neurons contained in this network.Network
      *
      * @return all Neurons
      */

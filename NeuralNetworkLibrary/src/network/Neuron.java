@@ -1,9 +1,11 @@
+package network;
+
 import com.sun.istack.internal.NotNull;
 
 import java.util.ArrayList;
 
 /**
- * A Neuron is the  basic Node in a {@link Network}
+ * A network.Neuron is the  basic Node in a {@link Network}
  *
  * @author Matteo Cosi
  * @since 16.04.2017
@@ -36,17 +38,17 @@ public class Neuron {
     private double bias;
 
     /**
-     * {@link Layer} where this Neuron is contained
+     * {@link Layer} where this network.Neuron is contained
      */
     private Layer myLayer = null;
 
     /**
-     * the Neuron Activation Function
+     * the network.Neuron Activation network.Function
      */
     private Function function = null;
 
     /**
-     * basic constructor for a Neuron
+     * basic constructor for a network.Neuron
      */
     public Neuron() {
         this(Math.random(), null, val -> {
@@ -56,7 +58,7 @@ public class Neuron {
     }
 
     /**
-     * constructor for a Neuron
+     * constructor for a network.Neuron
      *
      * @param bias {@link #bias}
      */
@@ -68,7 +70,7 @@ public class Neuron {
     }
 
     /**
-     * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
+     * more advanced Constructor for a network.Neuron, in which the network.Layer,where the network.Neuron is into, can be set.
      *
      * @param bias  {@link #bias}
      * @param layer {@link Layer}
@@ -81,7 +83,7 @@ public class Neuron {
     }
 
     /**
-     * more advanced Constructor for a Neuron, in which the Layer,where the Neuron is into, can be set.
+     * more advanced Constructor for a network.Neuron, in which the network.Layer,where the network.Neuron is into, can be set.
      * The Activation function can also be changed
      *
      * @param bias     {@link #bias}
@@ -98,7 +100,7 @@ public class Neuron {
 
 
     /**
-     * sets the Layer, in which the Neuron is into
+     * sets the network.Layer, in which the network.Neuron is into
      *
      * @return {@link Layer} where the {@link Layer} is currently in. null, if there is no layer
      */
@@ -107,7 +109,7 @@ public class Neuron {
     }
 
     /**
-     * sets the Layer, in which the Neuron is into
+     * sets the network.Layer, in which the network.Neuron is into
      *
      * @param myLayer {@link Layer}
      */
@@ -131,7 +133,7 @@ public class Neuron {
     }
 
     /**
-     * sets the {@link Neuron#axons} for this Neuron
+     * sets the {@link Neuron#axons} for this network.Neuron
      *
      * @param axons {@link #axons}
      */
@@ -140,7 +142,7 @@ public class Neuron {
     }
 
     /**
-     * sets the {@link Neuron#dendrites} for this Neuron
+     * sets the {@link Neuron#dendrites} for this network.Neuron
      *
      * @param dendrites {@link #dendrites}
      */
@@ -168,7 +170,7 @@ public class Neuron {
 
 
     /**
-     * sets the {@link Neuron#function} for this Neuron
+     * sets the {@link Neuron#function} for this network.Neuron
      *
      * @param function {@link #function}
      */
@@ -233,7 +235,7 @@ public class Neuron {
     }
 
     /**
-     * send a signal to all {@link Neuron} the current Neuron is connected with (all {@link Neuron#axons});
+     * send a signal to all {@link Neuron} the current network.Neuron is connected with (all {@link Neuron#axons});
      * the function used is {@link Function#calculate(double)}
      */
     public void send() {
@@ -247,7 +249,7 @@ public class Neuron {
      * @param s {@link Connection} to add
      * @return true if the connection was added. Otherwise false
      * @deprecated do not use
-     * Add an Connection to {@link #axons}
+     * Add an network.Connection to {@link #axons}
      */
     public boolean addAxon(Connection s) {
         if (!axons.contains(s)) {
@@ -272,7 +274,7 @@ public class Neuron {
     }
 
     /**
-     * Remove an Connection from {@link #axons}
+     * Remove an network.Connection from {@link #axons}
      *
      * @param s {@link Connection} to add
      * @return true if the connection was removed. Otherwise false
@@ -363,7 +365,7 @@ public class Neuron {
     }
 
     /**
-     * toggles the activation state of a Connection
+     * toggles the activation state of a network.Connection
      *
      * @param ret {@link Connection}
      * @return true if everything went fine, otherwise false
@@ -380,7 +382,7 @@ public class Neuron {
     }
 
     /**
-     * the function which is called by all the dendrites, to send the data to this Neuron.
+     * the function which is called by all the dendrites, to send the data to this network.Neuron.
      * The function simply adds all the "val" inputs to {@link Neuron#value}
      *
      * @param val the value that arrives from the dendrites

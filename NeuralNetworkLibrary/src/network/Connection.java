@@ -1,7 +1,9 @@
+package network;
+
 import com.sun.istack.internal.NotNull;
 
 /**
- * An Connection is a connection between two {@link Neuron} with a specific weight
+ * An network.Connection is a connection between two {@link Neuron} with a specific weight
  *
  * @author Matteo Cosi
  * @since 16.04.2017
@@ -9,7 +11,7 @@ import com.sun.istack.internal.NotNull;
 public class Connection {
 
     /**
-     * weight also known as value or cost of a Connection
+     * weight also known as value or cost of a network.Connection
      */
     private double weight = 0;
     /**
@@ -35,7 +37,7 @@ public class Connection {
     private boolean active;
 
     /**
-     * basic Constructor for a Connection, which connects two {@link Neuron}s
+     * basic Constructor for a network.Connection, which connects two {@link Neuron}s
      *
      * @param from {@link Neuron} where the connection begins
      * @param to   {@link Neuron} where the connection ends
@@ -45,7 +47,7 @@ public class Connection {
     }
 
     /**
-     * Constructor for a Connection, which connects two {@link Neuron}s
+     * Constructor for a network.Connection, which connects two {@link Neuron}s
      *
      * @param from   {@link Neuron} where the connection begins
      * @param to     {@link Neuron} where the connection ends
@@ -56,7 +58,7 @@ public class Connection {
     }
 
     /**
-     * Constructor for a Connection, which connects two {@link Neuron}s
+     * Constructor for a network.Connection, which connects two {@link Neuron}s
      *
      * @param from   {@link Neuron} where the connection begins
      * @param to     {@link Neuron} where the connection ends
@@ -148,7 +150,7 @@ public class Connection {
 
 
     /**
-     * Send a value to the {@link Connection#to} Neuron multiplied
+     * Send a value to the {@link Connection#to} network.Neuron multiplied
      * by the {@link Connection#weight} if the connection is active
      *
      * @param value the value to forward

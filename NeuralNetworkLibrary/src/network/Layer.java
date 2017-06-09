@@ -1,9 +1,11 @@
+package network;
+
 import com.sun.istack.internal.NotNull;
 
 import java.util.ArrayList;
 
 /**
- * The class Layer has the role of a container for the {@link Neuron} of a certain layer:
+ * The class network.Layer has the role of a container for the {@link Neuron} of a certain layer:
  *
  * @author Matteo Cosi
  * @since 15.05.2017
@@ -17,19 +19,19 @@ public class Layer {
 
 
     /**
-     * Contains all the {@link Neuron} of this Layer
+     * Contains all the {@link Neuron} of this network.Layer
      */
     private ArrayList<Neuron> neurons;
 
     /**
-     * Describes the Type of a Layer it can be either IN for InputLayer, OUT for OutputLayer and HIDDEN for HiddenLayer
+     * Describes the Type of a network.Layer it can be either IN for InputLayer, OUT for OutputLayer and HIDDEN for HiddenLayer
      */
     private LayerType type;
 
     /**
-     * Create an empty Layer with just the type {@link LayerType}
+     * Create an empty network.Layer with just the type {@link LayerType}
      *
-     * @param type {@link LayerType} to set for this Layer
+     * @param type {@link LayerType} to set for this network.Layer
      */
     public Layer(LayerType type) {
         neurons = new ArrayList<>();
@@ -40,10 +42,10 @@ public class Layer {
     }
 
     /**
-     * Create a Layer some Neurons
+     * Create a network.Layer some Neurons
      *
-     * @param neuronAmount number of Neurons to create in this Layer
-     * @param type         {@link LayerType} to set for this Layer
+     * @param neuronAmount number of Neurons to create in this network.Layer
+     * @param type         {@link LayerType} to set for this network.Layer
      */
     public Layer(int neuronAmount, LayerType type) {
         this(type);
@@ -55,7 +57,7 @@ public class Layer {
     }
 
     /**
-     * Create a fully functional Layer by giving a bunch of Neurons to start with
+     * Create a fully functional network.Layer by giving a bunch of Neurons to start with
      *
      * @param neurons {@link Layer#neurons}
      * @param type    {@link LayerType}
@@ -71,7 +73,7 @@ public class Layer {
     }
 
     /**
-     * Create a fully functional Layer by giving a bunch of Neurons to start with
+     * Create a fully functional network.Layer by giving a bunch of Neurons to start with
      *
      * @param neurons {@link Layer#neurons}
      * @param type    {@link LayerType}
@@ -110,7 +112,7 @@ public class Layer {
      * Removes a neuron from {@link Layer#neurons}
      *
      * @param neuron {@link Neuron} to remove from {@link #neurons}
-     * @return true if the Neuron was removed. Otherwise false
+     * @return true if the network.Neuron was removed. Otherwise false
      */
     public boolean removeNeuron(Neuron neuron) {
         if (neurons.contains(neuron)) {
@@ -135,7 +137,7 @@ public class Layer {
      * Add a neuron to {@link Layer#neurons}
      *
      * @param neuron {@link Neuron} to add to {@link #neurons}
-     * @return true if the Neuron was added. Otherwise false
+     * @return true if the network.Neuron was added. Otherwise false
      */
     public boolean addNeuron(Neuron neuron) {
         if (!neurons.contains(neuron)) {
@@ -194,7 +196,7 @@ public class Layer {
 
 
     /**
-     * sets all the Neurons to the given value, if the Layer is of Type Input only
+     * sets all the Neurons to the given value, if the network.Layer is of Type Input only
      *
      * @param in values to use
      */
@@ -210,7 +212,7 @@ public class Layer {
 
 
     /**
-     * Stimulates all the Neurons of this {@link Layer} to send a signal to all the Neurons of the next Layer
+     * Stimulates all the Neurons of this {@link Layer} to send a signal to all the Neurons of the next network.Layer
      */
     public void send() {
         for (int i = 0; i < neurons.size(); i++) {
@@ -229,7 +231,7 @@ public class Layer {
         }
     }
     /**
-     * returns the Neuron from {@link #neurons} with a given index
+     * returns the network.Neuron from {@link #neurons} with a given index
      *
      * @param i index
      * @return a {@link Neuron} from neurons with the requested index
