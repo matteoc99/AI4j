@@ -1,6 +1,6 @@
 package network_gui;
 
-import neural_network_lib.Connection;
+import network.Connection;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -74,7 +74,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         gAlia.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g.setColor(getRGBColor(this.weight));
-        //g.setColor(getHSBColor((float)((Connection) equivalent).getWeight()));
+        //g.setColor(getHSBColor((float)((network.Connection) equivalent).getWeight()));
         gAlia.setStroke(new BasicStroke(3));
         if (lineDrawOrientation == DOWNWARDS)
             gAlia.drawLine(0,0,getWidth(),getHeight());

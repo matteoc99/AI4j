@@ -1,3 +1,5 @@
+package network;
+
 /**
  * Collection of useful functions for the Library
  *
@@ -10,7 +12,7 @@ public class Utils
     /**
      * Creates a random descriptor, of the size given by
      * {@link Network#getDescriptorLength(int, int, int, int[])}. So be sure to have set the set
-     * Size of the descriptor, before calling this Function
+     * Size of the descriptor, before calling this network.Function
      *
      * @return a randomly generated descriptor
      */

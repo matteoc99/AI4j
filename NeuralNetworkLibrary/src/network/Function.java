@@ -1,3 +1,5 @@
+package network;
+
 /**
  * Returns a Value (y) for a given input (x)
  * @author Matteo Cosi
