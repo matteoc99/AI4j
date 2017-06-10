@@ -84,4 +84,5 @@ local.properties
 
 # IntelliJ project files
 out
+.idea
 gen
