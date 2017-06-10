@@ -46,7 +46,7 @@ class NetworkContainer extends JPanel implements NetworkGUIComponent{
         NetworkPanel networkPanel = new NetworkPanel(network);
         networkPanels.add(networkPanel);
         this.add(networkPanel);
-        repaint();
+        revalidate();
     }
 
     void refreshNetwork(@NotNull Network network) {

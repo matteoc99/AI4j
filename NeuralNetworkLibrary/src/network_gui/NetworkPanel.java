@@ -56,7 +56,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
             new CompoundBorder(
                     new LineBorder(Color.GRAY,3,true),
                     new EmptyBorder(2,2,2,2)),
-            "network.Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
             new Font("Arial Black", Font.PLAIN, 14));
 
     /**
@@ -69,7 +69,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
             new CompoundBorder(
                     new LineBorder(Color.GRAY,3,true),
                     new LineBorder(Color.GRAY,2,false)),
-            "network.Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
             new Font("Arial Black", Font.PLAIN, 14));
 
     private ArrayList<ArrayList<NetworkPanelNeuron>> neuronLayers;
@@ -84,6 +84,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         this.setPreferredSize(new Dimension(-1, 400));
 
         createComponents();
+        layoutComponents();
 
         // Listener
         // MouseListener reacts when the Mouse enters and leaves this NetworkPane
@@ -275,16 +276,14 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         developerMode=!developerMode;
 
         for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                networkPanelNeuron.toggleDeveloperMode();
+            neuronLayer.forEach(NetworkPanelNeuron::toggleDeveloperMode);
         connections.forEach(NetworkPanelConnection::toggleDeveloperMode);
     }
 
     @Override
     public void refresh() {
         for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            for (NetworkPanelNeuron networkPanelNeuron : neuronLayer)
-                networkPanelNeuron.refresh();
+            neuronLayer.forEach(NetworkPanelNeuron::refresh);
         connections.forEach(NetworkPanelConnection::refresh);
         repaint();
     }

@@ -21,7 +21,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     private int lineDrawOrientation;
 
-    private double weight = 1;
+    private double weight;
 
     private NetworkPanelNeuron from;
     private NetworkPanelNeuron to;
@@ -32,6 +32,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
         this.setEquivalent(equivalent);
         this.from = from;
         this.to = to;
+        this.weight = equivalent.getWeight();
 
         from.registerAsAxon(this);
         to.registerAsDendrite(this);

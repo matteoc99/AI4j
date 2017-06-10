@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/EvoShooter/EvoShooter.iml" filepath="$PROJECT_DIR$/EvoShooter/EvoShooter.iml" />
       <module fileurl="file://$PROJECT_DIR$/GameAi/GameAi.iml" filepath="$PROJECT_DIR$/GameAi/GameAi.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeuralNetworkLibrary/NeuralNetworkLibrary.iml" filepath="$PROJECT_DIR$/NeuralNetworkLibrary/NeuralNetworkLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SimpleLearner/SimpleLearner.iml" filepath="$PROJECT_DIR$/SimpleLearner/SimpleLearner.iml" />
     </modules>
   </component>
 </project>
