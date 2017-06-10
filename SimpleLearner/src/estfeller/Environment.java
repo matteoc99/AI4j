@@ -4,21 +4,21 @@ package estfeller;
  * @author Maximilian Estfelller
  * @since 09.06.2017
  */
-public class Environment {
+class Environment {
 
     final int environmentLength = 8;
 
-    double[] data;
+    private double[] data;
 
     void createData() {
         data = getEnvironmentData();
     }
 
-    public double[] getData() {
+    double[] getData() {
         return data;
     }
 
-    double[] getEnvironmentData() {
+    private double[] getEnvironmentData() {
         double[] ret = new double[environmentLength];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = Math.random()*2-1;

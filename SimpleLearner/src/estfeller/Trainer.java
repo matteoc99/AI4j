@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Trainer {
 
-    static final int topCount = 1;
-    static final int trainCount = 1000;
+    private static final int topCount = 1;
+    private static final int trainCount = 1000;
 
     private static final Environment environment = new Environment();
 
@@ -22,6 +22,7 @@ public class Trainer {
 
     private static Network bestNetwork;
 
+    @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) {
         NetworkGUI gui = new NetworkGUI();
         environment.createData();
