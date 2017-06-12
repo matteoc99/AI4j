@@ -93,6 +93,7 @@ public class Trainer {
      * Method clones all agents with slight changes
      */
     private static void copyAgents() {
+        /*
         for (int i = 0; i < topCount; i++) {
             Agent agent = agents.get(i);
             agent.getNet().generateDescriptor();
@@ -100,6 +101,18 @@ public class Trainer {
                 double[] desc = agent.getNet().getDescriptor().clone();
                 Utils.mutateDescriptor(desc);
                 agents.add(new Learner(new Network(desc)));
+            }
+        }
+        */
+        for (int i = 0; i < topCount; i++) {
+            Agent agent = agents.get(i);
+            agent.getNet().generateDescriptor();
+            for (int j = 0; j < trainCount/topCount; j++) {
+                double[] desc = agent.getNet().getDescriptor();
+                Network network = new Network(desc);
+                for (int k = 0; k < 10; k++)
+                    network.mutate();
+                agents.add(new Learner(network));
             }
         }
     }

@@ -516,4 +516,15 @@ public class Network {
         }
         return ret;
     }
+
+    /**
+     * Changes the weight of a connection in the Network
+     */
+    public void mutate(){
+        int layer = (int) (Math.random()*(layers.size()-1));
+        int neuron = (int) (Math.random()*layers.get(layer).getNeuronCount());
+        int connection= (int) (Math.random()*layers.get(layer).getNeuronAt(neuron).getAxons().size());
+        Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
+        c.setWeight(Math.random()*2-1);
+    }
 }
