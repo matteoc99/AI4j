@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Trainer {
 
+    //
     static final int topCount = 50;
     static final int trainCount = 2000;
     static final int dataSetCount = 200;
