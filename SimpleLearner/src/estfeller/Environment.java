@@ -11,20 +11,16 @@ public class Environment {
     double[] data;
 
     void createData() {
-        data = getEnvironmentData();
+        data = new double[environmentLength];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = Math.random()*2-1;
+        }
     }
 
     public double[] getData() {
         return data;
     }
 
-    double[] getEnvironmentData() {
-        double[] ret = new double[environmentLength];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = Math.random()*2-1;
-        }
-        return ret;
-    }
 
     int evaluateActions(double[] originalInput, double[] actions) {
         if (actions.length != originalInput.length)

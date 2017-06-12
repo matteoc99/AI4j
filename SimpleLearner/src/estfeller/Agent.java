@@ -70,8 +70,8 @@ public abstract class Agent {
     /**
      * Method used to increase the fitness. can or should be overwritten in the specific agents
      */
-    public void increaseFitness() {
-        fitness++;
+    public void increaseFitness(int inc) {
+        fitness+=inc;
     }
 }
 

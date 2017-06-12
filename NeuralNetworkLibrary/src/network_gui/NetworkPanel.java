@@ -1,6 +1,5 @@
 package network_gui;
 
-import network.Connection;
 import network.Layer;
 import network.Network;
 import network.Neuron;
@@ -276,15 +275,19 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         developerMode=!developerMode;
 
         for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            neuronLayer.forEach(NetworkPanelNeuron::toggleDeveloperMode);
-        connections.forEach(NetworkPanelConnection::toggleDeveloperMode);
+            for (NetworkPanelNeuron neuron : neuronLayer)
+                neuron.toggleDeveloperMode();
+        for (NetworkPanelConnection connection : connections)
+            connection.toggleDeveloperMode();
     }
 
     @Override
     public void refresh() {
         for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
-            neuronLayer.forEach(NetworkPanelNeuron::refresh);
-        connections.forEach(NetworkPanelConnection::refresh);
+            for (NetworkPanelNeuron neuron : neuronLayer)
+                neuron.refresh();
+        for (NetworkPanelConnection connection : connections)
+            connection.refresh();
         repaint();
     }
 
