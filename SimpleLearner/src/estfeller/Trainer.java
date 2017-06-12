@@ -12,10 +12,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Trainer {
 
-    //
-    static final int topCount = 50;
-    static final int trainCount = 2000;
-    static final int dataSetCount = 200;
+    static final int topCount = 50; // amount of agents kept alive
+    static final int trainCount = 2000; // amount of agents getting trained
+    static final int dataSetCount = 200; // amount of dataSets processed before evaluating agents
 
     private static final Environment environment = new Environment();
 
@@ -28,6 +27,7 @@ public class Trainer {
         environment.createData();
         createFirstWave();
 
+        // display
         new Thread(() -> {
             while (true) {
                 gui.addNetwork(bestNetwork);
@@ -46,6 +46,9 @@ public class Trainer {
         }
     }
 
+    /**
+     * Creates the starting agents
+     */
     private static void createFirstWave() {
         for (int i = 0; i < topCount; i++) {
             agents.add(new Learner(new Network(
@@ -57,6 +60,10 @@ public class Trainer {
         }
     }
 
+    /**
+     * Method runs dataSet given by the Environment trough the agents
+     * Thereby their fitness increases
+     */
     private static void processAgents() {
         for (Learner agent : agents)
             agent.setFitness(0);
@@ -70,6 +77,9 @@ public class Trainer {
         }
     }
 
+    /**
+     * Method kills most agents, leaving behind the best ones
+     */
     private static void filterAgents() {
         agents.sort((o1, o2) -> (int)(o2.getFitness()-o1.getFitness()));
         while (agents.size() > topCount) {
@@ -79,6 +89,9 @@ public class Trainer {
         System.out.println(agents.get(0).getFitness());
     }
 
+    /**
+     * Method clones all agents with slight changes
+     */
     private static void copyAgents() {
         for (int i = 0; i < topCount; i++) {
             Agent agent = agents.get(i);
