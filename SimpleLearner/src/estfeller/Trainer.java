@@ -110,8 +110,7 @@ public class Trainer {
             for (int j = 0; j < trainCount/topCount; j++) {
                 double[] desc = agent.getNet().getDescriptor();
                 Network network = new Network(desc);
-                for (int k = 0; k < 10; k++)
-                    network.mutate();
+                network.mutateSoft(10);
                 agents.add(new Learner(network));
             }
         }

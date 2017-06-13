@@ -387,6 +387,7 @@ public class Network {
         }
         for (int i = 0; i < ret.length; i++) {
             ret[i] = layers.get(layers.size() - 1).getNeuronAt(i).getValue();
+            layers.get(layers.size() - 1).getNeuronAt(i).setValue(0);
         }
         return ret;
     }
@@ -520,11 +521,30 @@ public class Network {
     /**
      * Changes the weight of a connection in the Network
      */
-    public void mutate(){
-        int layer = (int) (Math.random()*(layers.size()-1));
-        int neuron = (int) (Math.random()*layers.get(layer).getNeuronCount());
-        int connection= (int) (Math.random()*layers.get(layer).getNeuronAt(neuron).getAxons().size());
-        Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
-        c.setWeight(Math.random()*2-1);
+    public void mutateHard(int howOften) {
+        for (int i = 0; i < howOften; i++) {
+            int layer = (int) (Math.random() * (layers.size() - 1));
+            int neuron = (int) (Math.random() * layers.get(layer).getNeuronCount());
+            int connection = (int) (Math.random() * layers.get(layer).getNeuronAt(neuron).getAxons().size());
+            Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
+            c.setWeight(Math.random() * 2 - 1);
+        }
+    }
+
+    /**
+     * Changes the weight of a connection in the Network
+     */
+    public void mutateSoft(int howOften) {
+        for (int i = 0; i < howOften; i++) {
+            int layer = (int) (Math.random() * (layers.size() - 1));
+            int neuron = (int) (Math.random() * layers.get(layer).getNeuronCount());
+            int connection = (int) (Math.random() * layers.get(layer).getNeuronAt(neuron).getAxons().size());
+            Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
+            c.setWeight(c.getWeight() + Math.random() * 0.2 - 0.1);
+            if (c.getWeight() > 1)
+                c.setWeight(1);
+            if (c.getWeight() < -1)
+                c.setWeight(-1);
+        }
     }
 }
