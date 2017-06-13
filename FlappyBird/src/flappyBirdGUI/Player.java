@@ -34,12 +34,12 @@ public class Player extends BeweglichesObjekt {
             if (agent != null) {
                 try {
                     double data = agent.processData(new double[]{
-                            //    getPlayerY(),
-                            getMyY(),
-                            PlayGround.spaceY / PlayGround.HEIGHT,
+                            getPlayerY(),  //Zum schnellen training
+                            getMyY(),          //langsamer
+                            PlayGround.spaceY / PlayGround.HEIGHT,//langsamer
                             //    PlayGround.SPACE/350,
                             getUnten(),
-                            //      getAbstand()
+                            getAbstand()
                     })[0];
 
                     if (data > 0.7) {
