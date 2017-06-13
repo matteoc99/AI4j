@@ -6,12 +6,15 @@ import flappyBirdGUI.PlayGround;
 import network.Network;
 import network_gui.NetworkGUI;
 
+import java.util.ArrayList;
+
 /**
  * @author Matteo Cosi
  * @since 15.05.2017
  */
 public class PopulationOrganizer {
     public static double[] bestDescriptor = null;
+    public static ArrayList<double[]> goodParents = new ArrayList<>();
     public static int Generations = 2000;
     public static int population = 800;
     public static double bestFitness = -1;
@@ -24,33 +27,43 @@ public class PopulationOrganizer {
                 for (int j = 0; j < population; j++) {
                     if (i == 0) {
                         //first generation
-                        int hiddAmm = (int) (Math.random() * 3) + 1;
+                        int hiddAmm = (int) (Math.random() * 3);
                         int[] hidd = new int[hiddAmm];
                         for (int k = 0; k < hiddAmm; k++) {
                             hidd[k] = (int) (Math.random() * 15 + 1);
                         }
-                        agent[j] = new CosiAgent(new Network(5, 1, hiddAmm, hidd));
+                        agent[j] = new CosiAgent(new Network(3, 1, hiddAmm, hidd));
                     } else {
-                        int neu = (int) (Math.random() * 6);
+                        int neu = (int) (Math.random() * 7);
                         if (neu == (int) (Math.random() * 6) || neu == (int) (Math.random() * 6) || bestDescriptor == null) {
-                            int hiddAmm = (int) (Math.random() * 3) + 1;
+                            int hiddAmm = (int) (Math.random() * 3);
                             int[] hidd = new int[hiddAmm];
                             for (int k = 0; k < hiddAmm; k++) {
                                 hidd[k] = (int) (Math.random() * 15 + 1);
                             }
-                            agent[j] = new CosiAgent(new Network(5, 1, hiddAmm, hidd));
+                            agent[j] = new CosiAgent(new Network(3, 1, hiddAmm, hidd));
+                        } else if ((neu == (int) (Math.random() * 6)) && goodParents.size() > 1) {
+                            agent[j] = new CosiAgent(new Network(goodParents.get((int) (Math.random() * goodParents.size()))));
+                            agent[j].getNet().mutateSoft(neu);
                         } else {
                             agent[j] = new CosiAgent(new Network(bestDescriptor));
                             agent[j].getNet().mutateSoft(neu);
                         }
                     }
                 }
-
+                goodParents.clear();
                 PlayGround p = new PlayGround(agent, i);
                 while (!PlayGround.trainingOver)
                     Thread.sleep(100);
 
+                double durchschnitt = 0;
+                for (int j = 0; j < population; j++)
+                    durchschnitt += agent[j].getFitness();
+                durchschnitt /= population;
+
+
                 for (int j = 0; j < population; j++) {
+                    durchschnitt += agent[j].getFitness();
                     if (agent[j].getFitness() > bestFitness) {
                         n.addNetwork(agent[j].getNet());
                         n.repaint();
@@ -62,7 +75,10 @@ public class PopulationOrganizer {
                         }
                         System.out.println("}");
                         System.out.println(bestFitness);
+                    } else if (agent[j].getFitness() > durchschnitt + 30 && (int) (Math.random() * 3) == 1) {
+                        goodParents.add(agent[j].getNet().getDescriptor());
                     }
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

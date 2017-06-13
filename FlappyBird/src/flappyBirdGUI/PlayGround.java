@@ -32,7 +32,7 @@ public class PlayGround extends JFrame {
 
     public static double abstand = 0.2;
     //in ms
-    public static int WALLTIMEOUT = 170;
+    public static int WALLTIMEOUT = 180;
     public static long lastWall = System.currentTimeMillis();
 
     public JLabel punkte = new JLabel("Punkte:");

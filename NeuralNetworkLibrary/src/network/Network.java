@@ -28,7 +28,7 @@ public class Network {
      * [1-layercount]...size of the layers
      * 0...layer is deactivated
      */
-    private double[] descriptor;
+    private double[] descriptor = null;
 
 
     /**
@@ -393,6 +393,8 @@ public class Network {
     }
 
     public double[] getDescriptor() {
+        if (descriptor == null)
+            generateDescriptor();
         return descriptor;
     }
 
