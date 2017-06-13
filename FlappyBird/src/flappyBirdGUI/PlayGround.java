@@ -161,7 +161,7 @@ public class PlayGround extends JFrame {
         int count = 0;
         for (int i = 0; i < p.length; i++) {
             if (!p[i].getGestorben()) {
-                if (agents != null)
+                if (agents != null && p[i].agent != null)
                     p[i].agent.increaseFitness();
                 count++;
             }

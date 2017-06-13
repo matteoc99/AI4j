@@ -30,7 +30,7 @@ public class PopulationOrganizer {
                         int hiddAmm = (int) (Math.random() * 3);
                         int[] hidd = new int[hiddAmm];
                         for (int k = 0; k < hiddAmm; k++) {
-                            hidd[k] = (int) (Math.random() * 15 + 1);
+                            hidd[k] = (int) (Math.random() * 7 + 1);
                         }
                         agent[j] = new CosiAgent(new Network(3, 1, hiddAmm, hidd));
                     } else {
@@ -39,7 +39,7 @@ public class PopulationOrganizer {
                             int hiddAmm = (int) (Math.random() * 3);
                             int[] hidd = new int[hiddAmm];
                             for (int k = 0; k < hiddAmm; k++) {
-                                hidd[k] = (int) (Math.random() * 15 + 1);
+                                hidd[k] = (int) (Math.random() * 7 + 1);
                             }
                             agent[j] = new CosiAgent(new Network(3, 1, hiddAmm, hidd));
                         } else if ((neu == (int) (Math.random() * 6)) && goodParents.size() > 1) {
