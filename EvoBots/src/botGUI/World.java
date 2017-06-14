@@ -12,16 +12,11 @@ import java.util.ArrayList;
  */
 public class World extends JFrame {
 
-    //FPS control
-    private static int FPS = 60;
-    private long timeUntilSleep;
-    private int fpsCounter;
     /**
      * describes the width and height of a World
      */
     public static final int WORLD_WIDTH = 60;
     public static final int WORLD_HEIGHT = 40;
-
     /**
      * from 1-100 describes the amount of land in the World.
      * 100 is the Maximum
@@ -32,6 +27,12 @@ public class World extends JFrame {
      */
     public static final int LAND_SIZE= 4;
 
+
+
+    //FPS control
+    private static int FPS = 60;
+    private long timeUntilSleep;
+    private int fpsCounter;
     /**
      * The Map of {@link Chunk}s
      */
