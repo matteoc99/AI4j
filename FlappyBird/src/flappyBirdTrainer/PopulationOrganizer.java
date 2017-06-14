@@ -27,7 +27,7 @@ public class PopulationOrganizer {
                 for (int j = 0; j < population; j++) {
                     if (i == 0) {
                         //first generation
-                        int hiddAmm = (int) (Math.random() * 3);
+                        int hiddAmm = (int) (Math.random() * 3)+1;
                         int[] hidd = new int[hiddAmm];
                         for (int k = 0; k < hiddAmm; k++) {
                             hidd[k] = (int) (Math.random() * 7 + 1);
@@ -36,7 +36,7 @@ public class PopulationOrganizer {
                     } else {
                         int neu = (int) (Math.random() * 7);
                         if (neu == (int) (Math.random() * 6) || neu == (int) (Math.random() * 6) || bestDescriptor == null) {
-                            int hiddAmm = (int) (Math.random() * 3);
+                            int hiddAmm = (int) (Math.random() * 3)+1;
                             int[] hidd = new int[hiddAmm];
                             for (int k = 0; k < hiddAmm; k++) {
                                 hidd[k] = (int) (Math.random() * 7 + 1);

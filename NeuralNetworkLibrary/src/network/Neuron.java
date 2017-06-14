@@ -33,11 +33,6 @@ public class Neuron {
     private int index;
 
     /**
-     * The bias of the {@link Neuron}
-     */
-    private double bias;
-
-    /**
      * {@link Layer} where this network.Neuron is contained
      */
     private Layer myLayer = null;
@@ -51,7 +46,7 @@ public class Neuron {
      * basic constructor for a network.Neuron
      */
     public Neuron() {
-        this(Math.random(), null, val -> {
+        this(null, val -> {
             double ret = 1 / (1 + Math.exp(-val));
             return ret;
         });
@@ -60,10 +55,10 @@ public class Neuron {
     /**
      * constructor for a network.Neuron
      *
-     * @param bias {@link #bias}
+     * @param index {@link #index}
      */
-    public Neuron(int index, double bias) {
-        this(bias, null, val -> {
+    public Neuron(int index) {
+        this(null, val -> {
             double ret = 1 / (1 + Math.exp(-val));
             return ret;
         });
@@ -72,11 +67,10 @@ public class Neuron {
     /**
      * more advanced Constructor for a network.Neuron, in which the network.Layer,where the network.Neuron is into, can be set.
      *
-     * @param bias  {@link #bias}
      * @param layer {@link Layer}
      */
-    public Neuron(double bias, Layer layer) {
-        this(bias, layer, val -> {
+    public Neuron( Layer layer) {
+        this(layer, val -> {
             double ret = 1 / (1 + Math.exp(-val));
             return ret;
         });
@@ -86,16 +80,13 @@ public class Neuron {
      * more advanced Constructor for a network.Neuron, in which the network.Layer,where the network.Neuron is into, can be set.
      * The Activation function can also be changed
      *
-     * @param bias     {@link #bias}
      * @param layer    {@link Layer}
      * @param function {@link #function}
      */
-    public Neuron(double bias, @NotNull Layer layer, Function function) {
-        setBias(bias);
+    public Neuron(@NotNull Layer layer, Function function) {
         setMyLayer(layer);
         setFunction(function);
         setIndex(index);
-        //TODO control if index is unique in layer
     }
 
 
@@ -217,30 +208,12 @@ public class Neuron {
     }
 
     /**
-     * returns the bias of the current {@link Neuron}
-     *
-     * @return {@link Neuron#bias}
-     */
-    public double getBias() {
-        return bias;
-    }
-
-    /**
-     * sets the bias of the current {@link Neuron}
-     *
-     * @param bias {@link Neuron#bias}
-     */
-    public void setBias(double bias) {
-        this.bias = bias;
-    }
-
-    /**
      * send a signal to all {@link Neuron} the current network.Neuron is connected with (all {@link Neuron#axons});
      * the function used is {@link Function#calculate(double)}
      */
     public void send() {
         for (int i = 0; i < axons.size(); i++) {
-            axons.get(i).send(function.calculate(value * bias));
+            axons.get(i).send(function.calculate(value));
         }
         value = 0;
     }

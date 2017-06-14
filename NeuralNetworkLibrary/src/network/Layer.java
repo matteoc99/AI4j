@@ -219,17 +219,7 @@ public class Layer {
             neurons.get(i).send();
         }
     }
-
-    /**
-     * sets the bias of all the Neurons in this layer
-     *
-     * @param bias {@link Neuron#bias} to set
-     */
-    public void setBias(double bias) {
-        for (int i = 0; i < neurons.size(); i++) {
-            neurons.get(i).setBias(bias);
-        }
-    }
+    
     /**
      * returns the network.Neuron from {@link #neurons} with a given index
      *

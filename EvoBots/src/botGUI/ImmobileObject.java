@@ -2,6 +2,7 @@ package botGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 
 /**
@@ -12,7 +13,7 @@ public class ImmobileObject extends JComponent {
     /**
      * Image displayed on the {@link JComponent}
      */
-    protected Image bild = null;
+    protected Image image = null;
     /**
      * remembers if the Object is already death
      */
@@ -39,10 +40,10 @@ public class ImmobileObject extends JComponent {
         if (url == null)
             throw new ClassNotFoundException(dateiname + " not found");
         else {
-            this.bild = getToolkit().getImage(url);
-            prepareImage(bild, this);
+            this.image = getToolkit().getImage(url);
+            prepareImage(image, this);
             Thread t = Thread.currentThread();
-            while ((checkImage(bild, this) & PROPERTIES) != PROPERTIES) {
+            while ((checkImage(image, this) & PROPERTIES) != PROPERTIES) {
                 try {
                     t.sleep(1);
                 } catch (InterruptedException e) {
@@ -51,18 +52,24 @@ public class ImmobileObject extends JComponent {
 
                 }
             }
-            this.setSize(this.bild.getWidth(this), this.bild.getHeight(this));
+            this.setSize(this.image.getWidth(this), this.image.getHeight(this));
         }
         repaint();
     }
 
 
+    public void newimg(BufferedImage img){
+            this.image = img;
+            this.setSize(this.image.getWidth(this), this.image.getHeight(this));
+        repaint();
+    }
+
     /**
      * Method, which draws the image on the {@link JComponent}
      */
     public void paint(Graphics g) {
-        if (bild != null)
-            g.drawImage(this.bild, 0, 0, this);
+        if (image != null)
+            g.drawImage(this.image, 0, 0, this);
     }
 
     /**
@@ -122,5 +129,23 @@ public class ImmobileObject extends JComponent {
             }
         }
         return ret;
+    }
+    public static BufferedImage toBufferedImage(Image img)
+    {
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
     }
 }

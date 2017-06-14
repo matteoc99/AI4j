@@ -20,11 +20,11 @@ public class PlayGround extends JFrame {
 
     //FPS control
     private static int FPS = 60;
-    public static double spaceY = 0.5;
-
     private long timeUntilSleep;
 
     private Container c;
+
+    public static double spaceY = 0.5;
 
     public static int HEIGHT = 820;
     public static int WIDTH = 1080;

@@ -8,8 +8,7 @@ import java.util.ArrayList;
 
 /**
  * network.Network is a class that combines the Layers and offers some utilities
- * <p>
- * TODO training and learning. for now it only processes some values
+ *
  *
  * @author Matteo Cosi
  * @since 15.05.2017
@@ -117,8 +116,7 @@ public class Network {
 
         //iterate over the descriptor
         for (int i = 0; i < inputSize; i++) {
-            layerin.getNeuronAt(i).setBias(descriptor[index]);
-            index++;
+
             for (int j = 0; j < layerin.getNeuronAt(i).getAxons().size(); j++) {
                 Connection con = layerin.getNeuronAt(i).getAxons().get(j);
                 if (descriptor[index] < Connection.MIN_WEIGHT) {
@@ -133,9 +131,7 @@ public class Network {
         if (hiddenAmount > 0) {
             for (int i = 0; i < hiddenAmount; i++) {
                 for (int j = 0; j < hiddenSize[i]; j++) {
-                    layerhid[i].getNeuronAt(j).setBias(descriptor[index]);
-                    index++;
-                    for (int k = 0; k < layerhid[i].getNeuronAt(i).getAxons().size(); k++) {
+                    for (int k = 0; k < layerhid[i].getNeuronAt(j).getAxons().size(); k++) {
                         Connection con = layerhid[i].getNeuronAt(j).getAxons().get(k);
                         if (descriptor[index] < Connection.MIN_WEIGHT) {
                             con.setActive(false);
@@ -186,7 +182,7 @@ public class Network {
         //IN network.Neuron setup&initialization
         Neuron[] inNeurons = new Neuron[inputSize];
         for (int i = 0; i < inNeurons.length; i++) {
-            inNeurons[i] = new Neuron(i, Math.random());
+            inNeurons[i] = new Neuron(i);
         }
         Layer[] hiddenLayers = null;
         Neuron[][] hiddenNeurons = null;
@@ -205,7 +201,7 @@ public class Network {
             //&initialization
             for (int i = 0; i < hiddenNeurons.length; i++) {
                 for (int j = 0; j < hiddenNeurons[i].length; j++) {
-                    hiddenNeurons[i][j] = new Neuron(j, Math.random());
+                    hiddenNeurons[i][j] = new Neuron(j);
                 }
             }
         }
@@ -216,7 +212,7 @@ public class Network {
         //OUT network.Neuron setup&initialization
         Neuron[] outNeurons = new Neuron[outputSize];
         for (int i = 0; i < outNeurons.length; i++) {
-            outNeurons[i] = new Neuron(i, Math.random());
+            outNeurons[i] = new Neuron(i);
         }
 
         //adding all the Neurons to the Layers
@@ -417,21 +413,13 @@ public class Network {
                     //connection
                     ret += hiddenSize[hiddenSize.length - 1] * outputSize;
                     //neuron
-                    ret += hiddenSize[hiddenSize.length - 1];
                 } else {
                     //connections
                     ret += hiddenSize[i] * hiddenSize[i + 1];
-                    //neuron
-                    ret += hiddenSize[i];
                 }
             }
-            //neurons
-            ret += inputSize;
-            ret += outputSize;
         } else {
             ret += inputSize * outputSize;
-            ret += inputSize;
-            ret += outputSize;
         }
         //anzLayer
         ret++;
@@ -466,7 +454,7 @@ public class Network {
         /*
             stores the current index in this
         */
-        int index = 1;
+        int index=1;
         //layer description
         for (int i = 0; i < anzLayer; i++) {
             ret[index] = layers.get(i).getNeuronCount();
@@ -477,8 +465,6 @@ public class Network {
         //for all neurons add himself and the connection
         for (int i = 0; i < all.size(); i++) {
             Neuron neuron = all.get(i);
-            ret[index] = neuron.getBias();
-            index++;
             for (int j = 0; j < neuron.getAxons().size(); j++) {
                 Connection con = neuron.getAxons().get(j);
                 if (con.isActive())
