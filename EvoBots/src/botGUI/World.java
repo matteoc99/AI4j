@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 /**
@@ -66,7 +65,7 @@ public class World extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (c.type == Chunk.Type.LAND)
-                            c.fertility = 0;
+                            c.food = 0;
                     }
                 });
             }
@@ -132,7 +131,7 @@ public class World extends JFrame {
                     if (island.island[i][j] == 1) {
                         int x = i + island.x;
                         int y = j + island.y;
-                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT) {
+                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT&&x>0&&y>0) {
                             Chunk c = map[x][y];
                             c.setType(Chunk.Type.LAND);
                         }

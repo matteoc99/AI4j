@@ -1,6 +1,5 @@
 package botGUI;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -20,10 +19,9 @@ public class Chunk extends ImmobileObject {
     }
 
     /**
-     * Fertility can go from 0 to 100.
-     * It describes the speed of the Food regrowth
+     * Food can go from 0 to 100.
      */
-    public int fertility = 0;
+    public int food = 2;
 
     /**
      * Describes the Type of this Chunk
@@ -34,6 +32,11 @@ public class Chunk extends ImmobileObject {
      * describes the position of this Object in the {@link World#map}
      */
     int i, j;
+
+    /**
+     * Tells weather the chunck should be updated
+     */
+    public boolean toUpdate=true;
 
     /**
      * Construktor for the {@link ImmobileObject}
@@ -61,9 +64,7 @@ public class Chunk extends ImmobileObject {
                 this.type = type;
             if (type == Type.LAND) {
                 newimg(LAND);
-                fertility = 0;
             } else {
-                fertility = 98;
                 newimg(WATER);
             }
         } catch (ClassNotFoundException e) {
@@ -72,15 +73,16 @@ public class Chunk extends ImmobileObject {
     }
 
     /**
-     * updates the image in relation to the {@link #fertility}
+     * updates the image in relation to the {@link #food}
      */
     public void update() {
         int difference=20;
-        if (getNewFertility() - difference != fertility) {
-            int goal = getNewFertility() - difference;
+        if (getNewFood() - difference > food||toUpdate) {
+            toUpdate=false;
+            int goal = getNewFood() - difference;
             if(type==Type.LAND) {
-                if (fertility < goal)
-                    fertility += 2;
+                if (food < goal)
+                    food += 2;
             }
             Color color = null;
             if (type == Type.LAND) {
@@ -91,7 +93,7 @@ public class Chunk extends ImmobileObject {
                     e.printStackTrace();
                 }
             } else {
-                color = new Color(0, 103, 235);
+                color = new Color(0, 72, 235);
                 try {
                     newimg(WATER);
                 } catch (ClassNotFoundException e) {
@@ -103,7 +105,7 @@ public class Chunk extends ImmobileObject {
             for (int i = 0; i < img.getWidth(); i++) {
                 for (int j = 0; j < img.getHeight(); j++) {
                     int ran = (int) (Math.random() * 100) + 1;
-                    if (ran > fertility) {
+                    if (ran > food) {
                         img.setRGB(i, j, color.getRGB());
                     }
                 }
@@ -117,11 +119,11 @@ public class Chunk extends ImmobileObject {
      *
      * @return a new Ferility
      */
-    public int getNewFertility() {
+    public int getNewFood() {
         int ret=0;
         for (Chunk c:getNeighbors()){
-            if(ret<c.fertility){
-                ret=c.fertility;
+            if(ret<c.food){
+                ret=c.food;
             }
             if(c.type==Type.WATER) {
                 ret = 100;
