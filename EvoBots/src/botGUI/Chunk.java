@@ -42,10 +42,7 @@ public class Chunk extends ImmobileObject {
      * Construktor for the {@link ImmobileObject}
      */
     public Chunk(int i, int j) throws ClassNotFoundException {
-        super(WATER);
-        setType(Type.WATER);
-        this.i = i;
-        this.j = j;
+        this(Type.WATER,i,j);
     }
 
     /**
@@ -56,6 +53,7 @@ public class Chunk extends ImmobileObject {
         setType(type);
         this.i = i;
         this.j = j;
+        setSize(World.CHUNK_SIZE,World.CHUNK_SIZE);
     }
 
     public void setType(Type type) {

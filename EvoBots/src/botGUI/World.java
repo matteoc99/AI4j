@@ -28,6 +28,7 @@ public class World extends JFrame {
     public static final int LAND_SIZE= 4;
 
 
+    public static final int CHUNK_SIZE=16;
 
     //FPS control
     private static int FPS = 60;
