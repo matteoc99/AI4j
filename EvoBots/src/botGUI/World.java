@@ -3,6 +3,9 @@ package botGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 /**
@@ -11,19 +14,24 @@ import java.util.ArrayList;
 public class World extends JFrame {
 
     //FPS control
-    private static int FPS = 1;
+    private static int FPS = 60;
     private long timeUntilSleep;
-
+    private int fpsCounter;
     /**
-     * describes the size of a World
+     * describes the width and height of a World
      */
-    public static final int WORLD_SIZE = 30;
+    public static final int WORLD_WIDTH = 60;
+    public static final int WORLD_HEIGHT = 40;
 
     /**
      * from 1-100 describes the amount of land in the World.
      * 100 is the Maximum
      */
-    public static final int LAND_AMOUNT = 6;
+    public static final int LAND_AMOUNT = 2;
+    /**
+     * The bigger the value the smaller the islands are
+     */
+    public static final int LAND_SIZE= 4;
 
     /**
      * The Map of {@link Chunk}s
@@ -48,15 +56,33 @@ public class World extends JFrame {
         c = getContentPane();
         setVisible(true);
 
-        map = new Chunk[WORLD_SIZE][WORLD_SIZE];
+        map = new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
         generateMap();
+
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                final Chunk c = map[i][j];
+                c.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (c.type == Chunk.Type.LAND)
+                            c.fertility = 0;
+                    }
+                });
+            }
+        }
 
     }
 
     @Override
     public void paint(Graphics g) {
         timeUntilSleep = System.currentTimeMillis();
-        if (mapLoaded) {
+        if (fpsCounter > FPS/2)
+            fpsCounter = 0;
+        else
+            fpsCounter++;
+
+        if (mapLoaded && fpsCounter == FPS/2 ) {
             Component[] components = this.getContentPane().getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
@@ -84,10 +110,10 @@ public class World extends JFrame {
     private void generateMap() {
         ArrayList<Island> islands = new ArrayList<>();
         //first fill with Water
-        for (int i = 0; i < WORLD_SIZE; i++) {
-            for (int j = 0; j < WORLD_SIZE; j++) {
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
                 try {
-                    Chunk c = new Chunk(i,j);
+                    Chunk c = new Chunk(i, j);
                     c.setLocation(i * c.getWidth(), j * c.getHeight());
                     this.c.add(c);
                     map[i][j] = c;
@@ -96,7 +122,7 @@ public class World extends JFrame {
                     e.printStackTrace();
                 }
                 if (LAND_AMOUNT > (Math.random() * 100)) {
-                    islands.add(new Island(WORLD_SIZE / 8, i, j));
+                    islands.add(new Island(WORLD_WIDTH<WORLD_HEIGHT?WORLD_WIDTH:WORLD_HEIGHT / LAND_SIZE, i, j));
                 }
             }
         }
@@ -106,7 +132,7 @@ public class World extends JFrame {
                     if (island.island[i][j] == 1) {
                         int x = i + island.x;
                         int y = j + island.y;
-                        if (x < WORLD_SIZE && y < WORLD_SIZE) {
+                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT) {
                             Chunk c = map[x][y];
                             c.setType(Chunk.Type.LAND);
                         }
