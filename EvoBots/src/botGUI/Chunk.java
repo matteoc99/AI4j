@@ -56,6 +56,10 @@ public class Chunk extends ImmobileObject {
         setSize(World.CHUNK_SIZE,World.CHUNK_SIZE);
     }
 
+    /**
+     * sets the Type of a Chunk and automatically changes the Image
+     * @param type
+     */
     public void setType(Type type) {
         try {
             if (type != null)
@@ -71,13 +75,21 @@ public class Chunk extends ImmobileObject {
     }
 
     /**
+     * returns the Type of this Chunk
+     * @return the {@link #type} of this Chunk
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
      * updates the image in relation to the {@link #food}
      */
     public void update() {
-        int difference=20;
-        if (getNewFood() - difference > food||toUpdate) {
+
+        if (getNewFood() -  World.FOOD_DISTRIBUTION > food||toUpdate) {
             toUpdate=false;
-            int goal = getNewFood() - difference;
+            int goal = getNewFood() - World.FOOD_DISTRIBUTION;
             if(type==Type.LAND) {
                 if (food < goal)
                     food += 2;

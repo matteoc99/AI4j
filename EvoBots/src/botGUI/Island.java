@@ -10,8 +10,8 @@ public class Island {
     public int y;
 
     public Island(int size, int x, int y) {
-        this.x = x-size/2;
-        this.y = y-size/2;
+        this.x = x-size/2-1;
+        this.y = y-size/2-1;
         island = new int[size][size];
         int type = (int) (Math.random() * 6);
 

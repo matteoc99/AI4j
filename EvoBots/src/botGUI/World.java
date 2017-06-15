@@ -15,20 +15,35 @@ public class World extends JFrame {
     /**
      * describes the width and height of a World
      */
-    public static final int WORLD_WIDTH = 60;
-    public static final int WORLD_HEIGHT = 40;
+    public static final int WORLD_WIDTH = 50;
+    public static final int WORLD_HEIGHT = 30;
     /**
-     * from 1-100 describes the amount of land in the World.
-     * 100 is the Maximum
+     * from 1-1000 describes the amount of land in the World.
+     * 1000 is the Maximum
      */
-    public static final int LAND_AMOUNT = 2;
+    public static final int LAND_AMOUNT = 20;
     /**
      * The bigger the value the smaller the islands are
      */
-    public static final int LAND_SIZE= 4;
+    public static final int LAND_SIZE = WORLD_HEIGHT / 8;
 
+    /**
+     * Describes the size of the World
+     */
+    public static final int CHUNK_SIZE = 32;
 
-    public static final int CHUNK_SIZE=16;
+    /**
+     * Describes the distribution of the food
+     */
+    public static final int FOOD_DISTRIBUTION = 100 / (LAND_SIZE * 2);
+
+    /**
+     * Describes how smooth the Islands are
+     * 0: smoothing off
+     * 1: soft smoothing
+     * 1<: strong smoothing
+     */
+    public static final int SMOOTHING_FAKTOR=2;
 
     //FPS control
     private static int FPS = 60;
@@ -73,17 +88,25 @@ public class World extends JFrame {
             }
         }
 
+        //Uniformize map
+        if(SMOOTHING_FAKTOR==1){
+            uniformieze();
+        }else {
+            for (int i = 0; i < SMOOTHING_FAKTOR-1; i++) {
+                uniformieze();
+            }
+        }
     }
 
     @Override
     public void paint(Graphics g) {
         timeUntilSleep = System.currentTimeMillis();
-        if (fpsCounter > FPS/2)
+        if (fpsCounter > FPS / 2)
             fpsCounter = 0;
         else
             fpsCounter++;
 
-        if (mapLoaded && fpsCounter == FPS/2 ) {
+        if (mapLoaded && fpsCounter == FPS / 2) {
             Component[] components = this.getContentPane().getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
@@ -122,8 +145,8 @@ public class World extends JFrame {
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
-                if (LAND_AMOUNT > (Math.random() * 100)) {
-                    islands.add(new Island(WORLD_WIDTH<WORLD_HEIGHT?WORLD_WIDTH:WORLD_HEIGHT / LAND_SIZE, i, j));
+                if (LAND_AMOUNT > (Math.random() * 1000)) {
+                    islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH : WORLD_HEIGHT / LAND_SIZE, i, j));
                 }
             }
         }
@@ -133,7 +156,7 @@ public class World extends JFrame {
                     if (island.island[i][j] == 1) {
                         int x = i + island.x;
                         int y = j + island.y;
-                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT&&x>0&&y>0) {
+                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT && x > 0 && y > 0) {
                             Chunk c = map[x][y];
                             c.setType(Chunk.Type.LAND);
                         }
@@ -143,6 +166,38 @@ public class World extends JFrame {
         }
         mapLoaded = true;
         repaint();
+    }
+
+    /**
+     * make uniform
+     * if Water chunk has more Land arround than Water, transform to land.
+     */
+    public void uniformieze() {
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                //Count water vs land Neighbors
+                Chunk c = map[i][j];
+                int waterCount = 0;
+                int landCount = 0;
+                for (Chunk n : c.getNeighbors()) {
+                    if (n.getType() == Chunk.Type.LAND)
+                        landCount++;
+                    else
+                        waterCount++;
+                }
+                //valuate the  water vs land count
+                if (c.getType() == Chunk.Type.LAND) {
+                    if (SMOOTHING_FAKTOR!=1?landCount < waterCount:landCount==0) {
+                        c.setType(Chunk.Type.WATER);
+                    }
+                } else {
+                    if (SMOOTHING_FAKTOR!=1?landCount > waterCount:waterCount==0) {
+                        c.setType(Chunk.Type.LAND);
+                    }
+                }
+                c.update();
+            }
+        }
     }
 
     /**
