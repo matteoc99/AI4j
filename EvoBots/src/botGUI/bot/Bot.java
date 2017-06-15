@@ -74,6 +74,7 @@ public class Bot extends JPanel {
         int radius = sensor_length - sensor.getWidth() / 2;
         int x = (int) (radius * Math.cos(Math.toRadians(sensorRotation)));
         int y = (int) (radius * Math.sin(Math.toRadians(sensorRotation)));
+
         if (x < getWidth() / 2)
             x += getWidth() / 2;
         else
