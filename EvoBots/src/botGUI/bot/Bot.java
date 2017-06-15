@@ -15,7 +15,7 @@ import java.awt.geom.Rectangle2D;
 public class Bot extends JPanel {
 
 
-    private static final int SENSOR_LENGHT = 60;
+    private int sensor_length = 60;
     /**
      * the Body of the Bot
      */
@@ -41,11 +41,10 @@ public class Bot extends JPanel {
         sensor = new Sensor();
         body = new Body();
 
-        setSize(sensor.getWidth() + body.getWidth() + SENSOR_LENGHT, sensor.getHeight() + body.getHeight() + SENSOR_LENGHT);
+        setSize(sensor.getWidth() + body.getWidth() + sensor_length, sensor.getHeight() + body.getHeight() + sensor_length);
 
         body.setLocation(getWidth() / 2 - body.getWidth() / 2, getHeight() / 2 - body.getHeight() / 2);
-        sensor.setLocation(body.width + SENSOR_LENGHT, 0);
-
+        rotateAndResize();
         add(sensor);
         add(body);
 
@@ -63,15 +62,16 @@ public class Bot extends JPanel {
         g.drawLine(body.getX() + body.getWidth() / 2, body.getY() + body.getHeight() / 2,
                 sensor.getX() + sensor.getWidth() / 2, sensor.getY() + sensor.getHeight() / 2);
         g.drawOval(0, 0, getWidth(), getHeight());
-        //rotate
-        rotate();
 
         super.paint(g);
         repaint();
     }
 
-    private void rotate() {
-        int radius = getWidth() / 2 - sensor.getWidth() / 2;
+    /**
+     * rotate and resize and reposition the Sensor
+     */
+    private void rotateAndResize() {
+        int radius = sensor_length - sensor.getWidth() / 2;
         int x = (int) (radius * Math.cos(Math.toRadians(sensorRotation)));
         int y = (int) (radius * Math.sin(Math.toRadians(sensorRotation)));
         if (x < getWidth() / 2)
@@ -89,6 +89,9 @@ public class Bot extends JPanel {
     public void move() {
         setLocation(getX() + xDir, getY() + yDir);
         sensorRotation++;
-        rotate();
+        if (sensor_length > 1 && sensorRotation % 20 == 0)
+            sensor_length--;
+
+        rotateAndResize();
     }
 }
