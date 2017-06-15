@@ -407,6 +407,7 @@ public class World extends JFrame {
      */
     private void resizeMap() {
         if (mapLoaded) {
+            population.clear();
             int prevWidth = containerPanel.getWidth();
             int prevHeight = containerPanel.getHeight();
             containerPanel.setSize(WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
@@ -427,7 +428,7 @@ public class World extends JFrame {
      */
     private void createMap() {
         mapLoaded = false;
-
+        population.clear();
         map = new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
         generateMap();
 

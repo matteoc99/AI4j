@@ -5,8 +5,6 @@ import botGUI.ImmobileObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 
 /**
  * @author Matteo Cosi
@@ -14,17 +12,20 @@ import java.awt.geom.Rectangle2D;
  */
 public class Bot extends JPanel {
 
-
+    //TODO >60 BUG
     private int sensor_length = 60;
+
     /**
      * the Body of the Bot
      */
     Body body;
 
+
     /**
      * The sensor of the Bot
      */
     Sensor sensor;
+
     /**
      * Describes the rotation of the sensor
      * 0-360 degrees
@@ -34,6 +35,11 @@ public class Bot extends JPanel {
 
     public int xDir = 1;
     public int yDir = 1;
+
+
+    //TODO hp implementation
+    public int hp = 500;
+
 
     public Bot() {
         xDir = (int) (Math.random() * 1);
@@ -87,6 +93,20 @@ public class Bot extends JPanel {
 
     }
 
+    /**
+     * Object dies and removes itself from the Container where it was previously in.
+     */
+    public void kill() {
+        if (this.getParent() != null) {
+            this.getParent().remove(this);
+        }
+
+
+    }
+
+    /**
+     * simple move method
+     */
     public void move() {
         setLocation(getX() + xDir, getY() + yDir);
         sensorRotation++;
