@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 
 /**
  * A NetworkPanel contains all components to display a network
- * It is added to the networkContainer od the NetworkGUI
+ * It is added to the networkContainer of the NetworkGUI
  *
  * @author Maximilian Estfelller
  * @since 18.05.2017
  */
-class NetworkPanel extends JPanel implements NetworkGUIComponent{
+class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
 
     private final int rightPadding = 8;
     private final int leftPadding = 8;
@@ -233,6 +233,8 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
         return ret;
     }
 
+
+
     boolean isFocusMode() {
         return this.focusMode;
     }
@@ -305,6 +307,24 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent{
             if (connection.getEquivalent().equals(equivalent))
                 return connection;
         return null;
+    }
+
+    @Override
+    public void requestMove(MovableComponent component, Point point) {
+        validation(component, point);
+        component.setBounds(point.x, point.y, component.getWidth(), component.getHeight());
+        layoutConnections();
+    }
+
+    void validation(MovableComponent component, Point point) {
+        if (point.x < 0)
+            point.x = 0;
+        if (point.y < 0)
+            point.y = 0;
+        if (point.x+component.getWidth() > this.getWidth())
+            point.x = this.getWidth()-component.getWidth();
+        if (point.y+component.getHeight() > this.getHeight())
+            point.y = this.getHeight()-component.getHeight();
     }
 
     private class MyMouseListener extends MouseAdapter {
