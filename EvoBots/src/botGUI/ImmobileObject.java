@@ -10,10 +10,7 @@ import java.net.URL;
  * @since 15.05.2017
  */
 public class ImmobileObject extends JComponent {
-    /**
-     * Image displayed on the {@link JComponent}
-     */
-    protected Image image = null;
+
     /**
      * remembers if the Object is already death
      */
@@ -23,7 +20,7 @@ public class ImmobileObject extends JComponent {
      * Construktor for the {@link ImmobileObject}
      *
      */
-    public ImmobileObject() throws ClassNotFoundException {
+    public ImmobileObject() {
     }
 
     /**

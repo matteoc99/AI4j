@@ -1,6 +1,7 @@
 package botGUI;
 
 
+import botGUI.bot.Bot;
 import com.sun.prism.PresentableState;
 
 import javax.swing.*;
@@ -19,17 +20,17 @@ public class World extends JFrame {
     /**
      * describes the width and height of a World
      */
-    public static int WORLD_WIDTH = 100;
-    public static int WORLD_HEIGHT = 50;
+    public static int WORLD_WIDTH = 50;
+    public static int WORLD_HEIGHT = 25;
     /**
      * from 1-1000 describes the amount of land in the World.
      * 1000 is the Maximum
      */
-    public static int LAND_AMOUNT = 20;
+    public static int LAND_AMOUNT = 15;
     /**
      * The bigger the value the smaller the islands are
      */
-    public static int LAND_SIZE = 6;
+    public static int LAND_SIZE = 3;
     /**
      * Describes the size of the World
      */
@@ -103,13 +104,22 @@ public class World extends JFrame {
      */
     public int resizeCounter = 0;
 
+    /**
+     * describes the size of the control Panel
+     */
     public int controlPanelWidth = 500;
+
+    /**
+     * describes the min Population size, if the value drops below a new {@link Bot} is created
+     */
+    public static int MIN_POP_SIZE=1;
 
     /**
      * listener used for Drag and drop
      */
     DragUndDropListener listener = new DragUndDropListener();
 
+    ArrayList<Bot>population= new ArrayList<>();
 
     public World() {
         setTitle("World");
@@ -131,8 +141,6 @@ public class World extends JFrame {
         controlPanel.setBackground(Color.white);
         controlPanel.setLayout(null);
 
-        controlPanel.addMouseListener(listener);
-        controlPanel.addMouseMotionListener(listener);
         containerPanel.addMouseListener(listener);
         containerPanel.addMouseMotionListener(listener);
 
@@ -381,7 +389,7 @@ public class World extends JFrame {
 
             while (true) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(10);
+                    TimeUnit.MILLISECONDS.sleep(40);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -456,11 +464,22 @@ public class World extends JFrame {
 
     @Override
     public void paint(Graphics g) {
+        //add Bots if necessary
+
+        if(population.size()<MIN_POP_SIZE){
+            Bot b=new Bot();
+            b.setLocation(100,100);
+            population.add(b);
+            containerPanel.add(b,0);
+        }
+        //FPS control
         timeUntilSleep = System.currentTimeMillis();
         if (fpsCounter > FPS * CHUNK_REFRESH_TIME + FOOD_REGROWTH)
             fpsCounter = 0;
         else
             fpsCounter++;
+
+        //moving things
         if (mapLoaded) {
             Component[] components = containerPanel.getComponents();
             if (components != null && components.length > 0) {
@@ -470,10 +489,13 @@ public class World extends JFrame {
                             ((Chunk) c).update();
                         else if (fpsCounter % FOOD_REGROWTH == 0)
                             ((Chunk) c).updateFood();
+                    if (c instanceof Bot)
+                        ((Bot) c).move();
                 }
             }
         }
         super.paint(g);
+        //sleep to match FPS
         long passedTime = System.currentTimeMillis() - timeUntilSleep;
         if (passedTime < 1000.0 / FPS) {
             try {
@@ -591,7 +613,7 @@ public class World extends JFrame {
                 Chunk c = (Chunk) e.getComponent();
                 e.translatePoint(containerPanel.getLocation().x - x, containerPanel.getLocation().y - y);
                 containerPanel.setLocation(e.getX(), e.getY());
-            }else {
+            } else {
                 e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
                 e.getComponent().setLocation(e.getX(), e.getY());
             }

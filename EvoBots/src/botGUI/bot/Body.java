@@ -9,15 +9,18 @@ import java.awt.*;
  * Created by mcosi on 14/06/2017.
  */
 public class Body extends JComponent {
+    public int width=30;
+    public int height=width;
 
     public Body(){
-        setSize(World.CHUNK_SIZE/2,World.CHUNK_SIZE/2);
+        setSize(width,height);
         repaint();
     }
     @Override
-    public void paintComponents(Graphics g) {
+    public void paint(Graphics g) {
+        setSize(width,height);
         g.setColor(Color.RED);
-        g.fillOval(0,0, World.CHUNK_SIZE/2,World.CHUNK_SIZE/2);
-        super.paintComponents(g);
+        g.fillOval(0,0, width,height);
+        super.paint(g);
     }
 }
