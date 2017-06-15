@@ -139,6 +139,7 @@ public class World extends JFrame {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_R:
                         createMap();
+                        resizeMap();
                         break;
                     case KeyEvent.VK_W:
                     case KeyEvent.VK_UP:
@@ -207,11 +208,11 @@ public class World extends JFrame {
      * add all the Controll components to the control JPanel
      */
     private void addControls() {
-        JSlider w_width = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_WIDTH);
-        JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_HEIGHT);
-        JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 400, LAND_AMOUNT);
-        JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 180, LAND_SIZE);
-        JSlider chunk_size = new JSlider(JSlider.HORIZONTAL, 0, 500, CHUNK_SIZE);
+        JSlider w_width = new JSlider(JSlider.HORIZONTAL, 0, 300, WORLD_WIDTH);
+        JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 300, WORLD_HEIGHT);
+        JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 300, LAND_AMOUNT);
+        JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 50, LAND_SIZE);
+        JSlider chunk_size = new JSlider(JSlider.HORIZONTAL, 0, 200, CHUNK_SIZE);
         JSlider food_distrib = new JSlider(JSlider.HORIZONTAL, 0, 80, FOOD_DISTRIBUTION);
         JSlider food_regrowth = new JSlider(JSlider.HORIZONTAL, 0, 100, FOOD_REGROWTH);//bis hier min +1 weil
         JSlider chunk_refresh = new JSlider(JSlider.HORIZONTAL, 0, 10, CHUNK_REFRESH_TIME);
@@ -270,7 +271,7 @@ public class World extends JFrame {
         w_width.setMajorTickSpacing(50);
         w_height.setMajorTickSpacing(50);
         land_amount.setMajorTickSpacing(50);
-        land_size.setMajorTickSpacing(60);
+        land_size.setMajorTickSpacing(10);
         chunk_size.setMajorTickSpacing(100);
         food_distrib.setMajorTickSpacing(20);
         food_regrowth.setMajorTickSpacing(10);
@@ -280,7 +281,7 @@ public class World extends JFrame {
         w_width.setMinorTickSpacing(10);
         w_height.setMinorTickSpacing(10);
         land_amount.setMinorTickSpacing(10);
-        land_size.setMinorTickSpacing(15);
+        land_size.setMinorTickSpacing(2);
         chunk_size.setMinorTickSpacing(20);
         food_distrib.setMinorTickSpacing(5);
         food_regrowth.setMinorTickSpacing(2);
