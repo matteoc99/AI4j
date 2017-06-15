@@ -3,7 +3,6 @@ package network_gui;
 import network.Layer;
 import network.Neuron;
 
-import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -14,7 +13,7 @@ import java.util.ArrayList;
  * @author Maximilian Estfelller
  * @since 19.05.2017
  */
-class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
+class NetworkPanelNeuron extends MovableComponent implements NetworkGUIComponent{
 
     enum FocusState {
         NONE,
@@ -46,7 +45,7 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
     NetworkPanelNeuron(Neuron equivalent, Layer.LayerType type) {
         this.setEquivalent(equivalent);
         this.type = type;
-        this.addMouseListener(new MyMouseListener());
+        this.addMouseListener(new NPNMouseListener());
         switch (type) {
             case IN:
                 innerColor = new Color(250,250,0).brighter();
@@ -94,7 +93,6 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         repaint();
     }
 
-    @Deprecated
     private void changeFocusState() {
         if (((NetworkPanel) getParent()).isFocusMode()) {
             // changes the State of this network.Neuron only
@@ -159,10 +157,19 @@ class NetworkPanelNeuron extends JComponent implements NetworkGUIComponent{
         }
     }
 
-    private class MyMouseListener extends MouseAdapter {
+    private class NPNMouseListener extends MouseAdapter {
+
+        private Point onClick;
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (onClick.equals(e.getLocationOnScreen()))
+                changeFocusState();
+        }
+
         @Override
         public void mousePressed(MouseEvent e) {
-            changeFocusState();
+            onClick = e.getLocationOnScreen();
         }
     }
 
