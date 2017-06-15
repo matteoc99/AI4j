@@ -86,7 +86,6 @@ public class Chunk extends ImmobileObject {
      * updates the image in relation to the {@link #food}
      */
     public void update() {
-
         if (getNewFood() -  World.FOOD_DISTRIBUTION > food||toUpdate) {
             toUpdate=false;
             int goal = getNewFood() - World.FOOD_DISTRIBUTION;
@@ -122,6 +121,7 @@ public class Chunk extends ImmobileObject {
             }
             newimg(img);
         }
+        repaint();
     }
 
     /**

@@ -15,7 +15,6 @@ public class Island {
         island = new int[size][size];
         int type = (int) (Math.random() * 6);
 
-        System.out.println(type);
         switch (type) {
             case 0:
                 for (int i = 0; i < size; i++) {

@@ -3,6 +3,8 @@ package botGUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -43,7 +45,12 @@ public class World extends JFrame {
      * 1: soft smoothing
      * 1<: strong smoothing
      */
-    public static final int SMOOTHING_FAKTOR=2;
+    public static final int SMOOTHING_FAKTOR = 1;
+
+    /**
+     * Describes the speed of the moving map
+     */
+    private static final int MOVE_SPEED = 20;
 
     //FPS control
     private static int FPS = 60;
@@ -57,9 +64,11 @@ public class World extends JFrame {
     /**
      * The container on the {@link JFrame}
      */
-    Container c;
+    Container container;
 
     private boolean mapLoaded = false;
+
+    JPanel containerPanel = new JPanel();
 
     public World() {
         setTitle("World");
@@ -69,8 +78,14 @@ public class World extends JFrame {
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
 
-        c = getContentPane();
+        container = getContentPane();
+        container.setLayout(null);
+        container.setBackground(Color.green);
+        containerPanel.setBounds(100, 100, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
+        containerPanel.setLayout(null);
+        container.add(containerPanel);
         setVisible(true);
+
 
         map = new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
         generateMap();
@@ -89,13 +104,43 @@ public class World extends JFrame {
         }
 
         //Uniformize map
-        if(SMOOTHING_FAKTOR==1){
+        if (SMOOTHING_FAKTOR == 1) {
             uniformieze();
-        }else {
-            for (int i = 0; i < SMOOTHING_FAKTOR-1; i++) {
+        } else {
+            for (int i = 0; i < SMOOTHING_FAKTOR - 1; i++) {
                 uniformieze();
             }
         }
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_W:
+                    case KeyEvent.VK_UP:
+                            containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() - MOVE_SPEED);
+                        break;
+                    case KeyEvent.VK_S:
+                    case KeyEvent.VK_DOWN:
+                            containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() + MOVE_SPEED);
+                        break;
+                    case KeyEvent.VK_A:
+                    case KeyEvent.VK_LEFT:
+                            containerPanel.setLocation(containerPanel.getX() - MOVE_SPEED, containerPanel.getY());
+                        break;
+                    case KeyEvent.VK_D:
+                    case KeyEvent.VK_RIGHT:
+                            containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
+                        break;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+        containerPanel.repaint();
     }
 
     @Override
@@ -105,9 +150,8 @@ public class World extends JFrame {
             fpsCounter = 0;
         else
             fpsCounter++;
-
         if (mapLoaded && fpsCounter == FPS / 2) {
-            Component[] components = this.getContentPane().getComponents();
+            Component[] components = containerPanel.getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
                     if (c instanceof Chunk)
@@ -124,7 +168,7 @@ public class World extends JFrame {
                 e.printStackTrace();
             }
         }
-
+        containerPanel.repaint();
         repaint();
     }
 
@@ -139,7 +183,7 @@ public class World extends JFrame {
                 try {
                     Chunk c = new Chunk(i, j);
                     c.setLocation(i * c.getWidth(), j * c.getHeight());
-                    this.c.add(c);
+                    containerPanel.add(c);
                     map[i][j] = c;
 
                 } catch (ClassNotFoundException e) {
@@ -166,6 +210,7 @@ public class World extends JFrame {
         }
         mapLoaded = true;
         repaint();
+        containerPanel.repaint();
     }
 
     /**
@@ -187,11 +232,11 @@ public class World extends JFrame {
                 }
                 //valuate the  water vs land count
                 if (c.getType() == Chunk.Type.LAND) {
-                    if (SMOOTHING_FAKTOR!=1?landCount < waterCount:landCount==0) {
+                    if (SMOOTHING_FAKTOR != 1 ? landCount < waterCount : landCount == 0) {
                         c.setType(Chunk.Type.WATER);
                     }
                 } else {
-                    if (SMOOTHING_FAKTOR!=1?landCount > waterCount:waterCount==0) {
+                    if (SMOOTHING_FAKTOR != 1 ? landCount > waterCount : waterCount == 0) {
                         c.setType(Chunk.Type.LAND);
                     }
                 }
