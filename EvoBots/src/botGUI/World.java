@@ -15,8 +15,8 @@ public class World extends JFrame {
     /**
      * describes the width and height of a World
      */
-    public static final int WORLD_WIDTH = 50;
-    public static final int WORLD_HEIGHT = 30;
+    public static final int WORLD_WIDTH = 100;
+    public static final int WORLD_HEIGHT = 50;
     /**
      * from 1-1000 describes the amount of land in the World.
      * 1000 is the Maximum
@@ -56,7 +56,7 @@ public class World extends JFrame {
      * 1: soft smoothing
      * 1<: strong smoothing
      */
-    public static final int SMOOTHING_FAKTOR = 1;
+    public static final int SMOOTHING_FAKTOR = 2;
 
     /**
      * Describes the speed of the moving map
@@ -148,6 +148,9 @@ public class World extends JFrame {
                         int xOff= (int) (p.x-screenSize.getWidth()/2);
                         int yOff= (int) (p.y-screenSize.getHeight()/2);
                         containerPanel.setLocation(containerPanel.getX()+xOff/8,containerPanel.getY()+yOff/8);
+                        break;
+                    case KeyEvent.VK_P:
+                        containerPanel.setLocation(0,0);
                         break;
                 }
             }
