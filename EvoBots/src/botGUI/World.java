@@ -3,10 +3,7 @@ package botGUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +20,7 @@ public class World extends JFrame {
      * from 1-1000 describes the amount of land in the World.
      * 1000 is the Maximum
      */
-    public static final int LAND_AMOUNT = 20;
+    public static final int LAND_AMOUNT = 15;
     /**
      * The bigger the value the smaller the islands are
      */
@@ -32,12 +29,12 @@ public class World extends JFrame {
     /**
      * Describes the size of the World
      */
-    public static final int CHUNK_SIZE = 32;
+    public static int CHUNK_SIZE = 20;
 
     /**
      * Describes the distribution of the food
      */
-    public static final int FOOD_DISTRIBUTION = 100 / (LAND_SIZE * 2);
+    public static final int FOOD_DISTRIBUTION = 10;
 
     /**
      * Describes how smooth the Islands are
@@ -80,12 +77,80 @@ public class World extends JFrame {
 
         container = getContentPane();
         container.setLayout(null);
-        container.setBackground(Color.green);
+        container.setBackground(Color.gray);
         containerPanel.setBounds(100, 100, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
         containerPanel.setLayout(null);
         container.add(containerPanel);
         setVisible(true);
 
+
+        createMap();
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_R:
+                        dispose();
+                        new World();
+                        break;
+                    case KeyEvent.VK_W:
+                    case KeyEvent.VK_UP:
+                        containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() - MOVE_SPEED);
+                        break;
+                    case KeyEvent.VK_S:
+                    case KeyEvent.VK_DOWN:
+                        containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() + MOVE_SPEED);
+                        break;
+                    case KeyEvent.VK_A:
+                    case KeyEvent.VK_LEFT:
+                        containerPanel.setLocation(containerPanel.getX() - MOVE_SPEED, containerPanel.getY());
+                        break;
+                    case KeyEvent.VK_D:
+                    case KeyEvent.VK_RIGHT:
+                        containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
+                        break;
+                }
+            }
+        });
+        addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                if (e.getWheelRotation() > 0) {
+                    if (CHUNK_SIZE > 7) {
+                        CHUNK_SIZE -= e.getWheelRotation();
+                        resizeMap();
+                    }
+                } else {
+                    if (CHUNK_SIZE < 32) {
+                        CHUNK_SIZE -= e.getWheelRotation();
+                        resizeMap();
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * resizes the World to a given chunk size
+     */
+    private void resizeMap() {
+        if(mapLoaded) {
+            containerPanel.setSize(WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
+            for (int i = 0; i < WORLD_WIDTH; i++) {
+                for (int j = 0; j < WORLD_HEIGHT; j++) {
+                    Chunk c = map[i][j];
+                    c.resizeAndReposition();
+                }
+            }
+        }
+    }
+
+    /**
+     * Method that creates a new Map
+     */
+    private void createMap() {
+        mapLoaded=false;
 
         map = new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
         generateMap();
@@ -97,7 +162,7 @@ public class World extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (c.type == Chunk.Type.LAND)
-                            c.food = 0;
+                            c.setFood(0);
                     }
                 });
             }
@@ -109,48 +174,31 @@ public class World extends JFrame {
         } else {
             for (int i = 0; i < SMOOTHING_FAKTOR - 1; i++) {
                 uniformieze();
-            }
-        }
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W:
-                    case KeyEvent.VK_UP:
-                            containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() - MOVE_SPEED);
-                        break;
-                    case KeyEvent.VK_S:
-                    case KeyEvent.VK_DOWN:
-                            containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() + MOVE_SPEED);
-                        break;
-                    case KeyEvent.VK_A:
-                    case KeyEvent.VK_LEFT:
-                            containerPanel.setLocation(containerPanel.getX() - MOVE_SPEED, containerPanel.getY());
-                        break;
-                    case KeyEvent.VK_D:
-                    case KeyEvent.VK_RIGHT:
-                            containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
-                        break;
+                containerPanel.repaint();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
+        }
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                Chunk c = map[i][j];
+                c.toUpdate = true;
             }
-        });
-        containerPanel.repaint();
+        }
+        mapLoaded = true;
     }
 
     @Override
     public void paint(Graphics g) {
         timeUntilSleep = System.currentTimeMillis();
-        if (fpsCounter > FPS / 2)
-            fpsCounter = 0;
-        else
-            fpsCounter++;
-        if (mapLoaded && fpsCounter == FPS / 2) {
+        // if (fpsCounter > FPS / 2)
+        //     fpsCounter = 0;
+        // else
+        //    fpsCounter++;   && fpsCounter == FPS / 2
+        if (mapLoaded) {
             Component[] components = containerPanel.getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
@@ -176,6 +224,7 @@ public class World extends JFrame {
      * method used to generate the Map
      */
     private void generateMap() {
+        containerPanel.removeAll();
         ArrayList<Island> islands = new ArrayList<>();
         //first fill with Water
         for (int i = 0; i < WORLD_WIDTH; i++) {
@@ -208,7 +257,6 @@ public class World extends JFrame {
                 }
             }
         }
-        mapLoaded = true;
         repaint();
         containerPanel.repaint();
     }

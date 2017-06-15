@@ -13,7 +13,6 @@ public class Chunk extends ImmobileObject {
     public static final String LAND = "res\\gras.png";
     public static final String WATER = "res\\water.png";
 
-
     public enum Type {
         LAND, WATER,
     }
@@ -21,7 +20,7 @@ public class Chunk extends ImmobileObject {
     /**
      * Food can go from 0 to 100.
      */
-    public int food = 2;
+    private int food = 2;
 
     /**
      * Describes the Type of this Chunk
@@ -66,6 +65,7 @@ public class Chunk extends ImmobileObject {
                 this.type = type;
             if (type == Type.LAND) {
                 newimg(LAND);
+                food=5;
             } else {
                 newimg(WATER);
             }
@@ -83,6 +83,28 @@ public class Chunk extends ImmobileObject {
     }
 
     /**
+     * Setter for the food amount in this {@link Chunk}
+     * @param food {@link #food} to set
+     */
+    public void setFood(int food) {
+        this.food = food;
+    }
+
+    /**
+     * @return the amount of food in this square
+     */
+    public int getFood() {
+        return food;
+    }
+
+    /**
+     * @return if the Chunk should be updated or not
+     */
+    public boolean isToUpdate() {
+        return toUpdate;
+    }
+
+    /**
      * updates the image in relation to the {@link #food}
      */
     public void update() {
@@ -90,8 +112,7 @@ public class Chunk extends ImmobileObject {
             toUpdate=false;
             int goal = getNewFood() - World.FOOD_DISTRIBUTION;
             if(type==Type.LAND) {
-                if (food < goal)
-                    food += 2;
+                    food += Math.log10(goal-food)>1? Math.log10(goal-food):1;
             }
             Color color = null;
             if (type == Type.LAND) {
@@ -143,6 +164,15 @@ public class Chunk extends ImmobileObject {
         return ret;
     }
 
+    /**
+     * Returns an {@link ArrayList} with all the Neighbors
+     *     +
+     *    +#+
+     *     +
+     * #...the Chunk
+     * + the Neighbors
+     * @return
+     */
     public ArrayList<Chunk> getNeighbors() {
         ArrayList<Chunk> ret = new ArrayList<>();
         if (i < World.WORLD_WIDTH - 1)
@@ -155,4 +185,13 @@ public class Chunk extends ImmobileObject {
             ret.add(World.map[i][j - 1]);
         return ret;
     }
+
+    /**
+     * resizes, repaintes and repositions a Chunk
+     */
+    public void resizeAndReposition() {
+        this.setSize(World.CHUNK_SIZE,World.CHUNK_SIZE);
+        this.setLocation(i*World.CHUNK_SIZE,j*World.CHUNK_SIZE);
+    }
+
 }
