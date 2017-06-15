@@ -1,7 +1,8 @@
 package botGUI;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 
 /**
@@ -16,6 +17,11 @@ public class Chunk extends ImmobileObject {
     public enum Type {
         LAND, WATER,
     }
+
+
+    public Color land= new Color(97, 55, 25) ;
+    public Color water= new Color(55, 140, 235);
+
 
     /**
      * Food can go from 0 to 100.
@@ -48,7 +54,6 @@ public class Chunk extends ImmobileObject {
      * Construktor for the {@link ImmobileObject}
      */
     public Chunk(Type type, int i, int j) throws ClassNotFoundException {
-        super(type == Type.LAND ? LAND : WATER);
         setType(type);
         this.i = i;
         this.j = j;
@@ -60,18 +65,11 @@ public class Chunk extends ImmobileObject {
      * @param type
      */
     public void setType(Type type) {
-        try {
             if (type != null)
                 this.type = type;
-            if (type == Type.LAND) {
-                newimg(LAND);
+            if (type == Type.LAND)
                 food=5;
-            } else {
-                newimg(WATER);
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        repaint();
     }
 
     /**
@@ -105,44 +103,47 @@ public class Chunk extends ImmobileObject {
     }
 
     /**
+     * updates only the food without the Grafics
+     */
+    public void updateFood(){
+        if (getNewFood() -  World.FOOD_DISTRIBUTION > food||toUpdate) {
+            int goal = getNewFood() - World.FOOD_DISTRIBUTION;
+            if (type == Type.LAND) {
+                food += Math.log10(goal - food) > 1 ? Math.log10(goal - food) : 1;
+            }
+        }
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paintComponent(g);
+        if(type==Type.LAND){
+            g.setColor(land);
+        }else{
+            g.setColor(water);
+        }
+        g.fillRect(0,0,getWidth(),getHeight());
+
+    }
+
+    /**
      * updates the image in relation to the {@link #food}
      */
     public void update() {
         if (getNewFood() -  World.FOOD_DISTRIBUTION > food||toUpdate) {
             toUpdate=false;
-            int goal = getNewFood() - World.FOOD_DISTRIBUTION;
-            if(type==Type.LAND) {
-                    food += Math.log10(goal-food)>1? Math.log10(goal-food):1;
-            }
-            Color color = null;
-            if (type == Type.LAND) {
-                color = new Color(97, 55, 25);
-                try {
-                    newimg(LAND);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                color = new Color(0, 72, 235);
-                try {
-                    newimg(WATER);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            BufferedImage img = toBufferedImage(image);
-            for (int i = 0; i < img.getWidth(); i++) {
-                for (int j = 0; j < img.getHeight(); j++) {
-                    int ran = (int) (Math.random() * 100) + 1;
-                    if (ran > food) {
-                        img.setRGB(i, j, color.getRGB());
-                    }
-                }
-            }
-            newimg(img);
+            updateFood();
+            updateColor();
         }
-        repaint();
+    }
+
+    /**
+     * updates the color in reference to th fertility
+     */
+    private void updateColor() {
+        if(type==Type.LAND){
+            land= new Color(97-food/2+food/4, 55+food*2-food/2, 26-food/4+food/8) ;
+        }
     }
 
     /**

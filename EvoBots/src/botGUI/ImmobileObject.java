@@ -22,54 +22,15 @@ public class ImmobileObject extends JComponent {
     /**
      * Construktor for the {@link ImmobileObject}
      *
-     * @param dateiname image to load in the {@link JComponent}
      */
-    public ImmobileObject(String dateiname) throws ClassNotFoundException {
-        newimg(dateiname);
-
-    }
-
-    /**
-     * Loads and draws a new Image on {@link ImmobileObject}
-     *
-     * @param dateiname {@link java.nio.file.Path} to where the image is lacated
-     */
-    public void newimg(String dateiname) throws ClassNotFoundException {
-        URL url = this.getClass().getResource(dateiname);
-
-        if (url == null)
-            throw new ClassNotFoundException(dateiname + " not found");
-        else {
-            this.image = getToolkit().getImage(url);
-            prepareImage(image, this);
-            Thread t = Thread.currentThread();
-            while ((checkImage(image, this) & PROPERTIES) != PROPERTIES) {
-                try {
-                    t.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    System.out.println("SO");
-
-                }
-            }
-            this.setSize(this.image.getWidth(this), this.image.getHeight(this));
-        }
-        repaint();
-    }
-
-
-    public void newimg(BufferedImage img){
-            this.image = img;
-            this.setSize(this.image.getWidth(this), this.image.getHeight(this));
-        repaint();
+    public ImmobileObject() throws ClassNotFoundException {
     }
 
     /**
      * Method, which draws the image on the {@link JComponent}
      */
     public void paint(Graphics g) {
-        if (image != null)
-            g.drawImage(this.image, 0, 0, this);
+
     }
 
     /**
@@ -129,23 +90,5 @@ public class ImmobileObject extends JComponent {
             }
         }
         return ret;
-    }
-    public static BufferedImage toBufferedImage(Image img)
-    {
-        if (img instanceof BufferedImage)
-        {
-            return (BufferedImage) img;
-        }
-
-        // Create a buffered image with transparency
-        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        // Draw the image on to the buffered image
-        Graphics2D bGr = bimage.createGraphics();
-        bGr.drawImage(img, 0, 0, null);
-        bGr.dispose();
-
-        // Return the buffered image
-        return bimage;
     }
 }

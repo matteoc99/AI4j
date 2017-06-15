@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by mcosi on 14/06/2017.
@@ -25,16 +26,29 @@ public class World extends JFrame {
      * The bigger the value the smaller the islands are
      */
     public static final int LAND_SIZE = WORLD_HEIGHT / 8;
-
     /**
      * Describes the size of the World
      */
     public static int CHUNK_SIZE = 20;
 
+    public static final int MAX_CHUNK_SIZE = 256;
     /**
      * Describes the distribution of the food
      */
-    public static final int FOOD_DISTRIBUTION = 10;
+    public static final int FOOD_DISTRIBUTION = 15;
+
+
+    /**
+     * Describes the speed of the Food regrowth
+     */
+    private static final int FOOD_REGROWTH= 10;
+
+    /**
+     * describes how often Chunks are repainted 0-10
+     * 0 very often
+     * 1 slow
+     */
+    private static final int CHUNK_REFRESH_TIME =0 ;
 
     /**
      * Describes how smooth the Islands are
@@ -49,6 +63,9 @@ public class World extends JFrame {
      */
     private static final int MOVE_SPEED = 20;
 
+
+
+
     //FPS control
     private static int FPS = 60;
     private long timeUntilSleep;
@@ -59,18 +76,32 @@ public class World extends JFrame {
     public static Chunk[][] map = null;
 
     /**
-     * The container on the {@link JFrame}
+     * The container of the World Container
      */
     Container container;
 
+    /**
+     * tells if the Map has finished loading
+     */
     private boolean mapLoaded = false;
 
+    /**
+     * Contains the World
+     */
     JPanel containerPanel = new JPanel();
+
+    /**
+     * used to resize all at once
+     */
+    public int resizeCounter=0;
+
+
 
     public World() {
         setTitle("World");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        CHUNK_SIZE= (int) (screenSize.getWidth()/WORLD_WIDTH);
         setBounds(0, 0, screenSize.width, screenSize.height);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
@@ -78,7 +109,7 @@ public class World extends JFrame {
         container = getContentPane();
         container.setLayout(null);
         container.setBackground(Color.gray);
-        containerPanel.setBounds(100, 100, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
+        containerPanel.setBounds(0, 0, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
         containerPanel.setLayout(null);
         container.add(containerPanel);
         setVisible(true);
@@ -110,25 +141,64 @@ public class World extends JFrame {
                     case KeyEvent.VK_RIGHT:
                         containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
                         break;
+
+                    case KeyEvent.VK_CONTROL:
+                        Point p = MouseInfo.getPointerInfo().getLocation();
+                        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                        int xOff= (int) (p.x-screenSize.getWidth()/2);
+                        int yOff= (int) (p.y-screenSize.getHeight()/2);
+                        containerPanel.setLocation(containerPanel.getX()+xOff/8,containerPanel.getY()+yOff/8);
+                        break;
                 }
             }
         });
+
+        dynamicResizer();
+
         addMouseWheelListener(new MouseAdapter() {
+
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() > 0) {
-                    if (CHUNK_SIZE > 7) {
-                        CHUNK_SIZE -= e.getWheelRotation();
-                        resizeMap();
+                    if (CHUNK_SIZE > 2) {
+                        if(resizeCounter<=0)
+                            resizeCounter=1;
+                        CHUNK_SIZE -= e.getWheelRotation()*resizeCounter;
+                        resizeCounter=5;
+                        if(CHUNK_SIZE<=0)
+                            CHUNK_SIZE=1;
                     }
                 } else {
-                    if (CHUNK_SIZE < 32) {
-                        CHUNK_SIZE -= e.getWheelRotation();
-                        resizeMap();
+                    if (CHUNK_SIZE < MAX_CHUNK_SIZE) {
+                        if(resizeCounter<=0)
+                            resizeCounter=1;
+                        CHUNK_SIZE -= e.getWheelRotation()*resizeCounter;
+
+                        resizeCounter=5;
                     }
                 }
             }
+
         });
+
+    }
+
+    private void dynamicResizer() {
+        new Thread(() -> {
+
+            while (true) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                resizeCounter--;
+                if (resizeCounter == 0) {
+                    resizeCounter = 0;
+                    resizeMap();
+                }
+            }
+        }).start();
     }
 
     /**
@@ -136,7 +206,12 @@ public class World extends JFrame {
      */
     private void resizeMap() {
         if(mapLoaded) {
+            int prevWidth=containerPanel.getWidth();
+            int prevHeight=containerPanel.getHeight();
             containerPanel.setSize(WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
+            prevWidth-=containerPanel.getWidth();
+            prevHeight-=containerPanel.getHeight();
+            containerPanel.setLocation(containerPanel.getX()+prevWidth/2,containerPanel.getY()+prevHeight/2);
             for (int i = 0; i < WORLD_WIDTH; i++) {
                 for (int j = 0; j < WORLD_HEIGHT; j++) {
                     Chunk c = map[i][j];
@@ -194,16 +269,19 @@ public class World extends JFrame {
     @Override
     public void paint(Graphics g) {
         timeUntilSleep = System.currentTimeMillis();
-        // if (fpsCounter > FPS / 2)
-        //     fpsCounter = 0;
-        // else
-        //    fpsCounter++;   && fpsCounter == FPS / 2
+         if (fpsCounter > FPS*CHUNK_REFRESH_TIME+FOOD_REGROWTH)
+             fpsCounter = 0;
+         else
+            fpsCounter++;
         if (mapLoaded) {
             Component[] components = containerPanel.getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
                     if (c instanceof Chunk)
+                        if (fpsCounter == FPS*CHUNK_REFRESH_TIME)
                         ((Chunk) c).update();
+                    else if (fpsCounter%FOOD_REGROWTH==0)
+                            ((Chunk) c).updateFood();
                 }
             }
         }
