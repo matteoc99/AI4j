@@ -1,6 +1,8 @@
 package botGUI;
 
 
+import com.sun.prism.PresentableState;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -103,6 +105,11 @@ public class World extends JFrame {
 
     public int controlPanelWidth = 500;
 
+    /**
+     * listener used for Drag and drop
+     */
+    DragUndDropListener listener = new DragUndDropListener();
+
 
     public World() {
         setTitle("World");
@@ -123,6 +130,11 @@ public class World extends JFrame {
         controlPanel.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, getHeight());
         controlPanel.setBackground(Color.white);
         controlPanel.setLayout(null);
+
+        controlPanel.addMouseListener(listener);
+        controlPanel.addMouseMotionListener(listener);
+        containerPanel.addMouseListener(listener);
+        containerPanel.addMouseMotionListener(listener);
 
         container.add(controlPanel);
         container.add(containerPanel);
@@ -292,63 +304,63 @@ public class World extends JFrame {
         w_width.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                WORLD_WIDTH = w_width.getValue()+1;
+                WORLD_WIDTH = w_width.getValue() + 1;
                 requestFocus();
             }
         });
         w_height.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                WORLD_HEIGHT = w_height.getValue()+1;
+                WORLD_HEIGHT = w_height.getValue() + 1;
                 requestFocus();
             }
         });
         land_amount.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                LAND_AMOUNT = land_amount.getValue()+1;
+                LAND_AMOUNT = land_amount.getValue() + 1;
                 requestFocus();
             }
         });
         land_size.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                LAND_SIZE = land_size.getValue()+1;
+                LAND_SIZE = land_size.getValue() + 1;
                 requestFocus();
             }
         });
         chunk_size.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                CHUNK_SIZE = chunk_size.getValue()+1;
+                CHUNK_SIZE = chunk_size.getValue() + 1;
                 requestFocus();
             }
         });
         food_distrib.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                FOOD_DISTRIBUTION = food_distrib.getValue()+1;
+                FOOD_DISTRIBUTION = food_distrib.getValue() + 1;
                 requestFocus();
             }
         });
         food_regrowth.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                FOOD_REGROWTH=food_regrowth.getValue()+1;
+                FOOD_REGROWTH = food_regrowth.getValue() + 1;
                 requestFocus();
             }
         });
         chunk_refresh.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                CHUNK_REFRESH_TIME=chunk_refresh.getValue();
+                CHUNK_REFRESH_TIME = chunk_refresh.getValue();
                 requestFocus();
             }
         });
         smoothing.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                SMOOTHING_FAKTOR=smoothing.getValue();
+                SMOOTHING_FAKTOR = smoothing.getValue();
                 requestFocus();
             }
         });
@@ -414,13 +426,8 @@ public class World extends JFrame {
         for (int i = 0; i < WORLD_WIDTH; i++) {
             for (int j = 0; j < WORLD_HEIGHT; j++) {
                 final Chunk c = map[i][j];
-                c.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (c.type == Chunk.Type.LAND)
-                            c.setFood(0);
-                    }
-                });
+                c.addMouseListener(listener);
+                c.addMouseMotionListener(listener);
             }
         }
 
@@ -475,7 +482,6 @@ public class World extends JFrame {
                 e.printStackTrace();
             }
         }
-        containerPanel.repaint();
         repaint();
     }
 
@@ -498,7 +504,7 @@ public class World extends JFrame {
                     e.printStackTrace();
                 }
                 if (LAND_AMOUNT > (Math.random() * 1000)) {
-                    islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH/LAND_SIZE : WORLD_HEIGHT / LAND_SIZE, i, j));
+                    islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH / LAND_SIZE : WORLD_HEIGHT / LAND_SIZE, i, j));
                 }
             }
         }
@@ -508,7 +514,7 @@ public class World extends JFrame {
                     if (island.island[i][j] == 1) {
                         int x = i + island.x;
                         int y = j + island.y;
-                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT && x >= 0 && y >=0) {
+                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT && x >= 0 && y >= 0) {
                             Chunk c = map[x][y];
                             c.setType(Chunk.Type.LAND);
                         }
@@ -517,7 +523,6 @@ public class World extends JFrame {
             }
         }
         repaint();
-        containerPanel.repaint();
     }
 
     /**
@@ -560,4 +565,37 @@ public class World extends JFrame {
     public static void main(String[] args) {
         new World();
     }
+
+    class DragUndDropListener extends MouseAdapter {
+
+        int x, y;
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getComponent() instanceof Chunk) {
+                Chunk c = (Chunk) e.getComponent();
+                if (c.type == Chunk.Type.LAND)
+                    c.setFood(0);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            x = e.getX();
+            y = e.getY();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (e.getComponent() instanceof Chunk) {
+                Chunk c = (Chunk) e.getComponent();
+                e.translatePoint(containerPanel.getLocation().x - x, containerPanel.getLocation().y - y);
+                containerPanel.setLocation(e.getX(), e.getY());
+            }else {
+                e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
+                e.getComponent().setLocation(e.getX(), e.getY());
+            }
+        }
+    }
+
 }
