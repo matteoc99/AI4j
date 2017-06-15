@@ -2,6 +2,8 @@ package botGUI;
 
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -15,55 +17,55 @@ public class World extends JFrame {
     /**
      * describes the width and height of a World
      */
-    public static final int WORLD_WIDTH = 100;
-    public static final int WORLD_HEIGHT = 50;
+    public static int WORLD_WIDTH = 100;
+    public static int WORLD_HEIGHT = 50;
     /**
      * from 1-1000 describes the amount of land in the World.
      * 1000 is the Maximum
      */
-    public static final int LAND_AMOUNT = 15;
+    public static int LAND_AMOUNT = 20;
     /**
      * The bigger the value the smaller the islands are
      */
-    public static final int LAND_SIZE = WORLD_HEIGHT / 8;
+    public static int LAND_SIZE = 6;
     /**
      * Describes the size of the World
      */
     public static int CHUNK_SIZE = 20;
 
-    public static final int MAX_CHUNK_SIZE = 256;
+    public static final int MAX_CHUNK_SIZE = 1024;
     /**
      * Describes the distribution of the food
      */
-    public static final int FOOD_DISTRIBUTION = 15;
+    public static int FOOD_DISTRIBUTION = 15;
 
 
     /**
      * Describes the speed of the Food regrowth
+     * smaller value = faster
      */
-    private static final int FOOD_REGROWTH= 10;
+    private static int FOOD_REGROWTH = 10;
 
     /**
      * describes how often Chunks are repainted 0-10
      * 0 very often
      * 1 slow
      */
-    private static final int CHUNK_REFRESH_TIME =0 ;
+    private static int CHUNK_REFRESH_TIME = 0;
 
     /**
      * Describes how smooth the Islands are
      * 0: smoothing off
      * 1: soft smoothing
      * 1<: strong smoothing
+     * better <10
      */
-    public static final int SMOOTHING_FAKTOR = 2;
+    public static int SMOOTHING_FAKTOR = 2;
 
     /**
      * Describes the speed of the moving map
      */
-    private static final int MOVE_SPEED = 20;
-
-
+    private static final int MOVE_SPEED = 40;
 
 
     //FPS control
@@ -89,19 +91,24 @@ public class World extends JFrame {
      * Contains the World
      */
     JPanel containerPanel = new JPanel();
+    /**
+     * Contains the Controls and Settings for the World
+     */
+    JPanel controlPanel = new JPanel();
 
     /**
      * used to resize all at once
      */
-    public int resizeCounter=0;
+    public int resizeCounter = 0;
 
+    public int controlPanelWidth = 500;
 
 
     public World() {
         setTitle("World");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        CHUNK_SIZE= (int) (screenSize.getWidth()/WORLD_WIDTH);
+        CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
         setBounds(0, 0, screenSize.width, screenSize.height);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
@@ -109,11 +116,20 @@ public class World extends JFrame {
         container = getContentPane();
         container.setLayout(null);
         container.setBackground(Color.gray);
+
         containerPanel.setBounds(0, 0, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
         containerPanel.setLayout(null);
-        container.add(containerPanel);
-        setVisible(true);
 
+        controlPanel.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, getHeight());
+        controlPanel.setBackground(Color.white);
+        controlPanel.setLayout(null);
+
+        container.add(controlPanel);
+        container.add(containerPanel);
+
+        addControls();
+
+        setVisible(true);
 
         createMap();
 
@@ -122,8 +138,7 @@ public class World extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_R:
-                        dispose();
-                        new World();
+                        createMap();
                         break;
                     case KeyEvent.VK_W:
                     case KeyEvent.VK_UP:
@@ -141,16 +156,18 @@ public class World extends JFrame {
                     case KeyEvent.VK_RIGHT:
                         containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
                         break;
-
+                    case KeyEvent.VK_M:
+                    case KeyEvent.VK_H:
                     case KeyEvent.VK_CONTROL:
                         Point p = MouseInfo.getPointerInfo().getLocation();
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                        int xOff= (int) (p.x-screenSize.getWidth()/2);
-                        int yOff= (int) (p.y-screenSize.getHeight()/2);
-                        containerPanel.setLocation(containerPanel.getX()+xOff/8,containerPanel.getY()+yOff/8);
+                        screenSize.width -= controlPanelWidth;
+                        int xOff = (int) (p.x - screenSize.getWidth() / 2);
+                        int yOff = (int) (p.y - screenSize.getHeight() / 2);
+                        containerPanel.setLocation(containerPanel.getX() + xOff / 8, containerPanel.getY() + yOff / 8);
                         break;
                     case KeyEvent.VK_P:
-                        containerPanel.setLocation(0,0);
+                        containerPanel.setLocation(0, 0);
                         break;
                 }
             }
@@ -164,26 +181,186 @@ public class World extends JFrame {
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if (e.getWheelRotation() > 0) {
                     if (CHUNK_SIZE > 2) {
-                        if(resizeCounter<=0)
-                            resizeCounter=1;
-                        CHUNK_SIZE -= e.getWheelRotation()*resizeCounter;
-                        resizeCounter=5;
-                        if(CHUNK_SIZE<=0)
-                            CHUNK_SIZE=1;
+                        if (resizeCounter <= 0)
+                            resizeCounter = 1;
+                        CHUNK_SIZE -= e.getWheelRotation() * resizeCounter;
+                        resizeCounter = 5;
+                        if (CHUNK_SIZE <= 0)
+                            CHUNK_SIZE = 1;
                     }
                 } else {
                     if (CHUNK_SIZE < MAX_CHUNK_SIZE) {
-                        if(resizeCounter<=0)
-                            resizeCounter=1;
-                        CHUNK_SIZE -= e.getWheelRotation()*resizeCounter;
+                        if (resizeCounter <= 0)
+                            resizeCounter = 1;
+                        CHUNK_SIZE -= e.getWheelRotation() * resizeCounter;
 
-                        resizeCounter=5;
+                        resizeCounter = 5;
                     }
                 }
             }
 
         });
+        requestFocus();
+    }
 
+    /**
+     * add all the Controll components to the control JPanel
+     */
+    private void addControls() {
+        JSlider w_width = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_WIDTH);
+        JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_HEIGHT);
+        JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 400, LAND_AMOUNT);
+        JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 180, LAND_SIZE);
+        JSlider chunk_size = new JSlider(JSlider.HORIZONTAL, 0, 500, CHUNK_SIZE);
+        JSlider food_distrib = new JSlider(JSlider.HORIZONTAL, 0, 80, FOOD_DISTRIBUTION);
+        JSlider food_regrowth = new JSlider(JSlider.HORIZONTAL, 0, 100, FOOD_REGROWTH);//bis hier min +1 weil
+        JSlider chunk_refresh = new JSlider(JSlider.HORIZONTAL, 0, 10, CHUNK_REFRESH_TIME);
+        JSlider smoothing = new JSlider(JSlider.HORIZONTAL, 0, 10, SMOOTHING_FAKTOR);
+
+
+        int xOff = 150;
+
+        JLabel[] labels = new JLabel[9];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = new JLabel();
+            labels[i].setBounds(20, (getHeight() / 10) * i, xOff - 10, getHeight() / 10);
+            labels[i].setFont(new Font("Times New Roman", 0, 20));
+            controlPanel.add(labels[i]);
+        }
+        labels[0].setText("World Width");
+        labels[1].setText("World Height");
+        labels[2].setText("Land Amount");
+        labels[3].setText("Land Size");
+        labels[4].setText("Chunk Size");
+        labels[5].setText("Food Distrib.");
+        labels[6].setText("Food Regrowth");
+        labels[7].setText("Chunk Refresh");
+        labels[8].setText("Smoothing");
+
+        w_width.setBounds(xOff, 10, controlPanelWidth - xOff, getHeight() / 10);
+        w_height.setBounds(xOff, 10 + (getHeight() / 10), controlPanelWidth - xOff, (getHeight() / 10));
+        land_amount.setBounds(xOff, 10 + (getHeight() / 10) * 2, controlPanelWidth - xOff, getHeight() / 10);
+        land_size.setBounds(xOff, 10 + (getHeight() / 10) * 3, controlPanelWidth - xOff, getHeight() / 10);
+        chunk_size.setBounds(xOff, 10 + (getHeight() / 10) * 4, controlPanelWidth - xOff, getHeight() / 10);
+        food_distrib.setBounds(xOff, 10 + (getHeight() / 10) * 5, controlPanelWidth - xOff, getHeight() / 10);
+        food_regrowth.setBounds(xOff, 10 + (getHeight() / 10) * 6, controlPanelWidth - xOff, getHeight() / 10);
+        chunk_refresh.setBounds(xOff, 10 + (getHeight() / 10) * 7, controlPanelWidth - xOff, getHeight() / 10);
+        smoothing.setBounds(xOff, 10 + (getHeight() / 10) * 8, controlPanelWidth - xOff, getHeight() / 10);
+
+        w_width.setPaintLabels(true);
+        w_height.setPaintLabels(true);
+        land_amount.setPaintLabels(true);
+        land_size.setPaintLabels(true);
+        chunk_size.setPaintLabels(true);
+        food_distrib.setPaintLabels(true);
+        food_regrowth.setPaintLabels(true);
+        chunk_refresh.setPaintLabels(true);
+        smoothing.setPaintLabels(true);
+
+        w_width.setPaintTicks(true);
+        w_height.setPaintTicks(true);
+        land_amount.setPaintTicks(true);
+        land_size.setPaintTicks(true);
+        chunk_size.setPaintTicks(true);
+        food_distrib.setPaintTicks(true);
+        food_regrowth.setPaintTicks(true);
+        chunk_refresh.setPaintTicks(true);
+        smoothing.setPaintTicks(true);
+
+        w_width.setMajorTickSpacing(50);
+        w_height.setMajorTickSpacing(50);
+        land_amount.setMajorTickSpacing(50);
+        land_size.setMajorTickSpacing(60);
+        chunk_size.setMajorTickSpacing(100);
+        food_distrib.setMajorTickSpacing(20);
+        food_regrowth.setMajorTickSpacing(10);
+        chunk_refresh.setMajorTickSpacing(5);
+        smoothing.setMajorTickSpacing(5);
+
+        w_width.setMinorTickSpacing(10);
+        w_height.setMinorTickSpacing(10);
+        land_amount.setMinorTickSpacing(10);
+        land_size.setMinorTickSpacing(15);
+        chunk_size.setMinorTickSpacing(20);
+        food_distrib.setMinorTickSpacing(5);
+        food_regrowth.setMinorTickSpacing(2);
+        chunk_refresh.setMinorTickSpacing(1);
+        smoothing.setMinorTickSpacing(1);
+
+
+        w_width.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                WORLD_WIDTH = w_width.getValue()+1;
+                requestFocus();
+            }
+        });
+        w_height.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                WORLD_HEIGHT = w_height.getValue()+1;
+                requestFocus();
+            }
+        });
+        land_amount.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                LAND_AMOUNT = land_amount.getValue()+1;
+                requestFocus();
+            }
+        });
+        land_size.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                LAND_SIZE = land_size.getValue()+1;
+                requestFocus();
+            }
+        });
+        chunk_size.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                CHUNK_SIZE = chunk_size.getValue()+1;
+                requestFocus();
+            }
+        });
+        food_distrib.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                FOOD_DISTRIBUTION = food_distrib.getValue()+1;
+                requestFocus();
+            }
+        });
+        food_regrowth.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                FOOD_REGROWTH=food_regrowth.getValue()+1;
+                requestFocus();
+            }
+        });
+        chunk_refresh.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                CHUNK_REFRESH_TIME=chunk_refresh.getValue();
+                requestFocus();
+            }
+        });
+        smoothing.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                SMOOTHING_FAKTOR=smoothing.getValue();
+                requestFocus();
+            }
+        });
+
+        controlPanel.add(w_width);
+        controlPanel.add(w_height);
+        controlPanel.add(land_amount);
+        controlPanel.add(land_size);
+        controlPanel.add(chunk_size);
+        controlPanel.add(food_distrib);
+        controlPanel.add(food_regrowth);
+        controlPanel.add(chunk_refresh);
+        controlPanel.add(smoothing);
     }
 
     private void dynamicResizer() {
@@ -191,7 +368,7 @@ public class World extends JFrame {
 
             while (true) {
                 try {
-                    TimeUnit.MILLISECONDS.sleep(20);
+                    TimeUnit.MILLISECONDS.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -208,13 +385,13 @@ public class World extends JFrame {
      * resizes the World to a given chunk size
      */
     private void resizeMap() {
-        if(mapLoaded) {
-            int prevWidth=containerPanel.getWidth();
-            int prevHeight=containerPanel.getHeight();
+        if (mapLoaded) {
+            int prevWidth = containerPanel.getWidth();
+            int prevHeight = containerPanel.getHeight();
             containerPanel.setSize(WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
-            prevWidth-=containerPanel.getWidth();
-            prevHeight-=containerPanel.getHeight();
-            containerPanel.setLocation(containerPanel.getX()+prevWidth/2,containerPanel.getY()+prevHeight/2);
+            prevWidth -= containerPanel.getWidth();
+            prevHeight -= containerPanel.getHeight();
+            containerPanel.setLocation(containerPanel.getX() + prevWidth / 2, containerPanel.getY() + prevHeight / 2);
             for (int i = 0; i < WORLD_WIDTH; i++) {
                 for (int j = 0; j < WORLD_HEIGHT; j++) {
                     Chunk c = map[i][j];
@@ -228,7 +405,7 @@ public class World extends JFrame {
      * Method that creates a new Map
      */
     private void createMap() {
-        mapLoaded=false;
+        mapLoaded = false;
 
         map = new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
         generateMap();
@@ -272,18 +449,18 @@ public class World extends JFrame {
     @Override
     public void paint(Graphics g) {
         timeUntilSleep = System.currentTimeMillis();
-         if (fpsCounter > FPS*CHUNK_REFRESH_TIME+FOOD_REGROWTH)
-             fpsCounter = 0;
-         else
+        if (fpsCounter > FPS * CHUNK_REFRESH_TIME + FOOD_REGROWTH)
+            fpsCounter = 0;
+        else
             fpsCounter++;
         if (mapLoaded) {
             Component[] components = containerPanel.getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
                     if (c instanceof Chunk)
-                        if (fpsCounter == FPS*CHUNK_REFRESH_TIME)
-                        ((Chunk) c).update();
-                    else if (fpsCounter%FOOD_REGROWTH==0)
+                        if (fpsCounter == FPS * CHUNK_REFRESH_TIME)
+                            ((Chunk) c).update();
+                        else if (fpsCounter % FOOD_REGROWTH == 0)
                             ((Chunk) c).updateFood();
                 }
             }
@@ -320,7 +497,7 @@ public class World extends JFrame {
                     e.printStackTrace();
                 }
                 if (LAND_AMOUNT > (Math.random() * 1000)) {
-                    islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH : WORLD_HEIGHT / LAND_SIZE, i, j));
+                    islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH/LAND_SIZE : WORLD_HEIGHT / LAND_SIZE, i, j));
                 }
             }
         }
@@ -330,7 +507,7 @@ public class World extends JFrame {
                     if (island.island[i][j] == 1) {
                         int x = i + island.x;
                         int y = j + island.y;
-                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT && x > 0 && y > 0) {
+                        if (x < WORLD_WIDTH && y < WORLD_HEIGHT && x >= 0 && y >=0) {
                             Chunk c = map[x][y];
                             c.setType(Chunk.Type.LAND);
                         }
@@ -382,5 +559,4 @@ public class World extends JFrame {
     public static void main(String[] args) {
         new World();
     }
-
 }

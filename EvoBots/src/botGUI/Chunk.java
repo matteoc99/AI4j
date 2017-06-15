@@ -19,8 +19,8 @@ public class Chunk extends ImmobileObject {
     }
 
 
-    public Color land= new Color(97, 55, 25) ;
-    public Color water= new Color(55, 140, 235);
+    public Color land = new Color(97, 55, 25);
+    public Color water = new Color(55, 140, 235);
 
 
     /**
@@ -41,13 +41,13 @@ public class Chunk extends ImmobileObject {
     /**
      * Tells weather the chunck should be updated
      */
-    public boolean toUpdate=true;
+    public boolean toUpdate = true;
 
     /**
      * Construktor for the {@link ImmobileObject}
      */
     public Chunk(int i, int j) throws ClassNotFoundException {
-        this(Type.WATER,i,j);
+        this(Type.WATER, i, j);
     }
 
     /**
@@ -57,23 +57,25 @@ public class Chunk extends ImmobileObject {
         setType(type);
         this.i = i;
         this.j = j;
-        setSize(World.CHUNK_SIZE,World.CHUNK_SIZE);
+        setSize(World.CHUNK_SIZE, World.CHUNK_SIZE);
     }
 
     /**
      * sets the Type of a Chunk and automatically changes the Image
+     *
      * @param type
      */
     public void setType(Type type) {
-            if (type != null)
-                this.type = type;
-            if (type == Type.LAND)
-                food=5;
+        if (type != null)
+            this.type = type;
+        if (type == Type.LAND)
+            food = 5;
         repaint();
     }
 
     /**
      * returns the Type of this Chunk
+     *
      * @return the {@link #type} of this Chunk
      */
     public Type getType() {
@@ -82,6 +84,7 @@ public class Chunk extends ImmobileObject {
 
     /**
      * Setter for the food amount in this {@link Chunk}
+     *
      * @param food {@link #food} to set
      */
     public void setFood(int food) {
@@ -105,8 +108,8 @@ public class Chunk extends ImmobileObject {
     /**
      * updates only the food without the Grafics
      */
-    public void updateFood(){
-        if (getNewFood() -  World.FOOD_DISTRIBUTION > food||toUpdate) {
+    public void updateFood() {
+        if (getNewFood() - World.FOOD_DISTRIBUTION > food || toUpdate) {
             int goal = getNewFood() - World.FOOD_DISTRIBUTION;
             if (type == Type.LAND) {
                 food += Math.log10(goal - food) > 1 ? Math.log10(goal - food) : 1;
@@ -117,12 +120,12 @@ public class Chunk extends ImmobileObject {
     @Override
     public void paint(Graphics g) {
         super.paintComponent(g);
-        if(type==Type.LAND){
+        if (type == Type.LAND) {
             g.setColor(land);
-        }else{
+        } else {
             g.setColor(water);
         }
-        g.fillRect(0,0,getWidth(),getHeight());
+        g.fillRect(0, 0, getWidth(), getHeight());
 
     }
 
@@ -130,8 +133,8 @@ public class Chunk extends ImmobileObject {
      * updates the image in relation to the {@link #food}
      */
     public void update() {
-        if (getNewFood() -  World.FOOD_DISTRIBUTION > food||toUpdate) {
-            toUpdate=false;
+        if (getNewFood() - World.FOOD_DISTRIBUTION > food || toUpdate) {
+            toUpdate = false;
             updateFood();
             updateColor();
         }
@@ -141,8 +144,8 @@ public class Chunk extends ImmobileObject {
      * updates the color in reference to th fertility
      */
     private void updateColor() {
-        if(type==Type.LAND){
-            land= new Color(97-food/2+food/4, 55+food*2-food/2, 26-food/4+food/8) ;
+        if (type == Type.LAND) {
+            land = new Color(97 - food / 2 + food / 4, 55 + food * 2 - food / 2, 26 - food / 4 + food / 8);
         }
     }
 
@@ -152,12 +155,12 @@ public class Chunk extends ImmobileObject {
      * @return a new Ferility
      */
     public int getNewFood() {
-        int ret=0;
-        for (Chunk c:getNeighbors()){
-            if(ret<c.food){
-                ret=c.food;
+        int ret = 0;
+        for (Chunk c : getNeighbors()) {
+            if (ret < c.food) {
+                ret = c.food;
             }
-            if(c.type==Type.WATER) {
+            if (c.type == Type.WATER) {
                 ret = 100;
                 break;
             }
@@ -167,23 +170,27 @@ public class Chunk extends ImmobileObject {
 
     /**
      * Returns an {@link ArrayList} with all the Neighbors
-     *     +
-     *    +#+
-     *     +
+     * +
+     * +#+
+     * +
      * #...the Chunk
      * + the Neighbors
+     *
      * @return
      */
     public ArrayList<Chunk> getNeighbors() {
         ArrayList<Chunk> ret = new ArrayList<>();
-        if (i < World.WORLD_WIDTH - 1)
-            ret.add(World.map[i + 1][j]);
-        if (j < World.WORLD_HEIGHT - 1)
-            ret.add(World.map[i][j + 1]);
-        if (i > 0)
-            ret.add(World.map[i - 1][j]);
-        if (j > 0)
-            ret.add(World.map[i][j - 1]);
+        try {
+            if (i < World.WORLD_WIDTH - 1)
+                ret.add(World.map[i + 1][j]);
+            if (j < World.WORLD_HEIGHT - 1)
+                ret.add(World.map[i][j + 1]);
+            if (i > 0)
+                ret.add(World.map[i - 1][j]);
+            if (j > 0)
+                ret.add(World.map[i][j - 1]);
+        } catch (Exception e) {
+        }
         return ret;
     }
 
@@ -191,8 +198,8 @@ public class Chunk extends ImmobileObject {
      * resizes, repaintes and repositions a Chunk
      */
     public void resizeAndReposition() {
-        this.setSize(World.CHUNK_SIZE,World.CHUNK_SIZE);
-        this.setLocation(i*World.CHUNK_SIZE,j*World.CHUNK_SIZE);
+        this.setSize(World.CHUNK_SIZE, World.CHUNK_SIZE);
+        this.setLocation(i * World.CHUNK_SIZE, j * World.CHUNK_SIZE);
     }
 
 }
