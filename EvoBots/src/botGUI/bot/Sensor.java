@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public class Sensor extends JComponent {
 
-    public int width=15;
+    public int width=5;
     public int height=width;
 
     public Sensor() {

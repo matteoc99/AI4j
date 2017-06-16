@@ -112,14 +112,14 @@ public class World extends JFrame {
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
      */
-    public static int MIN_POP_SIZE=1;
+    public static int MIN_POP_SIZE = 1;
 
     /**
      * listener used for Drag and drop
      */
     DragUndDropListener listener = new DragUndDropListener();
 
-    ArrayList<Bot>population= new ArrayList<>();
+    ArrayList<Bot> population = new ArrayList<>();
 
     public World() {
         setTitle("World");
@@ -161,23 +161,19 @@ public class World extends JFrame {
                         createMap();
                         resizeMap();
                         break;
-                    case KeyEvent.VK_W:
+
                     case KeyEvent.VK_UP:
                         containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() - MOVE_SPEED);
                         break;
-                    case KeyEvent.VK_S:
                     case KeyEvent.VK_DOWN:
                         containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() + MOVE_SPEED);
                         break;
-                    case KeyEvent.VK_A:
                     case KeyEvent.VK_LEFT:
                         containerPanel.setLocation(containerPanel.getX() - MOVE_SPEED, containerPanel.getY());
                         break;
-                    case KeyEvent.VK_D:
                     case KeyEvent.VK_RIGHT:
                         containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
                         break;
-                    case KeyEvent.VK_M:
                     case KeyEvent.VK_H:
                     case KeyEvent.VK_CONTROL:
                         Point p = MouseInfo.getPointerInfo().getLocation();
@@ -189,6 +185,55 @@ public class World extends JFrame {
                         break;
                     case KeyEvent.VK_P:
                         containerPanel.setLocation(0, 0);
+                        break;
+
+                    //player steuerung for test
+                    case KeyEvent.VK_W:
+                        population.get(0).yDir = -2;
+
+                        break;
+                    case KeyEvent.VK_S:
+                        population.get(0).yDir = +2;
+
+                        break;
+                    case KeyEvent.VK_A:
+                        population.get(0).xDir = -2;
+
+                        break;
+                    case KeyEvent.VK_D:
+                        population.get(0).xDir = +2;
+                        break;
+                    case KeyEvent.VK_E:
+                        population.get(0).eat();
+
+                        break;
+                    case KeyEvent.VK_X:
+                        population.get(0).rotateAndResize(-10);
+                        break;
+                    case KeyEvent.VK_C:
+                        population.get(0).rotateAndResize(10);
+                        break;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_W:
+                        population.get(0).yDir = 0;
+
+                        break;
+                    case KeyEvent.VK_S:
+                        population.get(0).yDir = 0;
+
+                        break;
+                    case KeyEvent.VK_A:
+                        population.get(0).xDir = 0;
+
+                        break;
+                    case KeyEvent.VK_D:
+                        population.get(0).xDir = 0;
+
                         break;
                 }
             }
@@ -407,6 +452,9 @@ public class World extends JFrame {
      */
     private void resizeMap() {
         if (mapLoaded) {
+            for(Bot c:population){
+                c.kill();
+            }
             population.clear();
             int prevWidth = containerPanel.getWidth();
             int prevHeight = containerPanel.getHeight();
@@ -467,11 +515,11 @@ public class World extends JFrame {
     public void paint(Graphics g) {
         //add Bots if necessary
 
-        if(population.size()<MIN_POP_SIZE){
-            Bot b=new Bot();
-            b.setLocation(100,100);
+        if (population.size() < MIN_POP_SIZE) {
+            Bot b = new Bot();
+            b.setLocation(100, 100);
             population.add(b);
-            containerPanel.add(b,0);
+            containerPanel.add(b, 0);
         }
         //FPS control
         timeUntilSleep = System.currentTimeMillis();
