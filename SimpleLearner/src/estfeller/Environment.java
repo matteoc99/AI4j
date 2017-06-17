@@ -4,7 +4,7 @@ package estfeller;
  * @author Maximilian Estfelller
  * @since 09.06.2017
  */
-public class Environment {
+class Environment {
 
     final int environmentLength = 8;
 

@@ -1,7 +1,7 @@
 package agent.cosi;
 
 import agent.Agent;
-import neural_network_lib.Network;
+import network.Network;
 
 /**
  * @author Matteo Cosi
