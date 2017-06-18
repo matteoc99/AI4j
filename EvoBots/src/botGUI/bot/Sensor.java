@@ -10,8 +10,10 @@ import java.awt.*;
  */
 public class Sensor extends JComponent {
 
-    public int width=5;
+    public int width=10;
     public int height=width;
+
+    Color sensorColor = Color.blue;
 
     public Sensor() {
         setSize(width,height);
@@ -24,5 +26,10 @@ public class Sensor extends JComponent {
         g.setColor(Color.BLUE);
         g.fillOval(0,0,width,height);
         super.paint(g);
+    }
+
+    public void setSensorColor(Color sensorColor) {
+        this.sensorColor = sensorColor;
+        repaint();
     }
 }

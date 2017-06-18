@@ -107,7 +107,7 @@ public class World extends JFrame {
     /**
      * describes the size of the control Panel
      */
-    public int controlPanelWidth = 500;
+    public int controlPanelWidth = 400;
 
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
@@ -119,7 +119,7 @@ public class World extends JFrame {
      */
     DragUndDropListener listener = new DragUndDropListener();
 
-    ArrayList<Bot> population = new ArrayList<>();
+   public static ArrayList<Bot> population = new ArrayList<>();
 
     public World() {
         setTitle("World");
@@ -516,7 +516,7 @@ public class World extends JFrame {
         //add Bots if necessary
 
         if (population.size() < MIN_POP_SIZE) {
-            Bot b = new Bot();
+            Bot b = new Bot(null);
             b.setLocation(100, 100);
             population.add(b);
             containerPanel.add(b, 0);
