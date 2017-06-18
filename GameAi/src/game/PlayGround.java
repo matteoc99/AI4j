@@ -24,7 +24,7 @@ public class PlayGround extends JFrame {
     }
 
     //FPS control
-    private static final int FPS = 1200;
+    private static final int FPS = 200;
     private long timeUntilSleep;
 
     public Player leftPlayer[], rightPlayer[];

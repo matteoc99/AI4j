@@ -1,8 +1,7 @@
 package agent.est;
 
 import game.PlayGround;
-import neural_network_lib.Network;
-import neural_network_lib.Utils;
+import network.Network;
 
 import java.util.ArrayList;
 
@@ -13,8 +12,8 @@ import java.util.ArrayList;
  */
 public class NetworkTrainer {
 
-    final int amountOfChildren = 100;
-    final int amountOfSurvivors = 5;
+    private final int amountOfChildren = 1;
+    private final int amountOfSurvivors = 1;
 
     private ArrayList<EstAgent> agents = new ArrayList<>();
 
@@ -25,7 +24,7 @@ public class NetworkTrainer {
     private void init() {
         // create startNetworks
         for (int i = 0; i < amountOfSurvivors; i++) {
-            agents.add(new EstAgent(Network.createDFF(5,2,1,5)));
+            agents.add(new EstAgent(Network.createDFF(2,1,0,0)));
         }
 
         for (;;) {
@@ -59,13 +58,15 @@ public class NetworkTrainer {
 
     private void cloneAndMutateAgents() {
         ArrayList<EstAgent> newAgents = new ArrayList<>();
-        for (EstAgent agent : agents) {
-            newAgents.add(new EstAgent(new Network(agent.getNet().getDescriptor())));
-        }
+        //for (EstAgent agent : agents) {
+        //    newAgents.add(new EstAgent(new Network(agent.getNet().getDescriptor())));
+        //}
         for (int survivorIndex = 0; survivorIndex < amountOfSurvivors; survivorIndex++) {
             double[] descriptor = agents.get(survivorIndex).getNet().getDescriptor();
             for (int childNumber = 0; childNumber<amountOfChildren/amountOfSurvivors; childNumber++) {
-                newAgents.add(new EstAgent(new Network(Utils.mutate(descriptor))));
+                double[] descClone = descriptor.clone();
+                Utils.mutateDescriptor(descClone);
+                newAgents.add(new EstAgent(new Network(descClone)));
             }
         }
         agents = newAgents;
