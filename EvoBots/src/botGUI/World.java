@@ -1,8 +1,11 @@
 package botGUI;
 
 
+import agent.cosi.CosiAgent;
 import botGUI.bot.Bot;
 import com.sun.prism.PresentableState;
+import network.Network;
+import network_gui.NetworkGUI;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -112,14 +115,21 @@ public class World extends JFrame {
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
      */
-    public static int MIN_POP_SIZE = 1;
+    public static int MIN_POP_SIZE = 50;
 
     /**
      * listener used for Drag and drop
      */
     DragUndDropListener listener = new DragUndDropListener();
 
-   public static ArrayList<Bot> population = new ArrayList<>();
+    public static ArrayList<Bot> population = new ArrayList<>();
+
+    /**
+     * GUI&Training
+     */
+    public static double bestFittness = -1;
+    public static double[] bestNet = null;
+
 
     public World() {
         setTitle("World");
@@ -188,7 +198,7 @@ public class World extends JFrame {
                         break;
 
                     //player steuerung for test
-                    case KeyEvent.VK_W:
+                  /*  case KeyEvent.VK_W:
                         population.get(0).yDir = -2;
 
                         break;
@@ -211,8 +221,10 @@ public class World extends JFrame {
                         population.get(0).rotateAndResize(-10);
                         break;
                     case KeyEvent.VK_C:
-                        population.get(0).rotateAndResize(10);
+                        population.get(0).sensorRotation=180;
+                        population.get(0).rotateAndResize();
                         break;
+*/
                 }
             }
 
@@ -443,6 +455,8 @@ public class World extends JFrame {
                     resizeCounter = 0;
                     resizeMap();
                 }
+                if (resizeCounter == Integer.MIN_VALUE)
+                    resizeCounter = -1;
             }
         }).start();
     }
@@ -452,9 +466,10 @@ public class World extends JFrame {
      */
     private void resizeMap() {
         if (mapLoaded) {
-            for(Bot c:population){
-                c.kill();
-            }
+            if (population != null)
+                for (Bot c : population) {
+                    c.kill = true;
+                }
             population.clear();
             int prevWidth = containerPanel.getWidth();
             int prevHeight = containerPanel.getHeight();
@@ -514,9 +529,20 @@ public class World extends JFrame {
     @Override
     public void paint(Graphics g) {
         //add Bots if necessary
-
         if (population.size() < MIN_POP_SIZE) {
-            Bot b = new Bot(null);
+            Bot b = null;
+            int neu = (int) (Math.random() * 5);
+            if (neu == (int) (Math.random() * 5) || neu == (int) (Math.random() * 5) || bestNet == null) {
+                int hiddAmm = (int) (Math.random() * 2) + 1;
+                int[] hidd = new int[hiddAmm];
+                for (int k = 0; k < hiddAmm; k++) {
+                    hidd[k] = (int) (Math.random() * 6 + 1);
+                }
+                b = new Bot(new CosiAgent(new Network(4, 4, hiddAmm, hidd)));
+            } else {
+                b = new Bot(new CosiAgent(new Network(bestNet)));
+                b.agent.getNet().mutateSoft(neu);
+            }
             b.setLocation(100, 100);
             population.add(b);
             containerPanel.add(b, 0);

@@ -19,36 +19,34 @@ public class Bot extends JPanel {
      */
     public int age = 1;
     public int ageingCounter = 0;
-
     /**
      * describes how fast the agent Ages
      * greater value = slower aging
      */
     private static final int AGEING_SPEED = 5000;
 
-
     /**
      * describes the length of the sensor
      */
     private int sensor_length = 60;
+
 
     /**
      * the Body of the Bot
      */
     Body body;
 
-
     /**
      * The sensor of the Bot
      */
     Sensor sensor;
+
 
     /**
      * Describes the rotation of the sensor
      * 0-360 degrees
      */
     public int sensorRotation = 0;
-
 
     /**
      * direction of the Bot
@@ -60,11 +58,17 @@ public class Bot extends JPanel {
      * Variable that stores th current hp
      */
     public int hp = 500;
+    private static final int MAX_HP = 500;
 
     /**
      * {@link Agent} that controls the player behaviour
      */
-    Agent agent = null;
+    public Agent agent = null;
+
+    /**
+     * tells if the bot should be killed
+     */
+    public boolean kill = false;
 
     public Bot(Agent agent) {
         this.agent = agent;
@@ -98,6 +102,7 @@ public class Bot extends JPanel {
         g.setColor(Color.BLACK);
         g.drawLine(body.getX() + body.getWidth() / 2, body.getY() + body.getHeight() / 2,
                 sensor.getX() + sensor.getWidth() / 2, sensor.getY() + sensor.getHeight() / 2);
+        g.drawRect(0, 0, getWidth(), getHeight());
         super.paint(g);
         repaint();
     }
@@ -106,7 +111,6 @@ public class Bot extends JPanel {
      * rotate with a given angle and resize and reposition the Sensor
      */
     public void rotateAndResize(int angle) {
-        int radius = sensor_length - sensor.getWidth() / 2;
         sensorRotation += angle;
         sensorRotation = sensorRotation % 360;
         rotateAndResize();
@@ -116,6 +120,8 @@ public class Bot extends JPanel {
      * rotate and resize and reposition the Sensor
      */
     public void rotateAndResize() {
+        body.setLocation(getWidth() / 2 - body.getWidth() / 2, getHeight() / 2 - body.getHeight() / 2);
+
         int radius = sensor_length - sensor.getWidth() / 2;
 
         int x = (int) (radius * Math.cos(Math.toRadians(sensorRotation)));
@@ -140,16 +146,25 @@ public class Bot extends JPanel {
         if (this.getParent() != null) {
             this.getParent().remove(this);
         }
-        if (World.population.contains(this))
+        if (World.population.contains(this)) {
             World.population.remove(this);
+        }
+        //update fittnes
+        if (agent.getFitness() > World.bestFittness) {
+            World.bestFittness=agent.getFitness();
+            World.bestNet=agent.getNet().getDescriptor();
+        }
     }
 
     /**
      * simple move method
      */
     public void move() {
+        if (kill)
+            kill();
+
         //so that the bot isn too fast at dieing
-        if (ageingCounter % 4 == 0)
+        if (ageingCounter % 1 == 0)
             hp--;
         if (hp < 0) {
             kill();
@@ -167,18 +182,26 @@ public class Bot extends JPanel {
          * Inputs:
          * [0]->isLandUnderBody [0 oder 1]
          * [1]->isandUnderSensor [0 oder 1]
+         * [2]->hp [0-1] 1 wenn wenig hp
+         * [3]->richtung sensor [-1 - 1]
          * Outputs:
          * [0]->xDir
          * [1]->yDir
          * [2]->rotation of sensor
          * [3]->eat
          */
-        System.out.println(getIsLandUnderBody() + "     " + getisLandUnderSensor());
-
         if (agent != null) {
-            agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor()});
+            agent.increaseFitness();
+            double out[] = agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor(),getHp(),getSensorDir()});
+            xDir = (int) ((out[0] - 0.5) * 10);
+            yDir = (int) ((out[1] - 0.5) * 10);
+            rotateAndResize((int) ((out[2] - 0.5) * 30));
+            if (out[3] > 0.7)
+                eat();
+            System.out.println(xDir+"   "+yDir+" "+out[2]+"   "+out[3]);
         }
-        setLocation(getX() + xDir, getY() + yDir);
+        if(getX()>0&&getY()>0&&getX()<World.CHUNK_SIZE*World.WORLD_WIDTH&&getY()<World.CHUNK_SIZE*World.WORLD_HEIGHT)
+            setLocation(getX() + xDir, getY() + yDir);
     }
 
 
@@ -192,8 +215,8 @@ public class Bot extends JPanel {
                 hp += c.getFood() / age;
                 c.setFood(0);
                 c.toUpdate = true;
-                if (hp > 500)
-                    hp = 500;
+                if (hp > MAX_HP)
+                    hp = MAX_HP;
             }
         } catch (Exception e) {
 
@@ -262,5 +285,14 @@ public class Bot extends JPanel {
         } catch (Exception e) {
             return 0.5;
         }
+    }
+
+    public double getSensorDir() {
+        double temp=sensorRotation-90%360;
+        return (temp/360)*2-1;
+    }
+
+    public int getHp() {
+        return (MAX_HP-hp)/MAX_HP;
     }
 }
