@@ -29,7 +29,7 @@ public class World extends JFrame {
      * from 1-1000 describes the amount of land in the World.
      * 1000 is the Maximum
      */
-    public static int LAND_AMOUNT = 10;
+    public static int LAND_AMOUNT = 15;
     /**
      * The bigger the value the smaller the islands are
      */
@@ -50,7 +50,7 @@ public class World extends JFrame {
      * Describes the speed of the Food regrowth
      * smaller value = faster
      */
-    private static int FOOD_REGROWTH = 10;
+    private static int FOOD_REGROWTH = 30;
 
     /**
      * describes how often Chunks are repainted 0-10
@@ -75,7 +75,7 @@ public class World extends JFrame {
 
 
     //FPS control
-    private static int FPS = 300;
+    private static int FPS = 60;
     private long timeUntilSleep;
     private int fpsCounter;
     /**
@@ -115,7 +115,7 @@ public class World extends JFrame {
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
      */
-    public static int MIN_POP_SIZE = 50;
+    public static int MIN_POP_SIZE = 100;
 
     /**
      * listener used for Drag and drop
@@ -127,7 +127,7 @@ public class World extends JFrame {
     /**
      * GUI&Training
      */
-    public static double bestFittness = -1;
+    public static double bestFittness = 2500;
     public static double[] bestNet = null;
 
 
@@ -289,10 +289,10 @@ public class World extends JFrame {
         JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 300, WORLD_HEIGHT);
         JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 300, LAND_AMOUNT);
         JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 50, LAND_SIZE);
-        JSlider chunk_size = new JSlider(JSlider.HORIZONTAL, 0, 200, CHUNK_SIZE);
+        JSlider fps = new JSlider(JSlider.HORIZONTAL, 0, 300, FPS);
         JSlider food_distrib = new JSlider(JSlider.HORIZONTAL, 0, 80, FOOD_DISTRIBUTION);
         JSlider food_regrowth = new JSlider(JSlider.HORIZONTAL, 0, 100, FOOD_REGROWTH);//bis hier min +1 weil
-        JSlider chunk_refresh = new JSlider(JSlider.HORIZONTAL, 0, 10, CHUNK_REFRESH_TIME);
+        JSlider populationSlider = new JSlider(JSlider.HORIZONTAL, 0, 200, MIN_POP_SIZE);
         JSlider smoothing = new JSlider(JSlider.HORIZONTAL, 0, 10, SMOOTHING_FAKTOR);
 
 
@@ -309,60 +309,60 @@ public class World extends JFrame {
         labels[1].setText("World Height");
         labels[2].setText("Land Amount");
         labels[3].setText("Land Size");
-        labels[4].setText("Chunk Size");
+        labels[4].setText("FPS");
         labels[5].setText("Food Distrib.");
         labels[6].setText("Food Regrowth");
-        labels[7].setText("Chunk Refresh");
+        labels[7].setText("Population");
         labels[8].setText("Smoothing");
 
         w_width.setBounds(xOff, 10, controlPanelWidth - xOff, getHeight() / 10);
         w_height.setBounds(xOff, 10 + (getHeight() / 10), controlPanelWidth - xOff, (getHeight() / 10));
         land_amount.setBounds(xOff, 10 + (getHeight() / 10) * 2, controlPanelWidth - xOff, getHeight() / 10);
         land_size.setBounds(xOff, 10 + (getHeight() / 10) * 3, controlPanelWidth - xOff, getHeight() / 10);
-        chunk_size.setBounds(xOff, 10 + (getHeight() / 10) * 4, controlPanelWidth - xOff, getHeight() / 10);
+        fps.setBounds(xOff, 10 + (getHeight() / 10) * 4, controlPanelWidth - xOff, getHeight() / 10);
         food_distrib.setBounds(xOff, 10 + (getHeight() / 10) * 5, controlPanelWidth - xOff, getHeight() / 10);
         food_regrowth.setBounds(xOff, 10 + (getHeight() / 10) * 6, controlPanelWidth - xOff, getHeight() / 10);
-        chunk_refresh.setBounds(xOff, 10 + (getHeight() / 10) * 7, controlPanelWidth - xOff, getHeight() / 10);
+        populationSlider.setBounds(xOff, 10 + (getHeight() / 10) * 7, controlPanelWidth - xOff, getHeight() / 10);
         smoothing.setBounds(xOff, 10 + (getHeight() / 10) * 8, controlPanelWidth - xOff, getHeight() / 10);
 
         w_width.setPaintLabels(true);
         w_height.setPaintLabels(true);
         land_amount.setPaintLabels(true);
         land_size.setPaintLabels(true);
-        chunk_size.setPaintLabels(true);
+        fps.setPaintLabels(true);
         food_distrib.setPaintLabels(true);
         food_regrowth.setPaintLabels(true);
-        chunk_refresh.setPaintLabels(true);
+        populationSlider.setPaintLabels(true);
         smoothing.setPaintLabels(true);
 
         w_width.setPaintTicks(true);
         w_height.setPaintTicks(true);
         land_amount.setPaintTicks(true);
         land_size.setPaintTicks(true);
-        chunk_size.setPaintTicks(true);
+        fps.setPaintTicks(true);
         food_distrib.setPaintTicks(true);
         food_regrowth.setPaintTicks(true);
-        chunk_refresh.setPaintTicks(true);
+        populationSlider.setPaintTicks(true);
         smoothing.setPaintTicks(true);
 
         w_width.setMajorTickSpacing(50);
         w_height.setMajorTickSpacing(50);
         land_amount.setMajorTickSpacing(50);
         land_size.setMajorTickSpacing(10);
-        chunk_size.setMajorTickSpacing(100);
+        fps.setMajorTickSpacing(100);
         food_distrib.setMajorTickSpacing(20);
         food_regrowth.setMajorTickSpacing(10);
-        chunk_refresh.setMajorTickSpacing(5);
+        populationSlider.setMajorTickSpacing(50);
         smoothing.setMajorTickSpacing(5);
 
         w_width.setMinorTickSpacing(10);
         w_height.setMinorTickSpacing(10);
         land_amount.setMinorTickSpacing(10);
         land_size.setMinorTickSpacing(2);
-        chunk_size.setMinorTickSpacing(20);
+        fps.setMinorTickSpacing(20);
         food_distrib.setMinorTickSpacing(5);
         food_regrowth.setMinorTickSpacing(2);
-        chunk_refresh.setMinorTickSpacing(1);
+        populationSlider.setMinorTickSpacing(10);
         smoothing.setMinorTickSpacing(1);
 
 
@@ -394,10 +394,10 @@ public class World extends JFrame {
                 requestFocus();
             }
         });
-        chunk_size.addChangeListener(new ChangeListener() {
+        fps.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                CHUNK_SIZE = chunk_size.getValue() + 1;
+                FPS = fps.getValue() + 1;
                 requestFocus();
             }
         });
@@ -415,10 +415,10 @@ public class World extends JFrame {
                 requestFocus();
             }
         });
-        chunk_refresh.addChangeListener(new ChangeListener() {
+        populationSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                CHUNK_REFRESH_TIME = chunk_refresh.getValue();
+                MIN_POP_SIZE = populationSlider.getValue();
                 requestFocus();
             }
         });
@@ -434,10 +434,10 @@ public class World extends JFrame {
         controlPanel.add(w_height);
         controlPanel.add(land_amount);
         controlPanel.add(land_size);
-        controlPanel.add(chunk_size);
+        controlPanel.add(fps);
         controlPanel.add(food_distrib);
         controlPanel.add(food_regrowth);
-        controlPanel.add(chunk_refresh);
+        controlPanel.add(populationSlider);
         controlPanel.add(smoothing);
     }
 
@@ -531,17 +531,17 @@ public class World extends JFrame {
         //add Bots if necessary
         if (mapLoaded && population.size() < MIN_POP_SIZE) {
             Bot b = null;
-            int neu = (int) (Math.random() * 3);
-            if (neu == (int) (Math.random() * 3) || neu == (int) (Math.random() * 3) || bestNet == null) {
-                int hiddAmm = (int) (Math.random() * 2) + 1;
+            int neu = (int) (Math.random() * 4);
+            if (neu == (int) (Math.random() * 4) || bestNet == null) {
+                int hiddAmm = (int) (Math.random() * 4) ;
                 int[] hidd = new int[hiddAmm];
                 for (int k = 0; k < hiddAmm; k++) {
-                    hidd[k] = (int) (Math.random() * 6 + 1);
+                    hidd[k] = (int) (Math.random() * 10 + 1);
                 }
                 b = new Bot(new CosiAgent(new Network(6, 3, hiddAmm, hidd)));
             } else {
                 b = new Bot(new CosiAgent(new Network(bestNet)));
-                b.agent.getNet().mutateSoft(neu + 2);
+                b.agent.getNet().mutateSoft(neu + 1);
             }
             population.add(b);
             containerPanel.add(b, 0);
@@ -553,7 +553,6 @@ public class World extends JFrame {
                 ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
                 ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
                 b.setLocation(ranX, ranY);
-                System.out.println(ranX + "   " + ranY);
             }
 
         }

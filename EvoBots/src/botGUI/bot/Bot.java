@@ -166,10 +166,8 @@ public class Bot extends JPanel {
             kill();
         //pusish for water
         if (getChunkUnder(getX(), getY(), body).getType() == Chunk.Type.WATER)
-            hp -= 2;
-        //so that the bot isn too fast at dieing
-        if (ageingCounter % 1 == 0)
-            hp--;
+            hp -= 10;
+        hp--;
         if (hp < 0) {
             kill();
         } else {
@@ -180,7 +178,7 @@ public class Bot extends JPanel {
             ageingCounter++;
         } else {
             age++;
-            ageingCounter = -300;
+            ageingCounter = 0;
         }
 
         /*Agent Tells what to do
@@ -219,8 +217,8 @@ public class Bot extends JPanel {
      */
     private void transformSpeed(double speed) {
         speed = speed * 2;
-        xDir = (int) (speed * -Math.cos(Math.toRadians(sensorRotation)));
-        yDir = (int) (speed * -Math.sin(Math.toRadians(sensorRotation)));
+        xDir = (int) (Math.round(speed * -Math.cos(Math.toRadians(sensorRotation))));
+        yDir = (int) (Math.round(speed * -Math.sin(Math.toRadians(sensorRotation))));
     }
 
 
@@ -312,7 +310,7 @@ public class Bot extends JPanel {
     }
 
     public int getHp() {
-        int temp = hp > MAX_HP / 2 ? MAX_HP / 2 : hp;
+        int temp = hp > MAX_HP / 2 ? MAX_HP / 2: hp;
         return (MAX_HP - hp) / MAX_HP;
     }
 
