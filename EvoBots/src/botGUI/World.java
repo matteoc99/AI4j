@@ -75,7 +75,7 @@ public class World extends JFrame {
 
 
     //FPS control
-    private static int FPS = 60;
+    private static int FPS = 300;
     private long timeUntilSleep;
     private int fpsCounter;
     /**
@@ -529,7 +529,7 @@ public class World extends JFrame {
     @Override
     public void paint(Graphics g) {
         //add Bots if necessary
-        if (mapLoaded&&population.size() < MIN_POP_SIZE) {
+        if (mapLoaded && population.size() < MIN_POP_SIZE) {
             Bot b = null;
             int neu = (int) (Math.random() * 3);
             if (neu == (int) (Math.random() * 3) || neu == (int) (Math.random() * 3) || bestNet == null) {
@@ -538,21 +538,22 @@ public class World extends JFrame {
                 for (int k = 0; k < hiddAmm; k++) {
                     hidd[k] = (int) (Math.random() * 6 + 1);
                 }
-                b = new Bot(new CosiAgent(new Network(6, 4, hiddAmm, hidd)));
+                b = new Bot(new CosiAgent(new Network(6, 3, hiddAmm, hidd)));
             } else {
                 b = new Bot(new CosiAgent(new Network(bestNet)));
-                b.agent.getNet().mutateSoft(neu+2);
+                b.agent.getNet().mutateSoft(neu + 2);
             }
             population.add(b);
             containerPanel.add(b, 0);
             //random Location
-            int ranX= (int) (Math.random()*CHUNK_SIZE*WORLD_WIDTH);
-            int ranY= (int) (Math.random()*CHUNK_SIZE*WORLD_HEIGHT);            b.setLocation(ranX, ranY);
-            while (b.getChunkUnder(ranX,ranY,b.body)==null||b.getChunkUnder(ranX,ranY,b.body).getType()== Chunk.Type.WATER) {
-                ranX= (int) (Math.random()*CHUNK_SIZE*WORLD_WIDTH);
-                ranY= (int) (Math.random()*CHUNK_SIZE*WORLD_HEIGHT);
+            int ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
+            int ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
+            b.setLocation(ranX, ranY);
+            while (b.getChunkUnder(ranX, ranY, b.body) == null || b.getChunkUnder(ranX, ranY, b.body).getType() == Chunk.Type.WATER) {
+                ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
+                ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
                 b.setLocation(ranX, ranY);
-                System.out.println(ranX+"   "+ranY);
+                System.out.println(ranX + "   " + ranY);
             }
 
         }
@@ -573,8 +574,12 @@ public class World extends JFrame {
                             ((Chunk) c).update();
                         else if (fpsCounter % FOOD_REGROWTH == 0)
                             ((Chunk) c).updateFood();
-                    if (c instanceof Bot)
-                        ((Bot) c).move();
+                    if (c instanceof Bot) {
+                        Bot b = (Bot) c;
+                        if(b.getChunkUnder(b.getX(),b.getY(),b.body)!=null){
+                            b.move();
+                        }
+                    }
                 }
             }
         }
