@@ -58,7 +58,7 @@ public class Bot extends JPanel {
      * Variable that stores th current hp
      */
     public int hp = 500;
-    private static final int MAX_HP = 500;
+    private static final int MAX_HP = 1000;
 
     /**
      * {@link Agent} that controls the player behaviour
@@ -150,8 +150,8 @@ public class Bot extends JPanel {
         }
         //update fittnes
         if (agent.getFitness() > World.bestFittness) {
-            World.bestFittness=agent.getFitness();
-            World.bestNet=agent.getNet().getDescriptor();
+            World.bestFittness = agent.getFitness();
+            World.bestNet = agent.getNet().getDescriptor();
         }
     }
 
@@ -161,14 +161,17 @@ public class Bot extends JPanel {
     public void move() {
         if (kill)
             kill();
-
+        //pusish for water
+        if(getChunkUnder(getX(),getY(),body).getType()== Chunk.Type.WATER)
+            hp-=2;
         //so that the bot isn too fast at dieing
         if (ageingCounter % 1 == 0)
             hp--;
         if (hp < 0) {
             kill();
         } else {
-            body.setBodyColor(new Color(255, (502 - hp) / 2, (502 - hp) / 2));
+            int temp=hp>MAX_HP/2?MAX_HP-hp:hp;
+            body.setBodyColor(new Color(255, (502 - temp) / 2, (502 - temp) / 2));
         }
         if (ageingCounter < AGEING_SPEED) {
             ageingCounter++;
@@ -191,19 +194,17 @@ public class Bot extends JPanel {
          */
         if (agent != null) {
             agent.increaseFitness();
-            double out[] = agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor(),getHp(),getSensorDir()});
+            double out[] = agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor(), getHp(), getSensorDir(), getFoodUnderBody(), getFoodUnderSensor()});
             xDir = (int) ((out[0] - 0.5) * 10);
             yDir = (int) ((out[1] - 0.5) * 10);
             rotateAndResize((int) ((out[2] - 0.5) * 30));
             if (out[3] > 0.7)
                 eat();
-           // System.out.println(xDir+"   "+yDir+" "+out[2]+"   "+out[3]);
+            // System.out.println(xDir+"   "+yDir+" "+out[2]+"   "+out[3]);
         }
-        if(getX()>0&&getY()>0&&getX()<World.CHUNK_SIZE*World.WORLD_WIDTH-getWidth()&&getY()<World.CHUNK_SIZE*World.WORLD_HEIGHT-getHeight())
+        if (getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
     }
-
-
 
 
     /**
@@ -217,7 +218,7 @@ public class Bot extends JPanel {
                 c.setFood(0);
                 c.toUpdate = true;
                 if (hp > MAX_HP)
-                    hp = MAX_HP;
+                   this.kill();
             }
         } catch (Exception e) {
 
@@ -258,7 +259,7 @@ public class Bot extends JPanel {
                         Rectangle intersection = new Rectangle((int) newX, (int) newY, (int) newWidth, (int) newHeight);
                         int size = intersection.width * intersection.height;
                         if (size > bestSize) {
-                            ret =(Chunk) komponenten[i];
+                            ret = (Chunk) komponenten[i];
                             bestSize = size;
 
                         }
@@ -289,11 +290,30 @@ public class Bot extends JPanel {
     }
 
     public double getSensorDir() {
-        double temp=(sensorRotation-90)%360;
-        return (temp/360)*2-1;
+        double temp = (sensorRotation - 90) % 360;
+        return (temp / 360) * 2 - 1;
     }
 
     public int getHp() {
-        return (MAX_HP-hp)/MAX_HP;
+        int temp=hp>MAX_HP/2?MAX_HP/2:hp;
+        return (MAX_HP - hp) / MAX_HP;
+    }
+
+    public double getFoodUnderSensor() {
+        try {
+            Chunk c = (Chunk) (getChunkUnder(getX(), getY(), sensor));
+            return c.getType() == Chunk.Type.LAND ? c.getFood() / 100.0 : 0;
+        } catch (Exception e) {
+            return 0.5;
+        }
+    }
+
+    public double getFoodUnderBody() {
+        try {
+            Chunk c = (Chunk) (getChunkUnder(getX(), getY(), body));
+            return c.getType() == Chunk.Type.LAND ? c.getFood() / 100.0 : 0;
+        } catch (Exception e) {
+            return 0.5;
+        }
     }
 }

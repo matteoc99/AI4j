@@ -531,17 +531,17 @@ public class World extends JFrame {
         //add Bots if necessary
         if (mapLoaded&&population.size() < MIN_POP_SIZE) {
             Bot b = null;
-            int neu = (int) (Math.random() * 5);
-            if (neu == (int) (Math.random() * 5) || neu == (int) (Math.random() * 5) || bestNet == null) {
+            int neu = (int) (Math.random() * 3);
+            if (neu == (int) (Math.random() * 3) || neu == (int) (Math.random() * 3) || bestNet == null) {
                 int hiddAmm = (int) (Math.random() * 2) + 1;
                 int[] hidd = new int[hiddAmm];
                 for (int k = 0; k < hiddAmm; k++) {
                     hidd[k] = (int) (Math.random() * 6 + 1);
                 }
-                b = new Bot(new CosiAgent(new Network(4, 4, hiddAmm, hidd)));
+                b = new Bot(new CosiAgent(new Network(6, 4, hiddAmm, hidd)));
             } else {
                 b = new Bot(new CosiAgent(new Network(bestNet)));
-                b.agent.getNet().mutateSoft(neu);
+                b.agent.getNet().mutateSoft(neu+2);
             }
             population.add(b);
             containerPanel.add(b, 0);
