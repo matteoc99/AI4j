@@ -23,17 +23,17 @@ public class World extends JFrame {
     /**
      * describes the width and height of a World
      */
-    public static int WORLD_WIDTH = 50;
-    public static int WORLD_HEIGHT = 25;
+    public static int WORLD_WIDTH = 100;
+    public static int WORLD_HEIGHT = 75;
     /**
      * from 1-1000 describes the amount of land in the World.
      * 1000 is the Maximum
      */
-    public static int LAND_AMOUNT = 15;
+    public static int LAND_AMOUNT = 10;
     /**
      * The bigger the value the smaller the islands are
      */
-    public static int LAND_SIZE = 3;
+    public static int LAND_SIZE = 6;
     /**
      * Describes the size of the World
      */
@@ -529,7 +529,7 @@ public class World extends JFrame {
     @Override
     public void paint(Graphics g) {
         //add Bots if necessary
-        if (population.size() < MIN_POP_SIZE) {
+        if (mapLoaded&&population.size() < MIN_POP_SIZE) {
             Bot b = null;
             int neu = (int) (Math.random() * 5);
             if (neu == (int) (Math.random() * 5) || neu == (int) (Math.random() * 5) || bestNet == null) {
@@ -543,9 +543,18 @@ public class World extends JFrame {
                 b = new Bot(new CosiAgent(new Network(bestNet)));
                 b.agent.getNet().mutateSoft(neu);
             }
-            b.setLocation(100, 100);
             population.add(b);
             containerPanel.add(b, 0);
+            //random Location
+            int ranX= (int) (Math.random()*CHUNK_SIZE*WORLD_WIDTH);
+            int ranY= (int) (Math.random()*CHUNK_SIZE*WORLD_HEIGHT);            b.setLocation(ranX, ranY);
+            while (b.getChunkUnder(ranX,ranY,b.body)==null||b.getChunkUnder(ranX,ranY,b.body).getType()== Chunk.Type.WATER) {
+                ranX= (int) (Math.random()*CHUNK_SIZE*WORLD_WIDTH);
+                ranY= (int) (Math.random()*CHUNK_SIZE*WORLD_HEIGHT);
+                b.setLocation(ranX, ranY);
+                System.out.println(ranX+"   "+ranY);
+            }
+
         }
         //FPS control
         timeUntilSleep = System.currentTimeMillis();

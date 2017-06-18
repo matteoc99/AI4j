@@ -28,18 +28,18 @@ public class Bot extends JPanel {
     /**
      * describes the length of the sensor
      */
-    private int sensor_length = 60;
+    private int sensor_length = 40;
 
 
     /**
      * the Body of the Bot
      */
-    Body body;
+    public Body body;
 
     /**
      * The sensor of the Bot
      */
-    Sensor sensor;
+    public Sensor sensor;
 
 
     /**
@@ -102,7 +102,6 @@ public class Bot extends JPanel {
         g.setColor(Color.BLACK);
         g.drawLine(body.getX() + body.getWidth() / 2, body.getY() + body.getHeight() / 2,
                 sensor.getX() + sensor.getWidth() / 2, sensor.getY() + sensor.getHeight() / 2);
-        g.drawRect(0, 0, getWidth(), getHeight());
         super.paint(g);
         repaint();
     }
@@ -198,11 +197,13 @@ public class Bot extends JPanel {
             rotateAndResize((int) ((out[2] - 0.5) * 30));
             if (out[3] > 0.7)
                 eat();
-            System.out.println(xDir+"   "+yDir+" "+out[2]+"   "+out[3]);
+           // System.out.println(xDir+"   "+yDir+" "+out[2]+"   "+out[3]);
         }
-        if(getX()>0&&getY()>0&&getX()<World.CHUNK_SIZE*World.WORLD_WIDTH&&getY()<World.CHUNK_SIZE*World.WORLD_HEIGHT)
+        if(getX()>0&&getY()>0&&getX()<World.CHUNK_SIZE*World.WORLD_WIDTH-getWidth()&&getY()<World.CHUNK_SIZE*World.WORLD_HEIGHT-getHeight())
             setLocation(getX() + xDir, getY() + yDir);
     }
+
+
 
 
     /**
@@ -231,14 +232,14 @@ public class Bot extends JPanel {
      * @param y y Position
      * @return the Chunk with the greatest intersection area
      */
-    public Component getChunkUnder(int x, int y, JComponent component) {
-        Component ret = null;
+    public Chunk getChunkUnder(int x, int y, JComponent component) {
+        Chunk ret = null;
         if (this.getParent() != null) {
 
             if (x < -component.getX() || y < -component.getX()
                     || x + component.getX() + component.getWidth() > this.getParent().getWidth()
                     || y + component.getY() + component.getHeight() > this.getParent().getHeight())
-                ret = this.getParent();
+                ret = null;
             else {
                 Rectangle neuePosition = new Rectangle(x + component.getX(), y + component.getY(), component.getWidth(), component.getHeight());
                 Component[] komponenten = null;
@@ -257,7 +258,7 @@ public class Bot extends JPanel {
                         Rectangle intersection = new Rectangle((int) newX, (int) newY, (int) newWidth, (int) newHeight);
                         int size = intersection.width * intersection.height;
                         if (size > bestSize) {
-                            ret = komponenten[i];
+                            ret =(Chunk) komponenten[i];
                             bestSize = size;
 
                         }
@@ -288,7 +289,7 @@ public class Bot extends JPanel {
     }
 
     public double getSensorDir() {
-        double temp=sensorRotation-90%360;
+        double temp=(sensorRotation-90)%360;
         return (temp/360)*2-1;
     }
 

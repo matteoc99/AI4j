@@ -9,7 +9,7 @@ import java.awt.*;
  * Created by mcosi on 14/06/2017.
  */
 public class Body extends JComponent {
-    public int width=20;
+    public int width=10;
     public int height=width;
 
     Color bodyColor =  Color.red;
