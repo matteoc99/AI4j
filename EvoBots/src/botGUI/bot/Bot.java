@@ -70,6 +70,13 @@ public class Bot extends JPanel {
      */
     public boolean kill = false;
 
+    /**
+     * Color of the bot
+     */
+    int red= (int) (Math.random()*255);
+    int blue= (int) (Math.random()*255);
+    int green= (int) (Math.random()*255);
+
 
     //TODO make direction a double
 
@@ -172,7 +179,16 @@ public class Bot extends JPanel {
             kill();
         } else {
             int temp = hp > MAX_HP / 2 ? MAX_HP - hp : hp;
-            body.setBodyColor(new Color(255, (502 - temp) / 2, (502 - temp) / 2));
+            int red=(502 - temp/2-blue-green)<255?(502 - temp/2-blue-green) :255;
+            int green=(502 - temp/2-blue-red)<255?(502 - temp/2-blue-red) :255;
+            int blue=(502 - temp/2-green-red)<255?(502 - temp/2-green-red) :255;
+            if (red<0)
+                red=0;
+            if (green<0)
+                green=0;
+            if (blue<0)
+                blue=0;
+            body.setBodyColor(new Color(red,green,blue));
         }
         if (ageingCounter < AGEING_SPEED) {
             ageingCounter++;

@@ -127,7 +127,7 @@ public class World extends JFrame {
     /**
      * GUI&Training
      */
-    public static double bestFittness = 2500;
+    public static double bestFittness = 1000;
     public static double[] bestNet = null;
 
 
@@ -541,7 +541,7 @@ public class World extends JFrame {
                 b = new Bot(new CosiAgent(new Network(6, 3, hiddAmm, hidd)));
             } else {
                 b = new Bot(new CosiAgent(new Network(bestNet)));
-                b.agent.getNet().mutateSoft(neu + 1);
+                b.agent.getNet().mutateSoft((int) (neu +Math.random()*15));
             }
             population.add(b);
             containerPanel.add(b, 0);
