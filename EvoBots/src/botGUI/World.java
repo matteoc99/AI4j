@@ -96,7 +96,7 @@ public class World extends JFrame {
     /**
      * Contains the World
      */
-    JPanel containerPanel = new JPanel();
+    public static JPanel containerPanel = new JPanel();
     /**
      * Contains the Controls and Settings for the World
      */
@@ -123,12 +123,6 @@ public class World extends JFrame {
     DragUndDropListener listener = new DragUndDropListener();
 
     public static ArrayList<Bot> population = new ArrayList<>();
-
-    /**
-     * GUI&Training
-     */
-    public static double bestFittness = 1000;
-    public static double[] bestNet = null;
 
 
     public World() {
@@ -532,17 +526,12 @@ public class World extends JFrame {
         if (mapLoaded && population.size() < MIN_POP_SIZE) {
             Bot b = null;
             int neu = (int) (Math.random() * 4);
-            if (neu == (int) (Math.random() * 4) || bestNet == null) {
-                int hiddAmm = (int) (Math.random() * 4) ;
-                int[] hidd = new int[hiddAmm];
-                for (int k = 0; k < hiddAmm; k++) {
-                    hidd[k] = (int) (Math.random() * 10 + 1);
-                }
-                b = new Bot(new CosiAgent(new Network(6, 3, hiddAmm, hidd)));
-            } else {
-                b = new Bot(new CosiAgent(new Network(bestNet)));
-                b.agent.getNet().mutateSoft((int) (neu +Math.random()*15));
+            int hiddAmm = (int) (Math.random() * 2);
+            int[] hidd = new int[hiddAmm];
+            for (int k = 0; k < hiddAmm; k++) {
+                hidd[k] = (int) (Math.random() * 10 + 1);
             }
+            b = new Bot(new CosiAgent(new Network(6, 3, hiddAmm, hidd)));
             population.add(b);
             containerPanel.add(b, 0);
             //random Location
@@ -575,7 +564,7 @@ public class World extends JFrame {
                             ((Chunk) c).updateFood();
                     if (c instanceof Bot) {
                         Bot b = (Bot) c;
-                        if(b.getChunkUnder(b.getX(),b.getY(),b.body)!=null){
+                        if (b.getChunkUnder(b.getX(), b.getY(), b.body) != null) {
                             b.move();
                         }
                     }

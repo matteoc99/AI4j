@@ -1,8 +1,10 @@
 package botGUI.bot;
 
 import agent.Agent;
+import agent.cosi.CosiAgent;
 import botGUI.Chunk;
 import botGUI.World;
+import network.Network;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +25,7 @@ public class Bot extends JPanel {
      * describes how fast the agent Ages
      * greater value = slower aging
      */
-    private static final int AGEING_SPEED = 5000;
+    private static final int AGEING_SPEED = 700;
 
     /**
      * describes the length of the sensor
@@ -73,10 +75,15 @@ public class Bot extends JPanel {
     /**
      * Color of the bot
      */
-    int red= (int) (Math.random()*255);
-    int blue= (int) (Math.random()*255);
-    int green= (int) (Math.random()*255);
+    public int red= 255;
+    public int blue= 0;
+    public int green= 0;
 
+
+    /**
+     * if this value equals the age, a child is born
+     */
+    int makeChildren=2;
 
     //TODO make direction a double
 
@@ -158,11 +165,6 @@ public class Bot extends JPanel {
         if (World.population.contains(this)) {
             World.population.remove(this);
         }
-        //update fittnes
-        if (agent.getFitness() > World.bestFittness) {
-            World.bestFittness = agent.getFitness();
-            World.bestNet = agent.getNet().getDescriptor();
-        }
     }
 
     /**
@@ -178,6 +180,7 @@ public class Bot extends JPanel {
         if (hp < 0) {
             kill();
         } else {
+            //color
             int temp = hp > MAX_HP / 2 ? MAX_HP - hp : hp;
             int red=(502 - temp/2-blue-green)<255?(502 - temp/2-blue-green) :255;
             int green=(502 - temp/2-blue-red)<255?(502 - temp/2-blue-red) :255;
@@ -194,7 +197,13 @@ public class Bot extends JPanel {
             ageingCounter++;
         } else {
             age++;
-            ageingCounter = 0;
+            ageingCounter = -500*age;
+        }
+
+        if(age==makeChildren){
+            makeChildren++;
+            makeChildren();
+            System.out.println("CHILD");
         }
 
         /*Agent Tells what to do
@@ -224,6 +233,20 @@ public class Bot extends JPanel {
         }
         if (getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
+    }
+
+    /**
+     * method that gives Birth to a child
+     */
+    private void makeChildren() {
+        Agent a = new CosiAgent(new Network(agent.getNet().getDescriptor()));
+        a.getNet().mutateSoft(10);
+        Bot child = new Bot(a);
+        child.red=0;
+        child.blue=255;
+        World.containerPanel.add(child,0);
+        World.population.add(child);
+        child.setLocation(this.getX(),this.getY());
     }
 
     /**
