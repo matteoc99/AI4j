@@ -25,7 +25,7 @@ public class Bot extends JPanel {
      * describes how fast the agent Ages
      * greater value = slower aging
      */
-    private static final int AGEING_SPEED = 700;
+    private static final int AGEING_SPEED = 590;
 
     /**
      * describes the length of the sensor
@@ -48,7 +48,7 @@ public class Bot extends JPanel {
      * Describes the rotation of the sensor
      * 0-360 degrees
      */
-    public int sensorRotation = 0;
+    public int sensorRotation = (int) (Math.random()*360);
 
     /**
      * direction of the Bot
@@ -175,7 +175,7 @@ public class Bot extends JPanel {
             kill();
         //pusish for water
         if (getChunkUnder(getX(), getY(), body).getType() == Chunk.Type.WATER)
-            hp -= 10;
+            hp -= 5;
         hp--;
         if (hp < 0) {
             kill();
@@ -196,8 +196,8 @@ public class Bot extends JPanel {
         if (ageingCounter < AGEING_SPEED) {
             ageingCounter++;
         } else {
-            age++;
             ageingCounter = -500*age;
+            age++;
         }
 
         if(age==makeChildren){
@@ -211,7 +211,8 @@ public class Bot extends JPanel {
          * [0]->isLandUnderBody [0 oder 1]
          * [1]->isandUnderSensor [0 oder 1]
          * [2]->hp [0-1] 1 wenn wenig hp
-         * [3]->richtung sensor [-1 - 1]
+         * [4]->food under body [0-1]
+         * [5]->food under sensor [0-1]
          * Outputs:
          * [0]->speed
          * [1]->rotation of sensor
@@ -219,17 +220,18 @@ public class Bot extends JPanel {
          */
         if (agent != null) {
             agent.increaseFitness();
-            double out[] = agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor(), getHp(), getSensorDir(), getFoodUnderBody(), getFoodUnderSensor()});
-            if (out[0] > 0.6)
+         //   System.out.println("IN: "+getIsLandUnderBody()+" "+getisLandUnderSensor()+" "+getHp()+" "+getFoodUnderBody()+" "+getFoodUnderSensor());
+            double out[] = agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor(), getHp(), getFoodUnderBody(), getFoodUnderSensor()});
+            if (out[0] > 0.6||out[0] < 0.4)
                 transformSpeed(out[0]);
             else {
                 xDir = 0;
                 yDir = 0;
             }
-            rotateAndResize((int) ((out[1] - 0.5) * 5));
+            rotateAndResize((int) ((out[1] - 0.5) * 15));
             if (out[2] > 0.7)
                 eat();
-            // System.out.println(xDir+"   "+yDir+" "+out[2]+"   "+out[3]);
+           //  System.out.println("OUT: "+xDir+"   "+yDir+" "+out[1]+"   "+out[2]);
         }
         if (getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
@@ -246,7 +248,7 @@ public class Bot extends JPanel {
         child.blue=255;
         World.containerPanel.add(child,0);
         World.population.add(child);
-        child.setLocation(this.getX(),this.getY());
+        child.setLocation(this.getX()+(int)(Math.random()*60)-30,this.getY()+(int)(Math.random()*60)-30);
     }
 
     /**
@@ -255,7 +257,8 @@ public class Bot extends JPanel {
      * @param speed of the direction
      */
     private void transformSpeed(double speed) {
-        speed = speed * 2;
+        speed -=0.5;
+        speed*=4;
         xDir = (int) (Math.round(speed * -Math.cos(Math.toRadians(sensorRotation))));
         yDir = (int) (Math.round(speed * -Math.sin(Math.toRadians(sensorRotation))));
     }
@@ -265,6 +268,7 @@ public class Bot extends JPanel {
      * Eat the from the greatest Chunk
      */
     public void eat() {
+        hp-=10;
         try {
             Chunk c = (Chunk) getChunkUnder(getX(), getY(), body);
             if (c != null && c.getType() == Chunk.Type.LAND) {
@@ -344,13 +348,17 @@ public class Bot extends JPanel {
     }
 
     public double getSensorDir() {
-        double temp = (sensorRotation - 90) % 360;
+        double temp = sensorRotation % 360;
+
         return (temp / 360) * 2 - 1;
     }
 
-    public int getHp() {
-        int temp = hp > MAX_HP / 2 ? MAX_HP / 2: hp;
-        return (MAX_HP - hp) / MAX_HP;
+    public double getHp() {
+       if(hp>=MAX_HP-2){
+           return 1;
+       }else{
+           return (hp)/(MAX_HP/2);
+       }
     }
 
     public double getFoodUnderSensor() {

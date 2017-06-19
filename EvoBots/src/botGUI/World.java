@@ -20,10 +20,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class World extends JFrame {
 
+    //TODO resize is turned of for the moment
+
     /**
      * describes the width and height of a World
      */
-    public static int WORLD_WIDTH = 100;
+    public static int WORLD_WIDTH = 120;
     public static int WORLD_HEIGHT = 75;
     /**
      * from 1-1000 describes the amount of land in the World.
@@ -43,14 +45,14 @@ public class World extends JFrame {
     /**
      * Describes the distribution of the food
      */
-    public static int FOOD_DISTRIBUTION = 15;
+    public static int FOOD_DISTRIBUTION = 20;
 
 
     /**
      * Describes the speed of the Food regrowth
      * smaller value = faster
      */
-    private static int FOOD_REGROWTH = 30;
+    private static int FOOD_REGROWTH = 40;
 
     /**
      * describes how often Chunks are repainted 0-10
@@ -115,7 +117,7 @@ public class World extends JFrame {
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
      */
-    public static int MIN_POP_SIZE = 100;
+    public static int MIN_POP_SIZE = 1;
 
     /**
      * listener used for Drag and drop
@@ -192,7 +194,7 @@ public class World extends JFrame {
                         break;
 
                     //player steuerung for test
-                  /*  case KeyEvent.VK_W:
+                    case KeyEvent.VK_W:
                         population.get(0).yDir = -2;
 
                         break;
@@ -218,7 +220,7 @@ public class World extends JFrame {
                         population.get(0).sensorRotation=180;
                         population.get(0).rotateAndResize();
                         break;
-*/
+
                 }
             }
 
@@ -447,7 +449,7 @@ public class World extends JFrame {
                 resizeCounter--;
                 if (resizeCounter == 0) {
                     resizeCounter = 0;
-                    resizeMap();
+                  //TODO Bot resize  resizeMap();
                 }
                 if (resizeCounter == Integer.MIN_VALUE)
                     resizeCounter = -1;
@@ -531,7 +533,7 @@ public class World extends JFrame {
             for (int k = 0; k < hiddAmm; k++) {
                 hidd[k] = (int) (Math.random() * 10 + 1);
             }
-            b = new Bot(new CosiAgent(new Network(6, 3, hiddAmm, hidd)));
+            b = new Bot(new CosiAgent(new Network(5, 3, hiddAmm, hidd)));
             population.add(b);
             containerPanel.add(b, 0);
             //random Location

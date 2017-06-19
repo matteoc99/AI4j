@@ -37,6 +37,8 @@ public class Network {
         layers = new ArrayList<>();
     }
 
+    public Neuron bias= new Neuron(0);
+
     /**
      * Create a network.Network with some Layers and connects them in the order they arrive
      *
@@ -241,6 +243,10 @@ public class Network {
             layers.add(hiddenLayers[i]);
         }
         layers.add(outLayers);
+
+
+
+
         descriptor = generateDescriptor();
     }
 
@@ -375,7 +381,7 @@ public class Network {
             throw new IllegalStateException("cant find the in-network.Layer");
         for (int i = 0; i < in.length; i++) {
             if (in[i] > 1)
-                throw new IllegalArgumentException("Inputs have to be smaller than1");
+                throw new IllegalArgumentException("Inputs have to be smaller than at index: " +i +" value: "+in[i]);
         }
         inLayer.feed(in);
         for (int i = 0; i < layers.size() - 1; i++) {
