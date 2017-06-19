@@ -9,7 +9,6 @@ import java.util.ArrayList;
 /**
  * network.Network is a class that combines the Layers and offers some utilities
  *
- *
  * @author Matteo Cosi
  * @since 15.05.2017
  */
@@ -37,7 +36,7 @@ public class Network {
         layers = new ArrayList<>();
     }
 
-    public Neuron bias= new Neuron(0);
+    public Neuron bias = new Neuron(0);
 
     /**
      * Create a network.Network with some Layers and connects them in the order they arrive
@@ -60,6 +59,8 @@ public class Network {
      * @param descriptor {@link #descriptor}
      */
     public Network(double[] descriptor) {
+        this.descriptor = descriptor;
+
         if (descriptor[0] < 2 && descriptor[1] > 0 && descriptor[(int) (descriptor[0] - 1)] > 0)
             throw new IllegalArgumentException("descriptor format error");
 
@@ -152,7 +153,15 @@ public class Network {
             layers.add(layerhid[i]);
         }
         layers.add(layerout);
-        this.descriptor = generateDescriptor();
+
+
+        for (int i = 1; i < layers.size(); i++) {
+            for (int j = 0; j < layers.get(i).getNeuronCount(); j++) {
+                new Connection(bias, layers.get(i).getNeuronAt(j), descriptor[index]);
+                index++;
+            }
+        }
+
     }
 
     /**
@@ -244,9 +253,13 @@ public class Network {
         }
         layers.add(outLayers);
 
-
-
-
+        //bias
+        bias.setValue(1);
+        for (int i = 1; i < layers.size(); i++) {
+            for (int j = 0; j < layers.get(i).getNeuronCount(); j++) {
+                new Connection(bias, layers.get(i).getNeuronAt(j));
+            }
+        }
         descriptor = generateDescriptor();
     }
 
@@ -381,7 +394,7 @@ public class Network {
             throw new IllegalStateException("cant find the in-network.Layer");
         for (int i = 0; i < in.length; i++) {
             if (in[i] > 1)
-                throw new IllegalArgumentException("Inputs have to be smaller than at index: " +i +" value: "+in[i]);
+                throw new IllegalArgumentException("Inputs have to be smaller than at index: " + i + " value: " + in[i]);
         }
         inLayer.feed(in);
         for (int i = 0; i < layers.size() - 1; i++) {
@@ -396,7 +409,7 @@ public class Network {
 
     public double[] getDescriptor() {
         if (descriptor == null)
-            generateDescriptor();
+            descriptor = generateDescriptor();
         return descriptor;
     }
 
@@ -418,10 +431,11 @@ public class Network {
                 if (i == hiddenAmount - 1) {
                     //connection
                     ret += hiddenSize[hiddenSize.length - 1] * outputSize;
-                    //neuron
+
                 } else {
                     //connections
                     ret += hiddenSize[i] * hiddenSize[i + 1];
+
                 }
             }
         } else {
@@ -431,7 +445,11 @@ public class Network {
         ret++;
         //layer desc
         ret += 2 + hiddenAmount;
-
+        //bias
+        ret+=outputSize;
+        for (int i = 0; i < hiddenAmount; i++) {
+            ret+=hiddenSize[i];
+        }
         return ret;
     }
 
@@ -460,7 +478,7 @@ public class Network {
         /*
             stores the current index in this
         */
-        int index=1;
+        int index = 1;
         //layer description
         for (int i = 0; i < anzLayer; i++) {
             ret[index] = layers.get(i).getNeuronCount();
@@ -480,6 +498,12 @@ public class Network {
                 }
                 index++;
             }
+        }
+
+        //bias
+        for (int i = 0; i < bias.getAxons().size(); i++) {
+            ret[index]=bias.getAxons().get(i).getWeight();
+            index++;
         }
         return ret;
     }
@@ -535,6 +559,9 @@ public class Network {
             int connection = (int) (Math.random() * layers.get(layer).getNeuronAt(neuron).getAxons().size());
             Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
             c.setWeight(c.getWeight() + Math.random() * 0.2 - 0.1);
+
+            //TODO bias mutation
+
             if (c.getWeight() > 1)
                 c.setWeight(1);
             if (c.getWeight() < -1)
