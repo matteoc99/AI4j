@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public class Sensor extends JComponent {
 
-    public int width=5;
+    public int width=World.CHUNK_SIZE/4;
     public int height=width;
 
     Color sensorColor = Color.blue;

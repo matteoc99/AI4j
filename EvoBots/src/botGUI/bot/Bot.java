@@ -25,12 +25,12 @@ public class Bot extends JPanel {
      * describes how fast the agent Ages
      * greater value = slower aging
      */
-    private static final int AGEING_SPEED = 590;
+    private static final int AGEING_SPEED = 505;
 
     /**
      * describes the length of the sensor
      */
-    private int sensor_length = 40;
+    private int sensor_length = World.CHUNK_SIZE * 2;
 
 
     /**
@@ -48,7 +48,7 @@ public class Bot extends JPanel {
      * Describes the rotation of the sensor
      * 0-360 degrees
      */
-    public int sensorRotation = (int) (Math.random()*360);
+    public int sensorRotation = (int) (Math.random() * 360);
 
     /**
      * direction of the Bot
@@ -75,15 +75,20 @@ public class Bot extends JPanel {
     /**
      * Color of the bot
      */
-    public int red= 255;
-    public int blue= 0;
-    public int green= 0;
+    public int red = 255;
+    public int blue = 0;
+    public int green = 0;
 
 
     /**
      * if this value equals the age, a child is born
      */
-    int makeChildren=2;
+    int makeChildren = 2;
+
+    /**
+     * stores the previous World chunk size
+     */
+    int prevChunkSize = World.CHUNK_SIZE;
 
     //TODO make direction a double
 
@@ -182,28 +187,29 @@ public class Bot extends JPanel {
         } else {
             //color
             int temp = hp > MAX_HP / 2 ? MAX_HP - hp : hp;
-            int red=(502 - temp/2-blue-green)<255?(502 - temp/2-blue-green) :255;
-            int green=(502 - temp/2-blue-red)<255?(502 - temp/2-blue-red) :255;
-            int blue=(502 - temp/2-green-red)<255?(502 - temp/2-green-red) :255;
-            if (red<0)
-                red=0;
-            if (green<0)
-                green=0;
-            if (blue<0)
-                blue=0;
-            body.setBodyColor(new Color(red,green,blue));
+            int red = (502 - temp / 2 - blue - green) < 255 ? (502 - temp / 2 - blue - green) : 255;
+            int green = (502 - temp / 2 - blue - red) < 255 ? (502 - temp / 2 - blue - red) : 255;
+            int blue = (502 - temp / 2 - green - red) < 255 ? (502 - temp / 2 - green - red) : 255;
+            if (red < 0)
+                red = 0;
+            if (green < 0)
+                green = 0;
+            if (blue < 0)
+                blue = 0;
+            body.setBodyColor(new Color(red, green, blue));
         }
         if (ageingCounter < AGEING_SPEED) {
             ageingCounter++;
         } else {
-            ageingCounter = -500*age;
+            ageingCounter = -500 * age;
             age++;
         }
 
-        if(age==makeChildren){
+        if (age == makeChildren) {
+            if (age >= 2)
+                System.out.println("AGE " + age + " : " + agent.getNet().getDescriptor().toString());
             makeChildren++;
-            makeChildren();
-            System.out.println("CHILD");
+            makeChildren(2);
         }
 
         /*Agent Tells what to do
@@ -220,9 +226,9 @@ public class Bot extends JPanel {
          */
         if (agent != null) {
             agent.increaseFitness();
-         //   System.out.println("IN: "+getIsLandUnderBody()+" "+getisLandUnderSensor()+" "+getHp()+" "+getFoodUnderBody()+" "+getFoodUnderSensor());
+            //   System.out.println("IN: "+getIsLandUnderBody()+" "+getisLandUnderSensor()+" "+getHp()+" "+getFoodUnderBody()+" "+getFoodUnderSensor());
             double out[] = agent.processData(new double[]{getIsLandUnderBody(), getisLandUnderSensor(), getHp(), getFoodUnderBody(), getFoodUnderSensor()});
-            if (out[0] > 0.6||out[0] < 0.4)
+            if (out[0] > 0.6 || out[0] < 0.4)
                 transformSpeed(out[0]);
             else {
                 xDir = 0;
@@ -231,7 +237,7 @@ public class Bot extends JPanel {
             rotateAndResize((int) ((out[1] - 0.5) * 15));
             if (out[2] > 0.7)
                 eat();
-           //  System.out.println("OUT: "+xDir+"   "+yDir+" "+out[1]+"   "+out[2]);
+            //  System.out.println("OUT: "+xDir+"   "+yDir+" "+out[1]+"   "+out[2]);
         }
         if (getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
@@ -240,15 +246,17 @@ public class Bot extends JPanel {
     /**
      * method that gives Birth to a child
      */
-    private void makeChildren() {
-        Agent a = new CosiAgent(new Network(agent.getNet().getDescriptor()));
-        a.getNet().mutateSoft(10);
-        Bot child = new Bot(a);
-        child.red=0;
-        child.blue=255;
-        World.containerPanel.add(child,0);
-        World.population.add(child);
-        child.setLocation(this.getX()+(int)(Math.random()*60)-30,this.getY()+(int)(Math.random()*60)-30);
+    private void makeChildren(int howmany) {
+        for (int i = 0; i < howmany; i++) {
+            Agent a = new CosiAgent(new Network(agent.getNet().getDescriptor()));
+            a.getNet().mutateSoft((int) (Math.random() * 8));
+            Bot child = new Bot(a);
+            child.red = 0;
+            child.blue = 255;
+            World.containerPanel.add(child, 0);
+            World.population.add(child);
+            child.setLocation(this.getX() + (int) (Math.random() * 60) - 30, this.getY() + (int) (Math.random() * 60) - 30);
+        }
     }
 
     /**
@@ -257,8 +265,8 @@ public class Bot extends JPanel {
      * @param speed of the direction
      */
     private void transformSpeed(double speed) {
-        speed -=0.5;
-        speed*=4;
+        speed -= 0.5;
+        speed *= 4;
         xDir = (int) (Math.round(speed * -Math.cos(Math.toRadians(sensorRotation))));
         yDir = (int) (Math.round(speed * -Math.sin(Math.toRadians(sensorRotation))));
     }
@@ -268,7 +276,7 @@ public class Bot extends JPanel {
      * Eat the from the greatest Chunk
      */
     public void eat() {
-        hp-=10;
+        hp -= 10;
         try {
             Chunk c = (Chunk) getChunkUnder(getX(), getY(), body);
             if (c != null && c.getType() == Chunk.Type.LAND) {
@@ -326,7 +334,14 @@ public class Bot extends JPanel {
                 }
             }
         }
+        if (ret == null)
+            try {
+                return new Chunk(Chunk.Type.NONE, 0, 0);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         return ret;
+
     }
 
     private double getIsLandUnderBody() {
@@ -339,6 +354,7 @@ public class Bot extends JPanel {
     }
 
     public double getisLandUnderSensor() {
+        sensor_length = getWidth() / 2;
         try {
             Chunk c = (Chunk) (getChunkUnder(getX(), getY(), sensor));
             return c.getType() == Chunk.Type.LAND ? 1 : 0;
@@ -347,20 +363,34 @@ public class Bot extends JPanel {
         }
     }
 
+    /**
+     * returns the sensor direction from -1 to 1
+     */
     public double getSensorDir() {
         double temp = sensorRotation % 360;
 
         return (temp / 360) * 2 - 1;
     }
 
+    /**
+     * returns the health of the bot
+     * 1 is the max health
+     *
+     * @return 0-1 the health of the bot
+     */
     public double getHp() {
-       if(hp>=MAX_HP-2){
-           return 1;
-       }else{
-           return (hp)/(MAX_HP/2);
-       }
+        if (hp >= MAX_HP / 2) {
+            return 0;
+        } else {
+            return (hp) / (MAX_HP / 2);
+        }
     }
 
+    /**
+     * returns a value from 0-1 which holds the information about how much food is under the sensor
+     *
+     * @return a value from 0-1
+     */
     public double getFoodUnderSensor() {
         try {
             Chunk c = (Chunk) (getChunkUnder(getX(), getY(), sensor));
@@ -370,6 +400,11 @@ public class Bot extends JPanel {
         }
     }
 
+    /**
+     * returns a value from 0-1 which holds the information about how much food is under the body
+     *
+     * @return a value from 0-1
+     */
     public double getFoodUnderBody() {
         try {
             Chunk c = (Chunk) (getChunkUnder(getX(), getY(), body));
@@ -377,5 +412,24 @@ public class Bot extends JPanel {
         } catch (Exception e) {
             return 0.5;
         }
+    }
+
+    /**
+     * is a method which resize´s the bot relative to the World´s Chunk size
+     */
+    public void resizeAndRelocate() {
+        double difference = (0.0 + World.CHUNK_SIZE) /prevChunkSize;
+                sensor.width = World.CHUNK_SIZE / 4;
+        sensor.height = sensor.width;
+        body.width = World.CHUNK_SIZE / 2;
+        body.height = body.width;
+        sensor_length = World.CHUNK_SIZE * 2;
+        setSize(sensor.getWidth() + body.getWidth() + sensor_length, sensor.getHeight() + body.getHeight() + sensor_length);
+        body.setLocation(getWidth() / 2 - body.getWidth() / 2, getHeight() / 2 - body.getHeight() / 2);
+        sensor_length = getWidth() / 2;
+
+        setLocation((int) (getX()*difference), (int) (getY()*difference));
+
+        prevChunkSize = World.CHUNK_SIZE;
     }
 }

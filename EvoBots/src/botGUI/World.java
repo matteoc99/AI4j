@@ -25,7 +25,7 @@ public class World extends JFrame {
     /**
      * describes the width and height of a World
      */
-    public static int WORLD_WIDTH = 120;
+    public static int WORLD_WIDTH = 100;
     public static int WORLD_HEIGHT = 75;
     /**
      * from 1-1000 describes the amount of land in the World.
@@ -117,7 +117,7 @@ public class World extends JFrame {
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
      */
-    public static int MIN_POP_SIZE = 1;
+    public static int MIN_POP_SIZE = 100;
 
     /**
      * listener used for Drag and drop
@@ -164,6 +164,11 @@ public class World extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_R:
+                        if (population!=null) {
+                            for (Bot b : population)
+                                b.kill();
+                            population.clear();
+                        }
                         createMap();
                         resizeMap();
                         break;
@@ -217,7 +222,7 @@ public class World extends JFrame {
                         population.get(0).rotateAndResize(-10);
                         break;
                     case KeyEvent.VK_C:
-                        population.get(0).sensorRotation=180;
+                        population.get(0).sensorRotation = 180;
                         population.get(0).rotateAndResize();
                         break;
 
@@ -449,7 +454,8 @@ public class World extends JFrame {
                 resizeCounter--;
                 if (resizeCounter == 0) {
                     resizeCounter = 0;
-                  //TODO Bot resize  resizeMap();
+                    resizeMap();
+                    //TODO Bot resize  resizeMap();
                 }
                 if (resizeCounter == Integer.MIN_VALUE)
                     resizeCounter = -1;
@@ -462,11 +468,7 @@ public class World extends JFrame {
      */
     private void resizeMap() {
         if (mapLoaded) {
-            if (population != null)
-                for (Bot c : population) {
-                    c.kill = true;
-                }
-            population.clear();
+
             int prevWidth = containerPanel.getWidth();
             int prevHeight = containerPanel.getHeight();
             containerPanel.setSize(WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
@@ -479,6 +481,12 @@ public class World extends JFrame {
                     c.resizeAndReposition();
                 }
             }
+
+            if (population != null)
+                for (int i = 0; i < population.size(); i++) {
+                    Bot b= population.get(i);
+                    b.resizeAndRelocate();
+                }
         }
     }
 

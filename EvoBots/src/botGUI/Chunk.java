@@ -15,7 +15,7 @@ public class Chunk extends ImmobileObject {
     public static final String WATER = "res\\water.png";
 
     public enum Type {
-        LAND, WATER,
+        LAND, WATER,NONE
     }
 
 
