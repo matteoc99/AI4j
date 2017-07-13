@@ -1,7 +1,9 @@
 package botGUI.bot;
 
+import agent.cosi.CosiAgent;
 import botGUI.Chunk;
 import botGUI.World;
+import network.Network;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -24,45 +26,57 @@ public class DragAndDropListener extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getComponent() instanceof Bot) {
-            Bot bf = (Bot) e.getComponent();
-            if (w.selectedBot != null)
-                w.selectedBot.selected = false;
-            w.selectedBot = bf;
-            bf.selected = true;
-            w.controlPanel.removeAll();
-            w.container.remove(w.controlPanel);
-            w.controlPanel = new JPanel();
-            w.controlPanel = w.addBotStats(bf);
-            w.container.add(w.controlPanel,0);
-        } else {
-            if (w.selectedBot != null)
-                w.selectedBot.selected = false;
-            w.selectedBot = null;
-            w.controlPanel.removeAll();
-            w.container.remove(w.controlPanel);
-            w.controlPanel = new JPanel();
-            w.controlPanel = w.addControls();
-            w.container.add(w.controlPanel,0);
+        if (e.getButton() == 1) {
+
+            if (e.getComponent() instanceof Bot) {
+                Bot bf = (Bot) e.getComponent();
+                if (w.selectedBot != null)
+                    w.selectedBot.selected = false;
+                w.selectedBot = bf;
+                bf.selected = true;
+                w.controlPanel.removeAll();
+                w.container.remove(w.controlPanel);
+                w.controlPanel = new JPanel();
+                w.controlPanel = w.addBotStats(bf);
+                w.container.add(w.controlPanel, 0);
+            } else {
+                if (w.selectedBot != null)
+                    w.selectedBot.selected = false;
+                w.selectedBot = null;
+                w.controlPanel.removeAll();
+                w.container.remove(w.controlPanel);
+                w.controlPanel = new JPanel();
+                w.controlPanel = w.addControls();
+                w.container.add(w.controlPanel, 0);
+            }
+        }
+        if (e.getButton() == 3) {
+            Bot b = new Bot(new CosiAgent(new Network(World.theBests[0])), w, 0);
+            b.addMouseListener(this);
+            w.containerPanel.add(b, 0);
+            w.population.add(b);
+            b.setLocation(-w.containerPanel.getX() + e.getXOnScreen()-b.getWidth()/2, -w.containerPanel.getY()+e.getYOnScreen()-b.getHeight());
+            System.out.println("add");
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        x = e.getX();
-        y = e.getY();
+        if (e.getButton() == 1) {
+            x = e.getX();
+            y = e.getY();
+        }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (e.getComponent() instanceof Bot||e.getComponent() instanceof Chunk) {
-            e.translatePoint(w.containerPanel.getLocation().x - x, w.containerPanel.getLocation().y - y);
-            w.containerPanel.setLocation(e.getX(), e.getY());
-        } else {
-            e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
+            if (e.getComponent() instanceof Bot || e.getComponent() instanceof Chunk) {
+                e.translatePoint(w.containerPanel.getLocation().x - x, w.containerPanel.getLocation().y - y);
+                w.containerPanel.setLocation(e.getX(), e.getY());
+            } else {
+                e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
 
-            e.getComponent().setLocation(e.getX(), e.getY());
-        }
+                e.getComponent().setLocation(e.getX(), e.getY());
+            }
     }
-
 }

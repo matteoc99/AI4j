@@ -235,12 +235,12 @@ public class Bot extends JPanel {
         }
 
         if (age == makeChildren) {
-            if (age >= 2) {
+            if (age >= 3) {
                 System.out.print("AGE " + age + " : {");
                 for (double d : agent.getNet().getDescriptor())
                     System.out.print(", " + d);
+                System.out.println("}");
             }
-            System.out.println("}");
             makeChildren++;
             makeChildren(2);
         }
@@ -337,7 +337,7 @@ public class Bot extends JPanel {
      * Eat the from the greatest Chunk
      */
     public void eat() {
-        hp -= 5 * age;
+        hp -= 2 * age +2;
         try {
             Chunk c = (Chunk) getChunkUnder(getX(), getY(), body);
             if (c != null && c.getType() == Chunk.Type.LAND) {

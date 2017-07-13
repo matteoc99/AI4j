@@ -383,6 +383,9 @@ public class Network {
      * @return the Data that the network.Network Processes
      */
     public double[] processData(double[] in) {
+
+        //todo fire bias Neuron
+
         double[] ret = new double[layers.get(layers.size() - 1).getNeuronCount()];
 
         if (layers.size() <= 0)
@@ -405,6 +408,9 @@ public class Network {
             layers.get(layers.size() - 1).getNeuronAt(i).setValue(0);
         }
         return ret;
+
+
+
     }
 
     public double[] getDescriptor() {
@@ -546,6 +552,8 @@ public class Network {
             int connection = (int) (Math.random() * layers.get(layer).getNeuronAt(neuron).getAxons().size());
             Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
             c.setWeight(Math.random() * 2 - 1);
+            //TODO bias mutation
+
         }
     }
 
@@ -568,4 +576,11 @@ public class Network {
                 c.setWeight(-1);
         }
     }
+
+
+
+    public void propagateBack(double error){
+        //TODO
+    }
+
 }
