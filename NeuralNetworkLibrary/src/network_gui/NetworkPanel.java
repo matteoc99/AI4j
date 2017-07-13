@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @author Maximilian Estfelller
  * @since 18.05.2017
  */
-class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
+public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
 
     private final int rightPadding = 8;
     private final int leftPadding = 8;
@@ -75,7 +75,7 @@ class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
 
     private ArrayList<NetworkPanelConnection> connections;
 
-    NetworkPanel(Network network) {
+    public NetworkPanel(Network network) {
         this.network = network;
         // Settings
         this.setBorder(NORMAL_BORDER);

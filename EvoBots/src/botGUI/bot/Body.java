@@ -30,5 +30,7 @@ public class Body extends JComponent {
     public void setBodyColor(Color bodyColor) {
         this.bodyColor = bodyColor;
         repaint();
+    }public Color getBodyColor() {
+        return bodyColor;
     }
 }

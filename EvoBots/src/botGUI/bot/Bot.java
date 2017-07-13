@@ -8,6 +8,10 @@ import network.Network;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import static botGUI.World.*;
 
 /**
  * @author Matteo Cosi
@@ -25,7 +29,7 @@ public class Bot extends JPanel {
      * describes how fast the agent Ages
      * greater value = slower aging
      */
-    private static final int AGEING_SPEED = 505;
+    private static final int AGEING_SPEED = 530;
 
     /**
      * describes the length of the sensor
@@ -75,9 +79,9 @@ public class Bot extends JPanel {
     /**
      * Color of the bot
      */
-    public int red = 255;
-    public int blue = 0;
-    public int green = 0;
+    public int red = (int) (Math.random() * 80) + 30;
+    public int blue = (int) (Math.random() * 80) +30;
+    public int green = (int) (Math.random() * 80) + 30;
 
 
     /**
@@ -90,10 +94,19 @@ public class Bot extends JPanel {
      */
     int prevChunkSize = World.CHUNK_SIZE;
 
-    //TODO make direction a double
+    public boolean selected = false;
 
-    public Bot(Agent agent) {
+    public World world;
+
+
+    public int generation;
+
+
+    public Bot(Agent agent, World world, int generation) {
+        this.world = world;
         this.agent = agent;
+        this.generation = generation;
+
 
         xDir = (int) (Math.random() * 1);
         yDir = (int) (Math.random() * 1);
@@ -124,6 +137,10 @@ public class Bot extends JPanel {
         g.setColor(Color.BLACK);
         g.drawLine(body.getX() + body.getWidth() / 2, body.getY() + body.getHeight() / 2,
                 sensor.getX() + sensor.getWidth() / 2, sensor.getY() + sensor.getHeight() / 2);
+        if (selected) {
+            g.setColor(new Color(200, 250, 200));
+            g.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
+        }
         super.paint(g);
         repaint();
     }
@@ -132,7 +149,7 @@ public class Bot extends JPanel {
      * rotate with a given angle and resize and reposition the Sensor
      */
     public void rotateAndResize(int angle) {
-        sensorRotation += angle;
+        sensorRotation += angle + (Math.random() * 15) - 7.5;
         sensorRotation = sensorRotation % 360;
         rotateAndResize();
     }
@@ -167,8 +184,8 @@ public class Bot extends JPanel {
         if (this.getParent() != null) {
             this.getParent().remove(this);
         }
-        if (World.population.contains(this)) {
-            World.population.remove(this);
+        if (world.population.contains(this)) {
+            world.population.remove(this);
         }
     }
 
@@ -187,27 +204,43 @@ public class Bot extends JPanel {
         } else {
             //color
             int temp = hp > MAX_HP / 2 ? MAX_HP - hp : hp;
-            int red = (502 - temp / 2 - blue - green) < 255 ? (502 - temp / 2 - blue - green) : 255;
-            int green = (502 - temp / 2 - blue - red) < 255 ? (502 - temp / 2 - blue - red) : 255;
-            int blue = (502 - temp / 2 - green - red) < 255 ? (502 - temp / 2 - green - red) : 255;
+            /*int red = (502 - temp / 2 - this.blue - this.green) < 255 ? (502 - temp / 2 - this.blue - this.green) : 255;
+            int green = (502 - temp / 2 - this.blue - this.red) < 255 ? (502 - temp / 2 - this.blue - this.red) : 255;
+            int blue = (502 - temp / 2 - this.green - this.red) < 255 ? (502 - temp / 2 - this.green - this.red) : 255;
+            */
+            temp= Math.abs(temp-500);
+            int red = this.red+(temp/4);
+            int blue =this.blue+(temp/4);
+            int green =this.green+(temp/4);
+
             if (red < 0)
                 red = 0;
             if (green < 0)
                 green = 0;
             if (blue < 0)
                 blue = 0;
+            if (red > 255)
+                red = 255;
+            if (green > 255)
+                green = 255;
+            if (blue > 255)
+                blue = 255;
             body.setBodyColor(new Color(red, green, blue));
         }
         if (ageingCounter < AGEING_SPEED) {
             ageingCounter++;
         } else {
-            ageingCounter = -500 * age;
+            ageingCounter = -100 * age;
             age++;
         }
 
         if (age == makeChildren) {
-            if (age >= 2)
-                System.out.println("AGE " + age + " : " + agent.getNet().getDescriptor().toString());
+            if (age >= 2) {
+                System.out.print("AGE " + age + " : {");
+                for (double d : agent.getNet().getDescriptor())
+                    System.out.print(", " + d);
+            }
+            System.out.println("}");
             makeChildren++;
             makeChildren(2);
         }
@@ -241,6 +274,8 @@ public class Bot extends JPanel {
         }
         if (getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
+        else
+            kill();  //TODO becauseof bug if they hit the border
     }
 
     /**
@@ -250,12 +285,38 @@ public class Bot extends JPanel {
         for (int i = 0; i < howmany; i++) {
             Agent a = new CosiAgent(new Network(agent.getNet().getDescriptor()));
             a.getNet().mutateSoft((int) (Math.random() * 8));
-            Bot child = new Bot(a);
-            child.red = 0;
-            child.blue = 255;
-            World.containerPanel.add(child, 0);
-            World.population.add(child);
+            Bot child = new Bot(a, world, generation + 1);
+            //create colors for child
+            int newRed = (int) (red + Math.random() * 4 - 2);
+            int newBlue = (int) (blue + Math.random() * 4 - 2);
+            int newGreen = (int) (green + Math.random() * 4 - 2);
+            if (newBlue > 255) {
+                newBlue = 255;
+            }
+            if (newBlue < 0) {
+                newBlue = 0;
+            }
+            if (newGreen > 255) {
+                newGreen = 255;
+            }
+            if (newGreen < 0) {
+                newGreen = 0;
+            }
+            if (newRed > 255) {
+                newRed = 255;
+            }
+            if (newRed < 0) {
+                newRed = 0;
+            }
+            child.red = newRed;
+            child.blue = newBlue;
+            child.green = newGreen;
+
+            world.containerPanel.add(child, 0);
+            world.population.add(child);
             child.setLocation(this.getX() + (int) (Math.random() * 60) - 30, this.getY() + (int) (Math.random() * 60) - 30);
+            final Bot bf = child;
+            bf.addMouseListener(World.listener);
         }
     }
 
@@ -266,7 +327,7 @@ public class Bot extends JPanel {
      */
     private void transformSpeed(double speed) {
         speed -= 0.5;
-        speed *= 4;
+        speed *= prevChunkSize / 4;
         xDir = (int) (Math.round(speed * -Math.cos(Math.toRadians(sensorRotation))));
         yDir = (int) (Math.round(speed * -Math.sin(Math.toRadians(sensorRotation))));
     }
@@ -276,11 +337,11 @@ public class Bot extends JPanel {
      * Eat the from the greatest Chunk
      */
     public void eat() {
-        hp -= 10;
+        hp -= 5 * age;
         try {
             Chunk c = (Chunk) getChunkUnder(getX(), getY(), body);
             if (c != null && c.getType() == Chunk.Type.LAND) {
-                hp += c.getFood() / age;
+                hp += c.getFood();
                 c.setFood(0);
                 c.toUpdate = true;
                 if (hp > MAX_HP)
@@ -302,12 +363,14 @@ public class Bot extends JPanel {
     public Chunk getChunkUnder(int x, int y, JComponent component) {
         Chunk ret = null;
         if (this.getParent() != null) {
-
+            if (!(getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())) {
+                ret = null;
+            }
             if (x < -component.getX() || y < -component.getX()
                     || x + component.getX() + component.getWidth() > this.getParent().getWidth()
-                    || y + component.getY() + component.getHeight() > this.getParent().getHeight())
+                    || y + component.getY() + component.getHeight() > this.getParent().getHeight()) {
                 ret = null;
-            else {
+            } else {
                 Rectangle neuePosition = new Rectangle(x + component.getX(), y + component.getY(), component.getWidth(), component.getHeight());
                 Component[] komponenten = null;
                 komponenten = this.getParent().getComponents();
@@ -380,7 +443,7 @@ public class Bot extends JPanel {
      */
     public double getHp() {
         if (hp >= MAX_HP / 2) {
-            return 0;
+            return 1;
         } else {
             return (hp) / (MAX_HP / 2);
         }
@@ -418,8 +481,8 @@ public class Bot extends JPanel {
      * is a method which resize´s the bot relative to the World´s Chunk size
      */
     public void resizeAndRelocate() {
-        double difference = (0.0 + World.CHUNK_SIZE) /prevChunkSize;
-                sensor.width = World.CHUNK_SIZE / 4;
+        double difference = (0.0 + World.CHUNK_SIZE) / prevChunkSize;
+        sensor.width = World.CHUNK_SIZE / 4;
         sensor.height = sensor.width;
         body.width = World.CHUNK_SIZE / 2;
         body.height = body.width;
@@ -428,7 +491,7 @@ public class Bot extends JPanel {
         body.setLocation(getWidth() / 2 - body.getWidth() / 2, getHeight() / 2 - body.getHeight() / 2);
         sensor_length = getWidth() / 2;
 
-        setLocation((int) (getX()*difference), (int) (getY()*difference));
+        setLocation((int) (getX() * difference), (int) (getY() * difference));
 
         prevChunkSize = World.CHUNK_SIZE;
     }
