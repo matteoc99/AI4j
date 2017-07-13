@@ -425,4 +425,15 @@ public class Neuron {
     public boolean containsConnection(Connection con) {
         return containsAxon(con) || containsDendrite(con);
     }
+
+    /**
+     * Changes the Weights of the Dendrites
+     * @param error how much to change
+     */
+    public void processError(double error) {
+        for (int i = 0; i < dendrites.size(); i++) {
+            Connection c = dendrites.get(i);
+            c.changeWeightRelativeToError(error);
+        }
+    }
 }

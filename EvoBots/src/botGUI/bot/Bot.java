@@ -79,9 +79,9 @@ public class Bot extends JPanel {
     /**
      * Color of the bot
      */
-    public int red = (int) (Math.random() * 80) + 30;
-    public int blue = (int) (Math.random() * 80) +30;
-    public int green = (int) (Math.random() * 80) + 30;
+    public int red = (int) (Math.random() * 180) + 30;
+    public int blue = (int) (Math.random() * 180) +30;
+    public int green = (int) (Math.random() * 180) + 30;
 
 
     /**
@@ -203,11 +203,7 @@ public class Bot extends JPanel {
             kill();
         } else {
             //color
-            int temp = hp > MAX_HP / 2 ? MAX_HP - hp : hp;
-            /*int red = (502 - temp / 2 - this.blue - this.green) < 255 ? (502 - temp / 2 - this.blue - this.green) : 255;
-            int green = (502 - temp / 2 - this.blue - this.red) < 255 ? (502 - temp / 2 - this.blue - this.red) : 255;
-            int blue = (502 - temp / 2 - this.green - this.red) < 255 ? (502 - temp / 2 - this.green - this.red) : 255;
-            */
+         /*   int temp = hp > MAX_HP / 2 ? MAX_HP - hp : hp;
             temp= Math.abs(temp-500);
             int red = this.red+(temp/4);
             int blue =this.blue+(temp/4);
@@ -225,7 +221,8 @@ public class Bot extends JPanel {
                 green = 255;
             if (blue > 255)
                 blue = 255;
-            body.setBodyColor(new Color(red, green, blue));
+
+           */ body.setBodyColor(new Color(red, green, blue));
         }
         if (ageingCounter < AGEING_SPEED) {
             ageingCounter++;
@@ -274,8 +271,8 @@ public class Bot extends JPanel {
         }
         if (getX() > 0 && getY() > 0 && getX() < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
-        else
-            kill();  //TODO becauseof bug if they hit the border
+
+
     }
 
     /**

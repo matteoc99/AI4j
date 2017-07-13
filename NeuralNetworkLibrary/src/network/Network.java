@@ -36,7 +36,7 @@ public class Network {
         layers = new ArrayList<>();
     }
 
-    public Neuron bias = new Neuron(0);
+   // public Neuron bias = new Neuron(0);
 
     /**
      * Create a network.Network with some Layers and connects them in the order they arrive
@@ -154,14 +154,14 @@ public class Network {
         }
         layers.add(layerout);
 
-
-        for (int i = 1; i < layers.size(); i++) {
+        //bias
+      /*  for (int i = 1; i < layers.size(); i++) {
             for (int j = 0; j < layers.get(i).getNeuronCount(); j++) {
                 new Connection(bias, layers.get(i).getNeuronAt(j), descriptor[index]);
                 index++;
             }
         }
-
+*/
     }
 
     /**
@@ -254,12 +254,12 @@ public class Network {
         layers.add(outLayers);
 
         //bias
-        bias.setValue(1);
+       /* bias.setValue(1);
         for (int i = 1; i < layers.size(); i++) {
             for (int j = 0; j < layers.get(i).getNeuronCount(); j++) {
                 new Connection(bias, layers.get(i).getNeuronAt(j));
             }
-        }
+        }*/
         descriptor = generateDescriptor();
     }
 
@@ -451,11 +451,12 @@ public class Network {
         ret++;
         //layer desc
         ret += 2 + hiddenAmount;
+
         //bias
-        ret+=outputSize;
+        /*ret+=outputSize;
         for (int i = 0; i < hiddenAmount; i++) {
             ret+=hiddenSize[i];
-        }
+        }*/
         return ret;
     }
 
@@ -507,10 +508,10 @@ public class Network {
         }
 
         //bias
-        for (int i = 0; i < bias.getAxons().size(); i++) {
+       /* for (int i = 0; i < bias.getAxons().size(); i++) {
             ret[index]=bias.getAxons().get(i).getWeight();
             index++;
-        }
+        }*/
         return ret;
     }
 
@@ -578,9 +579,15 @@ public class Network {
     }
 
 
-
+    /**
+     * first implementation of backpropagation
+     * @param error the error of the net
+     */
     public void propagateBack(double error){
-        //TODO
+        for (int i = 0; i < layers.get(layers.size()-1).getNeuronCount(); i++) {
+            Neuron n = layers.get(layers.size()-1).getNeuronAt(i);
+            n.processError(error);
+        }
     }
 
 }
