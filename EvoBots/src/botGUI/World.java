@@ -5,6 +5,7 @@ import agent.cosi.CosiAgent;
 import botGUI.bot.Bot;
 import botGUI.bot.DragAndDropListener;
 import network.Network;
+import network_gui.NetworkContainer;
 import network_gui.NetworkPanel;
 
 import javax.swing.*;
@@ -51,6 +52,11 @@ public class World extends JFrame {
      */
     public static double[][] theBests = {{3.0, 5.0, 8.0, 3.0, 0.1627194548181652, 0.6142562841394916, -0.15167735471769395, -0.13449174273232867, -0.5894793390503703, -0.10831948623641674, 0.8378095417016462, 0.6857437956001737, -0.05120483967619194, 0.9007469251015088, -0.09355095515791345, -0.9115847693285959, -0.5777862129482267, 0.3229636991669462, 0.9960974436536036, 0.6742509672863726, -0.9137005267554399, 0.8192046671350268, 0.21046818182103677, -0.6107349305605014, 0.9726720945293148, -0.7176924916148473, 0.8640866393288564, -0.13574102760285123, 0.5360229309246729, -0.10119092014061537, 0.8822675446466788, -0.7701273651171288, -0.3589663232875344, -0.8363218852259762, 0.9386508908165183, 0.5246786829690571, -0.9927783197843381, 0.26729560264099916, -0.36715253600662345, -0.00454847118963464, -0.6980426384467595, 0.8618239824640077, 0.7392608432827525, 0.08288648427599532, -0.04333407556714275, -0.8855032260115021, -0.9008315404097644, 0.6926829189785886, 0.47849208654790676, 0.16825124266718627, 0.08165997884716503, -0.5289531477504446, 0.5394701152951897, 0.6555168610540298, 0.705046424565277, -0.7646915570047503, 0.4475092132871836, 0.7488635106010881, 0.4888698345393039, -0.5455086081006668, 0.7382683240811716, -0.6173969698929014, 0.897658174450652, 0.7313103632073044, 0.5742610705808284, 0.7423298538650667, -0.15891358086111929, 0.6062154566295526, -0.6027033756407989, 0.8947753122281754, 0.11121974641263987, -0.31425936736262927, 0.852627949670222, 0.5182424549860574, -0.13396894734623155, -0.908444169817584, 0.3879451307636037, -0.9057222846731059, -0.690599860256031}
     };
+
+
+    public enum Optimisation {
+        MIN, MEDIUM, MAX
+    }
 
 
     /**
@@ -160,7 +166,13 @@ public class World extends JFrame {
      */
     public Bot selectedBot = null;
 
+
+    /**
+     * Listener used to drag the map
+     */
     public static DragAndDropListener listener;
+
+    public static Optimisation performance = Optimisation.MIN;
 
     public World() {
         setTitle("World");
@@ -303,6 +315,8 @@ public class World extends JFrame {
                             resizeCounter = 1;
                         CHUNK_SIZE -= e.getWheelRotation() * resizeCounter;
                         resizeCounter = 3;
+                        if (performance == Optimisation.MAX)
+                            resizeCounter *= 2;
                         if (CHUNK_SIZE <= 0)
                             CHUNK_SIZE = 1;
                     }
@@ -313,6 +327,9 @@ public class World extends JFrame {
                         CHUNK_SIZE -= e.getWheelRotation() * resizeCounter;
 
                         resizeCounter = 3;
+                        if (performance == Optimisation.MAX)
+                            resizeCounter *= 2;
+
                     }
                 }
             }
@@ -324,12 +341,12 @@ public class World extends JFrame {
     public JPanel addBotStats(Bot b) {
         JPanel ret = new JPanel();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 500);
+        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height -400);
         ret.setBackground(Color.white);
         ret.setLayout(null);
 
-//        NetworkPanel p = new NetworkPanel(b.agent.getNet());
-        //TODO add network panel to controls
+        NetworkContainer con = new NetworkContainer();
+
 
         JLabel[] labels = new JLabel[6];
         for (int i = 0; i < labels.length; i++) {
@@ -348,6 +365,9 @@ public class World extends JFrame {
         labels[4].setBackground(b.body.getBodyColor());
         labels[4].setOpaque(true);
 
+        con.addNetwork(b.agent.getNet());
+        con.setBounds(20,60*labels.length,350,300);
+        ret.add(con);
 
         return ret;
     }
@@ -533,7 +553,6 @@ public class World extends JFrame {
                 if (resizeCounter == 0) {
                     resizeCounter = 0;
                     resizeMap();
-                    //TODO Bot resize  resizeMap();
                 }
                 if (resizeCounter == Integer.MIN_VALUE)
                     resizeCounter = -1;
@@ -617,7 +636,7 @@ public class World extends JFrame {
              */
             int chanceToSpawnBest = -10;
             if (chanceToSpawnBest < Math.random() * 100) {
-                b = new Bot(new CosiAgent(Network.createDFF(5, 3, 1, 8)), this, 0);
+                b = new Bot(new CosiAgent(new Network(14, 4, 2, new int[]{15,8})), this, 0);
             } else {
                 int pos = (int) (Math.random() * theBests.length);
                 b = new Bot(new CosiAgent(new Network(theBests[pos])), this, 0);
@@ -639,20 +658,22 @@ public class World extends JFrame {
         }
 
         //refresh bot panel
-        if (selectedBot != null) {
-            if (selectedBot.hp > 0) {
-                controlPanel.removeAll();
-                container.remove(controlPanel);
-                controlPanel = new JPanel();
-                controlPanel = addBotStats(selectedBot);
-                container.add(controlPanel, 0);
-            } else {
-                selectedBot = null;
-                controlPanel.removeAll();
-                container.remove(controlPanel);
-                controlPanel = new JPanel();
-                controlPanel = addControls();
-                container.add(controlPanel, 0);
+        if (performance == Optimisation.MEDIUM || performance == Optimisation.MIN) {
+            if (selectedBot != null) {
+                if (selectedBot.hp > 0) {
+                    controlPanel.removeAll();
+                    container.remove(controlPanel);
+                    controlPanel = new JPanel();
+                    controlPanel = addBotStats(selectedBot);
+                    container.add(controlPanel, 0);
+                } else {
+                    selectedBot = null;
+                    controlPanel.removeAll();
+                    container.remove(controlPanel);
+                    controlPanel = new JPanel();
+                    controlPanel = addControls();
+                    container.add(controlPanel, 0);
+                }
             }
         }
         //FPS control
@@ -668,10 +689,19 @@ public class World extends JFrame {
             if (components != null && components.length > 0) {
                 for (Component c : components) {
                     if (c instanceof Chunk) {
+
                         if (fpsCounter == FPS * CHUNK_REFRESH_TIME)
                             ((Chunk) c).update();
-                        else if (fpsCounter % FOOD_REGROWTH == 0)
+
+                         if (fpsCounter % FOOD_REGROWTH == 0)
                             ((Chunk) c).updateFood();
+
+                        if(performance==Optimisation.MAX)
+                            CHUNK_REFRESH_TIME=3;
+                        else if (performance==Optimisation.MEDIUM)
+                            CHUNK_REFRESH_TIME=1;
+                        else
+                            CHUNK_REFRESH_TIME=0;
                     }
                     if (c instanceof Bot) {
                         Bot b = (Bot) c;

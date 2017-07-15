@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author Maximilian Estfelller
  * @since 12.05.2017
  */
-class NetworkContainer extends JPanel implements NetworkGUIComponent{
+public class NetworkContainer extends JPanel implements NetworkGUIComponent{
 
     /**
      * List stores all created NetworkPanels
@@ -21,7 +21,7 @@ class NetworkContainer extends JPanel implements NetworkGUIComponent{
 
     private boolean developerMode = false;
 
-    NetworkContainer() {
+    public NetworkContainer() {
         super();
         this.setBorder(new EmptyBorder(5,20,5,20));
 
@@ -38,7 +38,7 @@ class NetworkContainer extends JPanel implements NetworkGUIComponent{
      *
      * @param network to add
      */
-    void addNetwork(@NotNull Network network) {
+    public void addNetwork(@NotNull Network network) {
         if (network == null) return;
         for (NetworkPanel networkPanel : networkPanels)
             if (networkPanel.getEquivalent().equals(network))
