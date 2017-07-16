@@ -272,7 +272,6 @@ public class Bot extends JPanel {
             agent.increaseFitness();
             //   System.out.println("IN: "+getIsLandUnderBody()+" "+getisLandUnderSensor()+" "+getHp()+" "+getFoodUnderBody()+" "+getFoodUnderSensor());
 
-
             double[] in = new double[14];
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
@@ -480,9 +479,9 @@ public class Bot extends JPanel {
      */
     public double getHp() {
         if (hp >= MAX_HP / 2) {
-            return 1;
+            return (MAX_HP-hp)/ (MAX_HP / 2.0);
         } else {
-            return (hp) / (MAX_HP / 2);
+            return (hp) / (MAX_HP / 2.0);
         }
     }
 
