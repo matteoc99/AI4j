@@ -83,7 +83,7 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
         this.setPreferredSize(new Dimension(-1, 400));
 
         createComponents();
-        layoutComponents();
+
 
         // Listener
         // MouseListener reacts when the Mouse enters and leaves this NetworkPane
@@ -98,6 +98,13 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
                 layoutComponents();
             }
         });
+    }
+
+
+    @Override
+    public void setBounds(int x, int y, int width, int height) {
+        super.setBounds(x, y, width, height);
+        layoutComponents();
     }
 
     @Override

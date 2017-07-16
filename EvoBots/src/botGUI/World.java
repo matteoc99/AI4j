@@ -362,8 +362,6 @@ public class World extends JFrame {
         ret.setBackground(Color.white);
         ret.setLayout(null);
 
-        NetworkPanel con = new NetworkPanel(b.agent.getNet());
-
 
         JLabel[] labels = new JLabel[6];
         for (int i = 0; i < labels.length; i++) {
@@ -375,15 +373,15 @@ public class World extends JFrame {
         labels[0].setText("Health:" + b.hp);
         labels[1].setText("Age: " + b.age);
         labels[2].setText("Generation: " + b.generation);
-        labels[3].setText("Color: " + b.red + " " + b.blue + " " + b.green);
-        labels[3].setBackground(new Color(b.red, b.blue, b.green));
+        labels[3].setText("Color: " + b.red + " " + b.green + " " + b.blue);
+        labels[3].setBackground(new Color(b.red, b.green, b.blue));
         labels[3].setOpaque(true);
-        labels[4].setText("Cur. Color: " + b.body.getBodyColor().getRed() + " " + b.body.getBodyColor().getBlue() + " " + b.body.getBodyColor().getGreen());
+        labels[4].setText("Cur. Color: " + b.body.getBodyColor().getRed() + " " + b.body.getBodyColor().getGreen() + " " + b.body.getBodyColor().getBlue());
         labels[4].setBackground(b.body.getBodyColor());
         labels[4].setOpaque(true);
 
-        //(b.agent.getNet());
-        //  con.setBounds(20,60*labels.length,350,300);
+        NetworkPanel con = new NetworkPanel(b.agent.getNet());
+        con.setBounds(20, 60 * labels.length, 350, 300);
         ret.add(con);
         con.refresh();
         return ret;
@@ -676,7 +674,7 @@ public class World extends JFrame {
                  */
                 int chanceToSpawnBest = -10;
                 if (chanceToSpawnBest < Math.random() * 100) {
-                    b = new Bot(new CosiAgent(new Network(14, 4, 1, new int[]{1})), this, 0);
+                    b = new Bot(new CosiAgent(new Network(14, 4, 2, new int[]{14,8})), this, 0);
                 } else {
                     int pos = (int) (Math.random() * theBests.length);
                     b = new Bot(new CosiAgent(new Network(theBests[pos])), this, 0);
