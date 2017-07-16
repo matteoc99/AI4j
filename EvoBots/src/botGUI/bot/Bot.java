@@ -108,6 +108,8 @@ public class Bot extends JPanel {
     public int memRefreshCounter = 0;
 
 
+    public static boolean useMemorie = false;
+
     public Bot(Agent agent, World world, int generation) {
         this.world = world;
         this.agent = agent;
@@ -135,9 +137,10 @@ public class Bot extends JPanel {
         setOpaque(false);
         repaint();
 
-        for (int i = 0; i < 3; i++) {
-            memorie.add(new double[]{0.5, 0.5, 0.5});
-        }
+        if (useMemorie)
+            for (int i = 0; i < 3; i++) {
+                memorie.add(new double[]{0.5, 0.5, 0.5});
+            }
     }
 
 
@@ -272,19 +275,29 @@ public class Bot extends JPanel {
             agent.increaseFitness();
             //   System.out.println("IN: "+getIsLandUnderBody()+" "+getisLandUnderSensor()+" "+getHp()+" "+getFoodUnderBody()+" "+getFoodUnderSensor());
 
-            double[] in = new double[14];
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    in[i * j + j] = memorie.get(i)[j];
-                }
-            }
-            in[9] = getIsLandUnderBody();
-            in[10] = getisLandUnderSensor();
-            in[11] = getHp();
-            in[12] = getFoodUnderBody();
-            in[13] = getFoodUnderSensor();
-            double out[] = agent.processData(in);
 
+            double[] in;
+            if (useMemorie) {
+                in = new double[14];
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        in[i * j + j] = memorie.get(i)[j];
+                    }
+                }
+                in[9] = getIsLandUnderBody();
+                in[10] = getisLandUnderSensor();
+                in[11] = getHp();
+                in[12] = getFoodUnderBody();
+                in[13] = getFoodUnderSensor();
+            } else {
+                in = new double[5];
+                in[0] = getIsLandUnderBody();
+                in[1] = getisLandUnderSensor();
+                in[2] = getHp();
+                in[3] = getFoodUnderBody();
+                in[4] = getFoodUnderSensor();
+            }
+            double out[] = agent.processData(in);
 
             transformSpeed(out[0]);
 
@@ -292,16 +305,16 @@ public class Bot extends JPanel {
             if (out[2] > 0.7)
                 eat();
 
-
-            if (memRefreshCounter >= memRefresh) {
-                if (memRefresh < 10)
-                    memRefresh++;
-                memorie.remove(0);
-                memorie.add(out);
-                memRefreshCounter = 0;
-            } else {
-                memRefreshCounter++;
-            }
+            if (useMemorie)
+                if (memRefreshCounter >= memRefresh) {
+                    if (memRefresh < 10)
+                        memRefresh++;
+                    memorie.remove(0);
+                    memorie.add(out);
+                    memRefreshCounter = 0;
+                } else {
+                    memRefreshCounter++;
+                }
         }
         if (getX() + xDir > 0 && getY() + yDir > 0 && getX() + xDir < World.CHUNK_SIZE * World.WORLD_WIDTH - getWidth() && getY() + yDir < World.CHUNK_SIZE * World.WORLD_HEIGHT - getHeight())
             setLocation(getX() + xDir, getY() + yDir);
@@ -479,7 +492,7 @@ public class Bot extends JPanel {
      */
     public double getHp() {
         if (hp >= MAX_HP / 2) {
-            return (MAX_HP-hp)/ (MAX_HP / 2.0);
+            return (MAX_HP - hp) / (MAX_HP / 2.0);
         } else {
             return (hp) / (MAX_HP / 2.0);
         }

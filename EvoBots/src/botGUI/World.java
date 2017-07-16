@@ -674,7 +674,11 @@ public class World extends JFrame {
                  */
                 int chanceToSpawnBest = -10;
                 if (chanceToSpawnBest < Math.random() * 100) {
-                    b = new Bot(new CosiAgent(new Network(14, 4, 2, new int[]{14,8})), this, 0);
+                    if(Bot.useMemorie) {
+                        b = new Bot(new CosiAgent(new Network(14, 4, 2, new int[]{14, 8})), this, 0);
+                    }else {
+                        b = new Bot(new CosiAgent(new Network(5, 4, 1, new int[]{8})), this, 0);
+                    }
                 } else {
                     int pos = (int) (Math.random() * theBests.length);
                     b = new Bot(new CosiAgent(new Network(theBests[pos])), this, 0);
