@@ -1,11 +1,15 @@
 package botGUI;
 
 
+import agent.Agent;
 import agent.cosi.CosiAgent;
+import botGUI.bot.Body;
 import botGUI.bot.Bot;
 import botGUI.bot.DragAndDropListener;
+import botGUI.bot.Sensor;
 import network.Network;
 import network_gui.NetworkContainer;
+import network_gui.NetworkGUI;
 import network_gui.NetworkPanel;
 
 import javax.swing.*;
@@ -13,7 +17,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,7 +56,8 @@ public class World extends JFrame {
      * <p>
      * AGE 5 : {, 3.0, 5.0, 8.0, 3.0, 0.1627194548181652, 0.6142562841394916, -0.15167735471769395, -0.13449174273232867, -0.5894793390503703, -0.10831948623641674, 0.8378095417016462, 0.6857437956001737, -0.05120483967619194, 0.9007469251015088, -0.09355095515791345, -0.9115847693285959, -0.5777862129482267, 0.3229636991669462, 0.9960974436536036, 0.6742509672863726, -0.9137005267554399, 0.8192046671350268, 0.21046818182103677, -0.6107349305605014, 0.9726720945293148, -0.7176924916148473, 0.8640866393288564, -0.13574102760285123, 0.5360229309246729, -0.10119092014061537, 0.8822675446466788, -0.7701273651171288, -0.3589663232875344, -0.8363218852259762, 0.9386508908165183, 0.5246786829690571, -0.9927783197843381, 0.26729560264099916, -0.36715253600662345, -0.00454847118963464, -0.6980426384467595, 0.8618239824640077, 0.7392608432827525, 0.08288648427599532, -0.04333407556714275, -0.8855032260115021, -0.9008315404097644, 0.6926829189785886, 0.47849208654790676, 0.16825124266718627, 0.08165997884716503, -0.5289531477504446, 0.5394701152951897, 0.6555168610540298, 0.705046424565277, -0.7646915570047503, 0.4475092132871836, 0.7488635106010881, 0.4888698345393039, -0.5455086081006668, 0.7382683240811716, -0.6173969698929014, 0.897658174450652, 0.7313103632073044, 0.5742610705808284, 0.7423298538650667, -0.15891358086111929, 0.6062154566295526, -0.6027033756407989, 0.8947753122281754, 0.11121974641263987, -0.31425936736262927, 0.852627949670222, 0.5182424549860574, -0.13396894734623155, -0.908444169817584, 0.3879451307636037, -0.9057222846731059, -0.690599860256031}
      */
-    public static double[][] theBests = {{3.0, 5.0, 8.0, 3.0, 0.1627194548181652, 0.6142562841394916, -0.15167735471769395, -0.13449174273232867, -0.5894793390503703, -0.10831948623641674, 0.8378095417016462, 0.6857437956001737, -0.05120483967619194, 0.9007469251015088, -0.09355095515791345, -0.9115847693285959, -0.5777862129482267, 0.3229636991669462, 0.9960974436536036, 0.6742509672863726, -0.9137005267554399, 0.8192046671350268, 0.21046818182103677, -0.6107349305605014, 0.9726720945293148, -0.7176924916148473, 0.8640866393288564, -0.13574102760285123, 0.5360229309246729, -0.10119092014061537, 0.8822675446466788, -0.7701273651171288, -0.3589663232875344, -0.8363218852259762, 0.9386508908165183, 0.5246786829690571, -0.9927783197843381, 0.26729560264099916, -0.36715253600662345, -0.00454847118963464, -0.6980426384467595, 0.8618239824640077, 0.7392608432827525, 0.08288648427599532, -0.04333407556714275, -0.8855032260115021, -0.9008315404097644, 0.6926829189785886, 0.47849208654790676, 0.16825124266718627, 0.08165997884716503, -0.5289531477504446, 0.5394701152951897, 0.6555168610540298, 0.705046424565277, -0.7646915570047503, 0.4475092132871836, 0.7488635106010881, 0.4888698345393039, -0.5455086081006668, 0.7382683240811716, -0.6173969698929014, 0.897658174450652, 0.7313103632073044, 0.5742610705808284, 0.7423298538650667, -0.15891358086111929, 0.6062154566295526, -0.6027033756407989, 0.8947753122281754, 0.11121974641263987, -0.31425936736262927, 0.852627949670222, 0.5182424549860574, -0.13396894734623155, -0.908444169817584, 0.3879451307636037, -0.9057222846731059, -0.690599860256031}
+    public static double[][] theBests = {
+            {4.0, 14.0, 15.0, 8.0, 4.0, -0.7275365291421605, -0.4358741799726731, -0.9993046963997814, 0.3175350419693277, -0.38623459534283855, -0.5856186081524521, 0.17892937655857422, -0.8860648950340522, -0.7418570127825457, -0.37165088520993494, -0.7040188651333634, 0.4695925913253376, 0.20893774625231765, -0.8357561942955587, -0.4924909341809889, 0.5232764861247923, -0.3361212675349248, -0.8715306845708253, 0.9670228480053562, 0.4802778845379503, -0.6362866078759561, -0.7478604739439958, 0.12954773793038066, -0.747318329068406, -0.7086497736349451, 0.4808826241586084, 0.9549030202835338, 0.5718385339571546, -0.2149495820667262, -0.9943737516343774, 0.3251092017044588, 0.7532746107247972, 0.39678426999199656, 0.1577643602991401, 0.039265923227384425, -0.578772508098855, 0.15694656041640198, 0.2503100177035136, 0.8605709022120511, -0.8105466176585618, 0.2992025004343344, 0.6673410117065812, 0.2639788156201248, -0.45310012820601386, 0.9543143588878478, -0.7127512115183923, 0.7693264426605357, -0.9887050682953005, -0.16062268288260895, -0.32899643001446033, 0.043579039895256244, -0.009346116296423457, -0.4510294077754291, 0.3548531885768198, -0.6828193497008812, 0.7321601401932853, 0.6973081559933771, -0.9424261639051321, -0.9166801537409683, 0.23982829545501883, 0.8655525128459371, -0.3544030618666323, 0.5352493544517192, -0.8931884160104662, 0.07603069134282858, -0.7049632386916429, -0.2543724514990071, -0.16483148988045992, 0.34517329724594803, -0.5521510662494584, -0.796823351725571, 0.4053565130653731, -0.24042841781511815, 0.880050912468177, -0.004218122156021131, 0.6096744310132967, 0.47462934870168394, 0.48314038711973506, -0.33451791454047175, -0.02167256509579807, -0.9471384930463458, -0.794450067220478, -0.4403669820390024, -0.9962578098949604, 0.6389717376045208, -0.990821194700277, -0.6361499678599629, -0.19178697666710387, -0.38858186513735227, -0.3332526595962997, -0.5738331850186613, 0.40191215100775723, 0.5552543703344912, -0.24107867747450928, -0.5318258234402502, 0.24275157364924604, 0.6686127163876068, 0.3258568655458791, -0.6722687269157168, -0.06346403719215332, 0.0452716638626649, 0.28602064595455357, -0.5108307173477207, 0.6052998585294802, -0.3316683120299966, -0.04415845253677064, 0.3307367980782694, 0.7036752994243471, 0.4050975868450233, 0.7869550672636261, -0.7446372420396137, -0.12241064741856, -0.1891532501458404, -0.21649687846257293, 0.16964248000000515, 0.8365439133623787, -0.8707606042643337, -0.02984418259925281, 0.13727891180066099, -0.8498169772452355, 0.5197049760729597, -0.24777470963370973, -0.5429590483628124, -0.6181929756386935, 0.24721779257237642, 0.042443797550999696, -0.09837249447064367, 0.03594466737481494, -0.6625478080222589, 0.624682394117344, -0.5973455432639652, -0.5759512371690565, -0.9696135693689738, 0.3830886804988711, 0.078310439389919, -0.25816687815681205, 0.2580019382865366, -0.2541734772448738, 0.17405453068683352, -0.5962782667202076, 0.32680334396803756, -0.024197808072021543, -0.7769422841379838, -0.005665062001886323, 0.0034622288661350087, 0.786465673169799, -0.4680822066617414, 0.0738900881808986, 0.28196631807655526, -0.83102118083906, -0.041493997548032846, -0.48615359023504645, 0.2532329725650997, 0.2877447272201743, -0.12736951974890975, -0.9589207612938437, -0.29677464117917896, -0.1655041090094287, 0.17653220044307716, 0.23331880540983718, 0.33318628121436933, 0.326842732887227, 0.3110539587223371, -0.6644553492429175, -0.17431585723603682, -0.5046143050401024, -0.7153457750413073, -0.04352141200251758, -0.6272575403932237, -0.8758016013383427, 0.9362637803845899, 0.9562716755311713, -0.26259655785908365, -0.5073076642986152, 0.8793116561762155, 0.6509355455930825, -0.5623462345383443, -0.0874238938301577, 0.873075425682448, 0.8360197422203515, -0.7782813986932196, -0.2381743718361493, -0.27116107101910636, 0.07149089593136981, -0.35369113070366676, 0.8882856177604375, 0.28216790622284726, -0.8282772720297931, -0.7255161060004407, -0.7112757027962198, -0.5510567410383715, 0.9089580933776429, -0.2226296444695981, -0.43513249906609364, 0.931618991248746, 0.5655584899697783, -0.9459437296187359, -0.1838583732642991, -0.24649992365425621, 0.15980895424683172, 0.3765574347853571, -0.6504433732266266, 0.4726640735991807, 0.9219995387133804, 0.5218304738301351, 0.8703654573893056, 0.6634781508737957, -0.08804248461900088, 0.870386968664721, 0.662836971253135, 0.052490876783226836, -0.45384193917833504, 0.5311388262095058, 0.6786853331412754, -0.44319268667818057, -0.7580061602799932, -0.305314978319293, -0.5786008323876066, -0.6031170128936476, 0.3887370171436284, 0.622327527475617, 0.04791909820084417, -0.5579989986244229, -0.5808192052866519, 0.9456811028394043, 0.20481432179260395, -0.004475364005883664, 0.8829002712070539, -0.7181777233884148, 0.7743117893205322, -0.661653985976443, -0.8884742062095392, 0.5614981609167164, -0.07376396913567196, -0.47722116271680814, -0.6816254682784708, -0.07700423989559702, 0.6551188416890383, 0.14547249193483625, 0.7892405118363592, -0.45814945935947926, 0.32744308826185753, -0.8732481738346956, 0.19809455918425112, 0.34664917420225216, -0.32781347191648114, -0.11488416256369804, 0.020900430779447587, 0.2137625614799301, 0.11853566511768499, -0.2805439017308353, -0.47729455152712075, -0.06107938970893323, 0.4178419921649481, 0.6978839938866914, -0.14238252044190092, 0.05111985175131628, 0.08259710878838677, -0.09911537696304662, 0.44823354178378016, -0.6355671578433464, 0.3334051250415395, 0.47784172355614696, -0.9994625393399177, 0.05586629345707217, 0.9656345501953427, 0.6498085745839219, 0.262238725817477, 0.01249267391906006, -0.16936459405685844, 0.5277249312797119, 0.946975572204908, -0.7913408572995504, 0.4721095521010208, 0.41411134791276294, 0.12376108317996182, 0.9541545513182639, 0.8664254345909439, -0.8824025372449944, -0.1894982077310181, 0.9967944509355473, 0.18637280950812563, 0.7334711589678291, -0.48762661469701807, -0.33203882371683524, -0.9589458878073636, -0.6702374842183239, -0.9897107890937795, 0.527215486006239, -0.2596857613895389, -0.9727954357328188, -0.16834702200275364, -0.7078270815078804, 0.790312137420512, 0.072741704260473, -0.4749626701162468, -0.7675830512146293, 0.04754164591894128, -0.3199160414432354, 0.11238515788927095, -0.33870041657913674, -0.25818822407514497, -0.3528661016516239, 0.9067832814749175, 0.6770567455948577, -0.07560010486310986, -0.9410589565020131, 0.26080996662923717, -0.11525422075690117, 0.8057939124668152, -0.25383352174372065, 0.7499130608349793, -0.5269113662413412, 0.9181438081115407, 0.5928689235016429, -0.2027739044551644, 0.7253837848063003, -0.9292555216664438, 0.27375128899842793, 0.8106855593890097, -0.1887722164086847, -0.3374235060815347, 0.5498351942484914, 0.5302631570762093, -0.4641351518763699, -0.925866930595213, -0.13714169389085717, 0.47258177687941094, 0.6165617546101672, -0.41853376190228864, -0.3574809772638614, 0.11213600076581032, -0.9895169886803892, 0.5185862796671377, -0.5229811026953182, 0.7527917163804647, 0.8361195700238695, 0.2600542570459863, 0.09618403304956336, -0.07980771456519875, -0.48959741481445573, -0.9961922540183763, 0.977771675204602, 0.5451514144331999, 0.866211223372545, -0.6950345487941318, 0.31139992218913704, -0.7899328805697357, -0.7799371820606404, 0.8445579206389779, -0.9591370397990693, -0.7051572254792777, 0.6273502864710327, 0.012835311422570772, -0.2455746496896274, -0.014243825710054336, 0.8925715817004543, -0.4549937619396516, -0.6959849576953978, 0.800168521926859, -0.7054279729636193, 0.6679650376034336}
     };
 
 
@@ -174,6 +181,11 @@ public class World extends JFrame {
 
     public static Optimisation performance = Optimisation.MIN;
 
+    public static NetworkGUI networkGUI;
+
+    public boolean pause = false;
+
+
     public World() {
         setTitle("World");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -182,6 +194,8 @@ public class World extends JFrame {
         setBounds(0, 0, screenSize.width, screenSize.height);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
+
+        networkGUI = new NetworkGUI();
 
         listener = new DragAndDropListener(this);
 
@@ -247,6 +261,9 @@ public class World extends JFrame {
                         break;
                     case KeyEvent.VK_L:
                         containerPanel.setLocation(0, 0);
+                        break;
+                    case KeyEvent.VK_P:
+                        pause = !pause;
                         break;
 
                     //player steuerung for test
@@ -341,11 +358,11 @@ public class World extends JFrame {
     public JPanel addBotStats(Bot b) {
         JPanel ret = new JPanel();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height -400);
+        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 400);
         ret.setBackground(Color.white);
         ret.setLayout(null);
 
-        NetworkContainer con = new NetworkContainer();
+        NetworkPanel con = new NetworkPanel(b.agent.getNet());
 
 
         JLabel[] labels = new JLabel[6];
@@ -365,10 +382,10 @@ public class World extends JFrame {
         labels[4].setBackground(b.body.getBodyColor());
         labels[4].setOpaque(true);
 
-        con.addNetwork(b.agent.getNet());
-        con.setBounds(20,60*labels.length,350,300);
+        //(b.agent.getNet());
+        //  con.setBounds(20,60*labels.length,350,300);
         ret.add(con);
-
+        con.refresh();
         return ret;
     }
 
@@ -399,7 +416,7 @@ public class World extends JFrame {
         JLabel[] labels = new JLabel[9];
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel();
-            labels[i].setBounds(20, (getHeight() / 10) * i, xOff - 10, getHeight() / 10);
+            labels[i].setBounds(20, (getHeight() / 12) * i, xOff - 10, getHeight() / 10);
             labels[i].setFont(new Font("Times New Roman", 0, 20));
             ret.add(labels[i]);
         }
@@ -414,14 +431,14 @@ public class World extends JFrame {
         labels[8].setText("Smoothing");
 
         w_width.setBounds(xOff, 10, controlPanelWidth - xOff, getHeight() / 10);
-        w_height.setBounds(xOff, 10 + (getHeight() / 10), controlPanelWidth - xOff, (getHeight() / 10));
-        land_amount.setBounds(xOff, 10 + (getHeight() / 10) * 2, controlPanelWidth - xOff, getHeight() / 10);
-        land_size.setBounds(xOff, 10 + (getHeight() / 10) * 3, controlPanelWidth - xOff, getHeight() / 10);
-        fps.setBounds(xOff, 10 + (getHeight() / 10) * 4, controlPanelWidth - xOff, getHeight() / 10);
-        food_distrib.setBounds(xOff, 10 + (getHeight() / 10) * 5, controlPanelWidth - xOff, getHeight() / 10);
-        food_regrowth.setBounds(xOff, 10 + (getHeight() / 10) * 6, controlPanelWidth - xOff, getHeight() / 10);
-        populationSlider.setBounds(xOff, 10 + (getHeight() / 10) * 7, controlPanelWidth - xOff, getHeight() / 10);
-        smoothing.setBounds(xOff, 10 + (getHeight() / 10) * 8, controlPanelWidth - xOff, getHeight() / 10);
+        w_height.setBounds(xOff, 10 + (getHeight() / 12), controlPanelWidth - xOff, (getHeight() / 10));
+        land_amount.setBounds(xOff, 10 + (getHeight() / 12) * 2, controlPanelWidth - xOff, getHeight() / 10);
+        land_size.setBounds(xOff, 10 + (getHeight() / 12) * 3, controlPanelWidth - xOff, getHeight() / 10);
+        fps.setBounds(xOff, 10 + (getHeight() / 12) * 4, controlPanelWidth - xOff, getHeight() / 10);
+        food_distrib.setBounds(xOff, 10 + (getHeight() / 12) * 5, controlPanelWidth - xOff, getHeight() / 10);
+        food_regrowth.setBounds(xOff, 10 + (getHeight() / 12) * 6, controlPanelWidth - xOff, getHeight() / 10);
+        populationSlider.setBounds(xOff, 10 + (getHeight() / 12) * 7, controlPanelWidth - xOff, getHeight() / 10);
+        smoothing.setBounds(xOff, 10 + (getHeight() / 12) * 8, controlPanelWidth - xOff, getHeight() / 10);
 
         w_width.setPaintLabels(true);
         w_height.setPaintLabels(true);
@@ -537,6 +554,28 @@ public class World extends JFrame {
         ret.add(food_regrowth);
         ret.add(populationSlider);
         ret.add(smoothing);
+
+        JButton save = new JButton("SAVE");
+        JButton load = new JButton("LOAD");
+
+        save.setBounds(10, 10 + (getHeight() / 12) * 10, 180, 70);
+        load.setBounds(200, 10 + (getHeight() / 12) * 10, 180, 70);
+
+        ret.add(save);
+        ret.add(load);
+
+        save.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                save();
+            }
+        });
+        load.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                load();
+            }
+        });
         return ret;
     }
 
@@ -622,105 +661,107 @@ public class World extends JFrame {
 
     @Override
     public void paint(Graphics g) {
-        //add Bots if necessary
-        if (mapLoaded && population.size() < MIN_POP_SIZE) {
-            Bot b = null;
+        if (!pause) {
+            //add Bots if necessary
+            if (mapLoaded && population.size() < MIN_POP_SIZE) {
+                Bot b = null;
            /* int neu = (int) (Math.random() * 4);
             int hiddAmm = (int) (Math.random() * 2);
             int[] hidd = new int[hiddAmm];
             for (int k = 0; k < hiddAmm; k++) {
                 hidd[k] = (int) (Math.random() * 10 + 1);
             }*/
-            /**
-             * 2 in 100
-             */
-            int chanceToSpawnBest = -10;
-            if (chanceToSpawnBest < Math.random() * 100) {
-                b = new Bot(new CosiAgent(new Network(14, 4, 2, new int[]{15,8})), this, 0);
-            } else {
-                int pos = (int) (Math.random() * theBests.length);
-                b = new Bot(new CosiAgent(new Network(theBests[pos])), this, 0);
-                // System.out.println("A HERO ENTERED THE WORLD");
-            }
-            population.add(b);
-            containerPanel.add(b, 0);
-            //random Location
-            int ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
-            int ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
-            b.setLocation(ranX, ranY);
-            while (!(b.getChunkUnder(ranX, ranY, b.body).getType() == Chunk.Type.LAND)) {
-                ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
-                ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
-                b.setLocation(ranX, ranY);
-            }
-            final Bot bf = b;
-            bf.addMouseListener(listener);
-        }
-
-        //refresh bot panel
-        if (performance == Optimisation.MEDIUM || performance == Optimisation.MIN) {
-            if (selectedBot != null) {
-                if (selectedBot.hp > 0) {
-                    controlPanel.removeAll();
-                    container.remove(controlPanel);
-                    controlPanel = new JPanel();
-                    controlPanel = addBotStats(selectedBot);
-                    container.add(controlPanel, 0);
+                /**
+                 * 2 in 100
+                 */
+                int chanceToSpawnBest = -10;
+                if (chanceToSpawnBest < Math.random() * 100) {
+                    b = new Bot(new CosiAgent(new Network(14, 4, 1, new int[]{1})), this, 0);
                 } else {
-                    selectedBot = null;
-                    controlPanel.removeAll();
-                    container.remove(controlPanel);
-                    controlPanel = new JPanel();
-                    controlPanel = addControls();
-                    container.add(controlPanel, 0);
+                    int pos = (int) (Math.random() * theBests.length);
+                    b = new Bot(new CosiAgent(new Network(theBests[pos])), this, 0);
+                    // System.out.println("A HERO ENTERED THE WORLD");
                 }
+                population.add(b);
+                containerPanel.add(b, 0);
+                //random Location
+                int ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
+                int ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
+                b.setLocation(ranX, ranY);
+                while (!(b.getChunkUnder(ranX, ranY, b.body).getType() == Chunk.Type.LAND)) {
+                    ranX = (int) (Math.random() * CHUNK_SIZE * WORLD_WIDTH);
+                    ranY = (int) (Math.random() * CHUNK_SIZE * WORLD_HEIGHT);
+                    b.setLocation(ranX, ranY);
+                }
+                final Bot bf = b;
+                bf.addMouseListener(listener);
             }
-        }
-        //FPS control
-        timeUntilSleep = System.currentTimeMillis();
-        if (fpsCounter > FPS * CHUNK_REFRESH_TIME + FOOD_REGROWTH)
-            fpsCounter = 0;
-        else
-            fpsCounter++;
 
-        //moving things
-        if (mapLoaded) {
-            Component[] components = containerPanel.getComponents();
-            if (components != null && components.length > 0) {
-                for (Component c : components) {
-                    if (c instanceof Chunk) {
-
-                        if (fpsCounter == FPS * CHUNK_REFRESH_TIME)
-                            ((Chunk) c).update();
-
-                         if (fpsCounter % FOOD_REGROWTH == 0)
-                            ((Chunk) c).updateFood();
-
-                        if(performance==Optimisation.MAX)
-                            CHUNK_REFRESH_TIME=3;
-                        else if (performance==Optimisation.MEDIUM)
-                            CHUNK_REFRESH_TIME=1;
-                        else
-                            CHUNK_REFRESH_TIME=0;
-                    }
-                    if (c instanceof Bot) {
-                        Bot b = (Bot) c;
-                        b.move();
+            //refresh bot panel
+            if (performance == Optimisation.MEDIUM || performance == Optimisation.MIN) {
+                if (selectedBot != null) {
+                    if (selectedBot.hp > 0) {
+                        controlPanel.removeAll();
+                        container.remove(controlPanel);
+                        controlPanel = new JPanel();
+                        controlPanel = addBotStats(selectedBot);
+                        container.add(controlPanel, 0);
+                    } else {
+                        selectedBot = null;
+                        controlPanel.removeAll();
+                        container.remove(controlPanel);
+                        controlPanel = new JPanel();
+                        controlPanel = addControls();
+                        container.add(controlPanel, 0);
                     }
                 }
             }
-        }
-        super.paint(g);
-        //sleep to match FPS
-        long passedTime = System.currentTimeMillis() - timeUntilSleep;
-        if (passedTime < 1000.0 / FPS) {
-            try {
-                Thread.sleep((long) (1000.0 / FPS - passedTime));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            //FPS control
+            timeUntilSleep = System.currentTimeMillis();
+            if (fpsCounter > FPS * CHUNK_REFRESH_TIME + FOOD_REGROWTH)
+                fpsCounter = 0;
+            else
+                fpsCounter++;
+
+            //moving things
+            if (mapLoaded) {
+                Component[] components = containerPanel.getComponents();
+                if (components != null && components.length > 0) {
+                    for (Component c : components) {
+                        if (c instanceof Chunk) {
+
+                            if (fpsCounter == FPS * CHUNK_REFRESH_TIME)
+                                ((Chunk) c).update();
+
+                            if (fpsCounter % FOOD_REGROWTH == 0)
+                                ((Chunk) c).updateFood();
+
+                            if (performance == Optimisation.MAX)
+                                CHUNK_REFRESH_TIME = 3;
+                            else if (performance == Optimisation.MEDIUM)
+                                CHUNK_REFRESH_TIME = 1;
+                            else
+                                CHUNK_REFRESH_TIME = 0;
+                        }
+                        if (c instanceof Bot) {
+                            Bot b = (Bot) c;
+                            b.move();
+                        }
+                    }
+                }
             }
+            super.paint(g);
+            //sleep to match FPS
+            long passedTime = System.currentTimeMillis() - timeUntilSleep;
+            if (passedTime < 1000.0 / FPS) {
+                try {
+                    Thread.sleep((long) (1000.0 / FPS - passedTime));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            repaint();
         }
-        repaint();
     }
 
     /**
@@ -797,18 +838,261 @@ public class World extends JFrame {
 
 
     /**
-     * Save the current state of the World
-     */
-    public void save() {
-
-    }
-
-
-    /**
      * Load a previous World
      */
     public void load() {
 
+        String path = "C:\\EvoBots\\test.txt";
+
+        String data = "";
+
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(path)));
+            String line;
+            while ((line = br.readLine()) != null) {
+                data += line;
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int indexOfSemiColum = data.indexOf(';');
+
+
+        String subData = data.substring(0, indexOfSemiColum);
+        WORLD_WIDTH = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+  //      System.out.println("w" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        WORLD_HEIGHT = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+//        System.out.println("h" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        LAND_AMOUNT = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+//        System.out.println("la" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        LAND_SIZE = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("ls" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        CHUNK_SIZE = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("cs" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        FOOD_DISTRIBUTION = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("fd" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        FOOD_REGROWTH = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("fr" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        SMOOTHING_FAKTOR = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("s" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        FPS = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("fps" + subData);
+
+
+        subData = data.substring(0, indexOfSemiColum);
+        MIN_POP_SIZE = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+        //System.out.println("pop" + subData);
+
+       /* TODO performance
+        subData = data.substring(0, indexOfSemiColum);
+        performance
+                indexOfSemiColum = data.indexOf(';');
+ */
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+
+
+        for (int i = 0; i < WORLD_WIDTH; i++) {
+            for (int j = 0; j < WORLD_HEIGHT; j++) {
+                Chunk c = null;
+                try {
+                    c = new Chunk(i, j);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                subData = data.substring(0, indexOfSemiColum);
+                int food = Integer.parseInt(subData);
+                data = data.substring(indexOfSemiColum + 1);
+                indexOfSemiColum = data.indexOf(';');
+
+
+                subData = data.substring(0, indexOfSemiColum);
+                data = data.substring(indexOfSemiColum + 1);
+                indexOfSemiColum = data.indexOf(';');
+                if (subData.equals("LAND"))
+                    c.setType(Chunk.Type.LAND);
+                c.setFood(food);
+
+                c.setLocation(i * CHUNK_SIZE, j * CHUNK_SIZE);
+                containerPanel.remove(map[i][j]);
+                map[i][j] = c;
+                containerPanel.add(c);
+            }
+        }
+        subData = data.substring(0, indexOfSemiColum);
+        int botCount = Integer.parseInt(subData);
+        data = data.substring(indexOfSemiColum + 1);
+        indexOfSemiColum = data.indexOf(';');
+      //  System.out.println("bCount" + botCount);
+
+
+        if(population!=null){
+            for (int i = 0; i < population.size(); i++) {
+                Bot b= population.get(i);
+                b.kill();
+            }
+            population.clear();
+        }
+
+        for (int j = 0; j < botCount; j++) {
+            Bot b = new Bot(null, null, 0);
+            indexOfSemiColum = data.indexOf(';');
+
+            int dat[] = new int[15];
+            for (int k = 0; k < 15; k++) {
+                subData = data.substring(0, indexOfSemiColum);
+                dat[k] = Integer.parseInt(subData);
+                data = data.substring(indexOfSemiColum + 1);
+                indexOfSemiColum = data.indexOf(';');
+            }
+            int x, y;
+
+            x = dat[0];
+            y = dat[1];
+            b.setLocation(x, y);
+            b.age = dat[2];
+            b.ageingCounter = dat[3];
+            b.sensorRotation = dat[4];
+
+            b.xDir = dat[5];
+            b.yDir = dat[6];
+            b.hp = dat[7];
+            b.red = dat[8];
+            b.blue = dat[9];
+
+            b.green = dat[10];
+            b.makeChildren = dat[11];
+            b.generation = dat[12];
+            b.memRefresh = dat[13];
+            b.memRefreshCounter = dat[14];
+
+            b.world=this;
+            //memorie
+            for (int k = 0; k < b.memorie.size(); k++) {
+                for (int l = 0; l < b.memorie.get(k).length; l++) {
+                    subData = data.substring(0, indexOfSemiColum);
+                    b.memorie.get(k)[l] = Double.parseDouble(subData);
+                    data = data.substring(indexOfSemiColum + 1);
+                    indexOfSemiColum = data.indexOf(';');
+                }
+            }
+
+            //agent
+            data=data.replace('[', '{');
+            data=data.replace(']', '}');
+
+            //TODO in data bleiben 3 überflüssige werte übrig
+
+            subData= data.substring(0,data.indexOf('}')+1);
+            b.agent = new CosiAgent(new Network(subData));
+
+            data=data.substring(data.indexOf('}')+1);
+
+            population.add(b);
+            containerPanel.add(b);
+        }
+        repaint();
+        requestFocus();
+    }
+
+    /**
+     * Save the current state of the World
+     */
+    public void save() {
+
+        File theDir = new File("C:\\EvoBots");
+        if (!theDir.exists()) {
+            try {
+                theDir.mkdir();
+            } catch (SecurityException se) {
+                se.printStackTrace();
+                System.out.println("ERROR SAVE");
+            }
+
+        }
+
+
+        String data = "" + WORLD_WIDTH + ";" + WORLD_HEIGHT + ";" + LAND_AMOUNT + ";" + LAND_SIZE + ";" + CHUNK_SIZE + ";" + FOOD_DISTRIBUTION
+                + ";" + FOOD_REGROWTH + ";" + SMOOTHING_FAKTOR + ";" + FPS + ";" + MIN_POP_SIZE + ";" + performance + ";";
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                Chunk c = map[i][j];
+                data += "" + c.getFood() + ";" + c.getType() + ";";
+            }
+        }
+        data += population.size() + ";";
+        for (int i = 0; i < population.size(); i++) {
+            Bot b = population.get(i);
+            data += "" + b.getX() + ";" + b.getY() + ";" + b.age + ";" + b.ageingCounter + ";"
+                    + b.sensorRotation + ";" + b.xDir + ";" + b.yDir + ";" + b.hp + ";"
+                    + b.red + ";" + b.blue + ";" + b.green + ";" + b.makeChildren + ";"
+                    + b.generation + ";" + b.memRefresh + ";" + b.memRefreshCounter + ";";
+            for (int j = 0; j < b.memorie.size(); j++) {
+                for (int k = 0; k < b.memorie.get(j).length; k++) {
+                    data += b.memorie.get(j)[k] + ";";
+                }
+            }
+            data += "" + Arrays.toString(b.agent.getNet().getDescriptor()) + "\n";
+        }
+        String path = JOptionPane.showInputDialog("Dateiname Angeben");
+        try {
+            PrintWriter writer = new PrintWriter("c:\\EvoBots\\" + path + ".txt", "UTF-8");
+            writer.println(data);
+            writer.close();
+        } catch (IOException e) {
+            System.out.println("ERROR SAVE 2");
+        }
+        requestFocus();
     }
 
 

@@ -88,7 +88,7 @@ public class Bot extends JPanel {
     /**
      * if this value equals the age, a child is born
      */
-    int makeChildren = 2;
+    public int makeChildren = 2;
 
     /**
      * stores the previous World chunk size
@@ -245,6 +245,7 @@ public class Bot extends JPanel {
 
         if (age == makeChildren) {
             if (age >= 3) {
+                World.networkGUI.addNetwork(agent.getNet());
                 System.out.print("AGE " + age + " : {");
                 for (double d : agent.getNet().getDescriptor())
                     System.out.print(", " + d);
@@ -285,12 +286,9 @@ public class Bot extends JPanel {
             in[13] = getFoodUnderSensor();
             double out[] = agent.processData(in);
 
-            if (out[0] > 0.6 || out[0] < 0.4)
-                transformSpeed(out[0]);
-            else {
-                xDir = 0;
-                yDir = 0;
-            }
+
+            transformSpeed(out[0]);
+
             rotateAndResize((int) ((out[1] - 0.5) * 15));
             if (out[2] > 0.7)
                 eat();

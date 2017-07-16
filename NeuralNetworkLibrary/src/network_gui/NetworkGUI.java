@@ -43,7 +43,7 @@ public class NetworkGUI extends JFrame{
 
         // Settings
         this.setTitle("NetworkDisplay");
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         // Settings end
 
         // Location and Size

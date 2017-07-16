@@ -3,7 +3,9 @@ package network;
 import com.sun.istack.internal.NotNull;
 import network.Layer.LayerType;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 /**
@@ -36,7 +38,7 @@ public class Network {
         layers = new ArrayList<>();
     }
 
-   // public Neuron bias = new Neuron(0);
+    // public Neuron bias = new Neuron(0);
 
     /**
      * Create a network.Network with some Layers and connects them in the order they arrive
@@ -51,6 +53,16 @@ public class Network {
                 connect(layerSet.get(i), layerSet.get(i + 1));
             }
         }
+    }
+
+    /**
+     * Creates a Network from a String that contains the descriptor
+     * { val1, val2, etc...}
+     *
+     * @param descriptor
+     */
+    public Network(String descriptor) {
+        this(stringToDescriptor(descriptor));
     }
 
     /**
@@ -410,7 +422,6 @@ public class Network {
         return ret;
 
 
-
     }
 
     public double[] getDescriptor() {
@@ -516,6 +527,36 @@ public class Network {
     }
 
     /**
+     * Creates a descriptor from a given String
+     *
+     * @param descriptor the string to transform
+     * @return a Double Array
+     */
+    public static double[] stringToDescriptor(String descriptor) {
+        ArrayList<Double> desc = new ArrayList<>();
+        int index = descriptor.indexOf("}");
+        descriptor = descriptor.substring(0,index);
+        index = descriptor.indexOf("{");
+        descriptor = descriptor.substring(index + 1);
+        while (true) {
+            index = descriptor.indexOf(",");
+            if (index == -1) {
+                desc.add(new Double(descriptor));
+                break;
+            }
+            String subData = descriptor.substring(0, index);
+            desc.add(new Double(subData));
+            descriptor = descriptor.substring(index + 1);
+        }
+        double[] ret = new double[desc.size()];
+        for (int i = 0; i < desc.size(); i++) {
+            ret[i] = desc.get(i);
+        }
+        return ret;
+    }
+
+
+    /**
      * Returns the total Neurons number contained in this network.Network
      *
      * @return total Neurons number
@@ -581,11 +622,12 @@ public class Network {
 
     /**
      * first implementation of backpropagation
+     *
      * @param error the error of the net
      */
-    public void propagateBack(double error){
-        for (int i = 0; i < layers.get(layers.size()-1).getNeuronCount(); i++) {
-            Neuron n = layers.get(layers.size()-1).getNeuronAt(i);
+    public void propagateBack(double error) {
+        for (int i = 0; i < layers.get(layers.size() - 1).getNeuronCount(); i++) {
+            Neuron n = layers.get(layers.size() - 1).getNeuronAt(i);
             n.processError(error);
         }
     }
