@@ -842,207 +842,189 @@ public class World extends JFrame {
      */
     public void load() {
 
-        String path = "C:\\EvoBots\\test.txt";
-
-        String data = "";
-
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(path)));
-            String line;
-            while ((line = br.readLine()) != null) {
-                data += line;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        File file = new File("C:\\EvoBots");
+        // Reading directory contents
+        File[] files = file.listFiles();
+        String worlds[] = new String[files.length];
+        for (int i = 0; i < files.length; i++) {
+            worlds[i] = files[i].getName();
         }
 
-        int indexOfSemiColum = data.indexOf(';');
+        String selectedWorld = "";
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(file);
+
+        int n = fileChooser.showOpenDialog(World.this);
+        if (n == JFileChooser.APPROVE_OPTION) {
+            File f = fileChooser.getSelectedFile();
+            selectedWorld = f.getName();
 
 
-        String subData = data.substring(0, indexOfSemiColum);
-        WORLD_WIDTH = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-  //      System.out.println("w" + subData);
+            containerPanel.removeAll();
 
 
-        subData = data.substring(0, indexOfSemiColum);
-        WORLD_HEIGHT = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-//        System.out.println("h" + subData);
+            String path = "C:\\EvoBots\\" + selectedWorld;
 
+            String data = "";
 
-        subData = data.substring(0, indexOfSemiColum);
-        LAND_AMOUNT = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-//        System.out.println("la" + subData);
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(
+                        new InputStreamReader(new FileInputStream(path)));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    data += line;
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
+            int indexOfSemiColum = data.indexOf(';');
 
-        subData = data.substring(0, indexOfSemiColum);
-        LAND_SIZE = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("ls" + subData);
+            int[] setupData = new int[12];
 
+            for (int i = 0; i < setupData.length; i++) {
+                String subData = data.substring(0, indexOfSemiColum);
+                setupData[i] = Integer.parseInt(subData);
+                data = data.substring(indexOfSemiColum + 1);
+                indexOfSemiColum = data.indexOf(';');
+            }
 
-        subData = data.substring(0, indexOfSemiColum);
-        CHUNK_SIZE = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("cs" + subData);
+            containerPanel.setLocation(setupData[0], setupData[1]);
 
+            WORLD_WIDTH = setupData[2];
+            WORLD_HEIGHT = setupData[3];
+            LAND_AMOUNT = setupData[4];
+            LAND_SIZE = setupData[5];
+            CHUNK_SIZE = setupData[6];
+            FOOD_DISTRIBUTION = setupData[7];
+            FOOD_REGROWTH = setupData[8];
+            SMOOTHING_FAKTOR = setupData[9];
+            FPS = setupData[10];
+            MIN_POP_SIZE = setupData[11];
 
-        subData = data.substring(0, indexOfSemiColum);
-        FOOD_DISTRIBUTION = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("fd" + subData);
-
-
-        subData = data.substring(0, indexOfSemiColum);
-        FOOD_REGROWTH = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("fr" + subData);
-
-
-        subData = data.substring(0, indexOfSemiColum);
-        SMOOTHING_FAKTOR = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("s" + subData);
-
-
-        subData = data.substring(0, indexOfSemiColum);
-        FPS = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("fps" + subData);
-
-
-        subData = data.substring(0, indexOfSemiColum);
-        MIN_POP_SIZE = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-        //System.out.println("pop" + subData);
+            resizeMap();
 
        /* TODO performance
         subData = data.substring(0, indexOfSemiColum);
         performance
                 indexOfSemiColum = data.indexOf(';');
  */
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-
-
-        for (int i = 0; i < WORLD_WIDTH; i++) {
-            for (int j = 0; j < WORLD_HEIGHT; j++) {
-                Chunk c = null;
-                try {
-                    c = new Chunk(i, j);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                subData = data.substring(0, indexOfSemiColum);
-                int food = Integer.parseInt(subData);
-                data = data.substring(indexOfSemiColum + 1);
-                indexOfSemiColum = data.indexOf(';');
-
-
-                subData = data.substring(0, indexOfSemiColum);
-                data = data.substring(indexOfSemiColum + 1);
-                indexOfSemiColum = data.indexOf(';');
-                if (subData.equals("LAND"))
-                    c.setType(Chunk.Type.LAND);
-                c.setFood(food);
-
-                c.setLocation(i * CHUNK_SIZE, j * CHUNK_SIZE);
-                containerPanel.remove(map[i][j]);
-                map[i][j] = c;
-                containerPanel.add(c);
-            }
-        }
-        subData = data.substring(0, indexOfSemiColum);
-        int botCount = Integer.parseInt(subData);
-        data = data.substring(indexOfSemiColum + 1);
-        indexOfSemiColum = data.indexOf(';');
-      //  System.out.println("bCount" + botCount);
-
-
-        if(population!=null){
-            for (int i = 0; i < population.size(); i++) {
-                Bot b= population.get(i);
-                b.kill();
-            }
-            population.clear();
-        }
-
-        for (int j = 0; j < botCount; j++) {
-            Bot b = new Bot(null, null, 0);
+            data = data.substring(indexOfSemiColum + 1);
             indexOfSemiColum = data.indexOf(';');
 
-            int dat[] = new int[15];
-            for (int k = 0; k < 15; k++) {
-                subData = data.substring(0, indexOfSemiColum);
-                dat[k] = Integer.parseInt(subData);
-                data = data.substring(indexOfSemiColum + 1);
-                indexOfSemiColum = data.indexOf(';');
-            }
-            int x, y;
+            String subData;
 
-            x = dat[0];
-            y = dat[1];
-            b.setLocation(x, y);
-            b.age = dat[2];
-            b.ageingCounter = dat[3];
-            b.sensorRotation = dat[4];
+            for (int i = 0; i < WORLD_WIDTH; i++) {
+                for (int j = 0; j < WORLD_HEIGHT; j++) {
+                    Chunk c = null;
+                    try {
+                        c = new Chunk(i, j);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
 
-            b.xDir = dat[5];
-            b.yDir = dat[6];
-            b.hp = dat[7];
-            b.red = dat[8];
-            b.blue = dat[9];
-
-            b.green = dat[10];
-            b.makeChildren = dat[11];
-            b.generation = dat[12];
-            b.memRefresh = dat[13];
-            b.memRefreshCounter = dat[14];
-
-            b.world=this;
-            //memorie
-            for (int k = 0; k < b.memorie.size(); k++) {
-                for (int l = 0; l < b.memorie.get(k).length; l++) {
                     subData = data.substring(0, indexOfSemiColum);
-                    b.memorie.get(k)[l] = Double.parseDouble(subData);
+                    int food = Integer.parseInt(subData);
+                    data = data.substring(indexOfSemiColum + 1);
+                    indexOfSemiColum = data.indexOf(';');
+
+
+                    subData = data.substring(0, indexOfSemiColum);
+                    data = data.substring(indexOfSemiColum + 1);
+                    indexOfSemiColum = data.indexOf(';');
+                    if (subData.equals("LAND"))
+                        c.setType(Chunk.Type.LAND);
+                    c.setFood(food);
+
+                    c.setLocation(i * CHUNK_SIZE, j * CHUNK_SIZE);
+                    map[i][j] = c;
+                    containerPanel.add(c);
+                }
+            }
+            subData = data.substring(0, indexOfSemiColum);
+            int botCount = Integer.parseInt(subData);
+            data = data.substring(indexOfSemiColum + 1);
+            indexOfSemiColum = data.indexOf(';');
+            //  System.out.println("bCount" + botCount);
+
+
+            if (population != null) {
+                for (int i = 0; i < population.size(); i++) {
+                    Bot b = population.get(i);
+                    b.kill();
+                }
+                population.clear();
+            }
+
+            for (int j = 0; j < botCount; j++) {
+                Bot b = new Bot(null, null, 0);
+                indexOfSemiColum = data.indexOf(';');
+
+                int dat[] = new int[15];
+                for (int k = 0; k < 15; k++) {
+                    subData = data.substring(0, indexOfSemiColum);
+                    dat[k] = Integer.parseInt(subData);
                     data = data.substring(indexOfSemiColum + 1);
                     indexOfSemiColum = data.indexOf(';');
                 }
+                int x, y;
+
+                x = dat[0];
+                y = dat[1];
+                b.setLocation(x, y);
+                b.age = dat[2];
+                b.ageingCounter = dat[3];
+                b.sensorRotation = dat[4];
+
+                b.xDir = dat[5];
+                b.yDir = dat[6];
+                b.hp = dat[7];
+                b.red = dat[8];
+                b.blue = dat[9];
+
+                b.green = dat[10];
+                b.makeChildren = dat[11];
+                b.generation = dat[12];
+                b.memRefresh = dat[13];
+                b.memRefreshCounter = dat[14];
+
+                b.world = this;
+                //memorie
+                for (int k = 0; k < b.memorie.size(); k++) {
+                    for (int l = 0; l < b.memorie.get(k).length; l++) {
+                        subData = data.substring(0, indexOfSemiColum);
+                        b.memorie.get(k)[l] = Double.parseDouble(subData);
+                        data = data.substring(indexOfSemiColum + 1);
+                        indexOfSemiColum = data.indexOf(';');
+                    }
+                }
+
+                //agent
+                data = data.replace('[', '{');
+                data = data.replace(']', '}');
+
+                //TODO in data bleiben 3 überflüssige werte übrig kp was läuft
+
+                subData = data.substring(0, data.indexOf('}') + 1);
+                b.agent = new CosiAgent(new Network(subData));
+
+                b.addMouseListener(listener);
+
+                networkGUI.addNetwork(b.agent.getNet());
+
+                data = data.substring(data.indexOf('}') + 1);
+
+                population.add(b);
+                containerPanel.add(b, 0);
             }
-
-            //agent
-            data=data.replace('[', '{');
-            data=data.replace(']', '}');
-
-            //TODO in data bleiben 3 überflüssige werte übrig
-
-            subData= data.substring(0,data.indexOf('}')+1);
-            b.agent = new CosiAgent(new Network(subData));
-
-            data=data.substring(data.indexOf('}')+1);
-
-            population.add(b);
-            containerPanel.add(b);
+            repaint();
+            resizeMap();
+            requestFocus();
         }
-        repaint();
-        requestFocus();
     }
 
     /**
@@ -1062,7 +1044,7 @@ public class World extends JFrame {
         }
 
 
-        String data = "" + WORLD_WIDTH + ";" + WORLD_HEIGHT + ";" + LAND_AMOUNT + ";" + LAND_SIZE + ";" + CHUNK_SIZE + ";" + FOOD_DISTRIBUTION
+        String data = "" + containerPanel.getX() + ";" + containerPanel.getY() + ";" + WORLD_WIDTH + ";" + WORLD_HEIGHT + ";" + LAND_AMOUNT + ";" + LAND_SIZE + ";" + CHUNK_SIZE + ";" + FOOD_DISTRIBUTION
                 + ";" + FOOD_REGROWTH + ";" + SMOOTHING_FAKTOR + ";" + FPS + ";" + MIN_POP_SIZE + ";" + performance + ";";
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
