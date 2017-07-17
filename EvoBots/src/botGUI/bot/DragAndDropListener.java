@@ -51,13 +51,13 @@ public class DragAndDropListener extends MouseAdapter {
             }
         }
         if (e.getButton() == 3) {
-            Bot b = new Bot(new CosiAgent(new Network(World.theBests[0])), w, 0);
-            b.addMouseListener(this);
-            w.containerPanel.add(b, 0);
-            w.population.add(b);
-            b.setLocation(-w.containerPanel.getX() + e.getXOnScreen()-b.getWidth()/2, -w.containerPanel.getY()+e.getYOnScreen()-b.getHeight());
-            System.out.println("add");
+            if (e.getComponent() instanceof Bot) {
+
+                Bot bf = (Bot) e.getComponent();
+                bf.kill();
+            }
         }
+
     }
 
     @Override
@@ -70,13 +70,13 @@ public class DragAndDropListener extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-            if (e.getComponent() instanceof Bot || e.getComponent() instanceof Chunk) {
-                e.translatePoint(w.containerPanel.getLocation().x - x, w.containerPanel.getLocation().y - y);
-                w.containerPanel.setLocation(e.getX(), e.getY());
-            } else {
-                e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
+        if (e.getComponent() instanceof Bot || e.getComponent() instanceof Chunk) {
+            e.translatePoint(w.containerPanel.getLocation().x - x, w.containerPanel.getLocation().y - y);
+            w.containerPanel.setLocation(e.getX(), e.getY());
+        } else {
+            e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
 
-                e.getComponent().setLocation(e.getX(), e.getY());
-            }
+            e.getComponent().setLocation(e.getX(), e.getY());
+        }
     }
 }

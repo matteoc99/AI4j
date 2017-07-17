@@ -255,7 +255,7 @@ public class Bot extends JPanel {
                 System.out.println("}");
             }
             makeChildren++;
-            makeChildren(2);
+            makeChildren(age-1);
         }
 
         /*Agent Tells what to do
