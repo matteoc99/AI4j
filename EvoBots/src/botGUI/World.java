@@ -148,11 +148,13 @@ public class World extends JFrame {
 
     public static Optimisation performance = Optimisation.MIN;
 
-    public static NetworkGUI networkGUI;
+   // public static NetworkGUI networkGUI;
 
     public boolean pause = false;
 
     public String currenDateiname = null;
+
+    JProgressBar progressBar;
 
     public World() {
         setTitle("World");
@@ -163,7 +165,7 @@ public class World extends JFrame {
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
 
-        networkGUI = new NetworkGUI();
+       // networkGUI = new NetworkGUI();
 
         listener = new DragAndDropListener(this);
 
@@ -202,6 +204,14 @@ public class World extends JFrame {
                             }
                             population.clear();
                         }
+                        map=null;
+
+                        containerPanel.removeAll();
+                        containerPanel.update(containerPanel.getGraphics());
+
+                        CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
+                        if(CHUNK_SIZE<8)
+                            CHUNK_SIZE=8;
                         createMap();
                         resizeMap();
                         currenDateiname = null;
@@ -693,6 +703,7 @@ public class World extends JFrame {
             Component[] components = containerPanel.getComponents();
             if (components != null && components.length > 0) {
                 for (Component c : components) {
+
                     if (c instanceof Chunk) {
 
                         if (fpsCounter == FPS * CHUNK_REFRESH_TIME)
@@ -736,6 +747,13 @@ public class World extends JFrame {
         containerPanel.removeAll();
         ArrayList<Island> islands = new ArrayList<>();
         //first fill with Water
+
+        progressBar = new JProgressBar(0,WORLD_WIDTH);
+        progressBar.setBounds(getWidth()/2-200-controlPanelWidth/2,getHeight()/2-40,400,80);
+        progressBar.setValue(0);
+        containerPanel.add(progressBar);
+        containerPanel.update(containerPanel.getGraphics());
+
         for (int i = 0; i < WORLD_WIDTH; i++) {
             for (int j = 0; j < WORLD_HEIGHT; j++) {
                 try {
@@ -751,7 +769,10 @@ public class World extends JFrame {
                     islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH / LAND_SIZE : WORLD_HEIGHT / LAND_SIZE, i, j));
                 }
             }
+            progressBar.setValue(i);
+            progressBar.update(progressBar.getGraphics());
         }
+
         for (Island island : islands) {
             for (int i = 0; i < island.island.length; i++) {
                 for (int j = 0; j < island.island[i].length; j++) {
@@ -766,6 +787,8 @@ public class World extends JFrame {
                 }
             }
         }
+        containerPanel.remove(progressBar);
+        containerPanel.update(containerPanel.getGraphics());
         repaint();
     }
 
@@ -828,7 +851,6 @@ public class World extends JFrame {
 
             containerPanel.removeAll();
 
-
             String path = "C:\\EvoBots\\" + selectedWorld;
 
             currenDateiname = selectedWorld.substring(0, selectedWorld.indexOf('.'));
@@ -873,9 +895,7 @@ public class World extends JFrame {
             FPS = setupData[10];
             MIN_POP_SIZE = setupData[11];
 
-            resizeMap();
 
-            containerPanel.setLocation(setupData[0], setupData[1]);
 
 
        /* TODO performance
@@ -887,6 +907,8 @@ public class World extends JFrame {
             indexOfSemiColum = data.indexOf(';');
 
             String subData;
+
+            map= new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
 
             for (int i = 0; i < WORLD_WIDTH; i++) {
                 for (int j = 0; j < WORLD_HEIGHT; j++) {
@@ -984,8 +1006,6 @@ public class World extends JFrame {
 
                 b.addMouseListener(listener);
 
-                networkGUI.addNetwork(b.agent.getNet());
-
                 data = data.substring(data.indexOf('}') + 1);
 
                 population.add(b);
@@ -1047,13 +1067,13 @@ public class World extends JFrame {
 
         String path;
         if (currenDateiname != null) {
-            path = JOptionPane.showInputDialog("Dateiname Angeben",currenDateiname);
-            currenDateiname=path;
+            path = JOptionPane.showInputDialog("Dateiname Angeben", currenDateiname);
         } else {
             path = JOptionPane.showInputDialog("Dateiname Angeben");
-            currenDateiname = path;
+
         }
         if (path != null && path.length() > 0) {
+            currenDateiname = path;
             try {
                 PrintWriter writer = new PrintWriter("c:\\EvoBots\\" + path + ".txt", "UTF-8");
                 writer.println(data);

@@ -15,7 +15,7 @@ public class Chunk extends ImmobileObject {
     public static final String WATER = "res\\water.png";
 
     public enum Type {
-        LAND, WATER,NONE
+        LAND, WATER, NONE
     }
 
 
@@ -114,6 +114,7 @@ public class Chunk extends ImmobileObject {
             if (type == Type.LAND) {
                 food += Math.log10(goal - food) > 1 ? Math.log10(goal - food) : 1;
             }
+
         }
     }
 
@@ -137,6 +138,7 @@ public class Chunk extends ImmobileObject {
             toUpdate = false;
             updateFood();
             updateColor();
+
         }
     }
 

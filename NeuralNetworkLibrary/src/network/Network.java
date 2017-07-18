@@ -602,13 +602,13 @@ public class Network {
     /**
      * Changes the weight of a connection in the Network
      */
-    public void mutateSoft(int howOften) {
+    public void mutateSoft(int howOften,double strength) {
         for (int i = 0; i < howOften; i++) {
             int layer = (int) (Math.random() * (layers.size() - 1));
             int neuron = (int) (Math.random() * layers.get(layer).getNeuronCount());
             int connection = (int) (Math.random() * layers.get(layer).getNeuronAt(neuron).getAxons().size());
             Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
-            c.setWeight(c.getWeight() + Math.random() * 0.2 - 0.1);
+            c.setWeight(c.getWeight() + Math.random() * strength - strength/2);
 
             //TODO bias mutation
 

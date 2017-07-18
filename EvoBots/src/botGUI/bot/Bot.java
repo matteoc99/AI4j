@@ -199,6 +199,7 @@ public class Bot extends JPanel {
         }
         if (world.population.contains(this)) {
             world.population.remove(this);
+
         }
     }
 
@@ -248,14 +249,14 @@ public class Bot extends JPanel {
 
         if (age == makeChildren) {
             if (age >= 3) {
-                World.networkGUI.addNetwork(agent.getNet());
+              //  World.networkGUI.addNetwork(agent.getNet());
                 System.out.print("AGE " + age + " : {");
                 for (double d : agent.getNet().getDescriptor())
                     System.out.print(", " + d);
                 System.out.println("}");
             }
             makeChildren++;
-            makeChildren(age-1);
+            makeChildren(age - 1);
         }
 
         /*Agent Tells what to do
@@ -329,12 +330,12 @@ public class Bot extends JPanel {
     private void makeChildren(int howmany) {
         for (int i = 0; i < howmany; i++) {
             Agent a = new CosiAgent(new Network(agent.getNet().getDescriptor()));
-            a.getNet().mutateSoft((int) (Math.random() * 8));
+            a.getNet().mutateSoft((int) (Math.random() * 8),2.0/(generation+1));
             Bot child = new Bot(a, world, generation + 1);
             //create colors for child
-            int newRed = (int) (red + Math.random() * 4 - 2);
-            int newBlue = (int) (blue + Math.random() * 4 - 2);
-            int newGreen = (int) (green + Math.random() * 4 - 2);
+            int newRed = (int) Math.round(red + Math.random() * 4 - 2);
+            int newBlue = (int) Math.round(blue + Math.random() * 4 - 2);
+            int newGreen = (int) Math.round(green + Math.random() * 4 - 2);
             if (newBlue > 255) {
                 newBlue = 255;
             }
