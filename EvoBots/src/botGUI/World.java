@@ -7,6 +7,10 @@ import botGUI.bot.Body;
 import botGUI.bot.Bot;
 import botGUI.bot.DragAndDropListener;
 import botGUI.bot.Sensor;
+import de.craften.ui.swingmaterial.MaterialButton;
+import de.craften.ui.swingmaterial.MaterialPanel;
+import de.craften.ui.swingmaterial.MaterialProgressSpinner;
+import de.craften.ui.swingmaterial.MaterialWindow;
 import network.Network;
 import network_gui.NetworkContainer;
 import network_gui.NetworkGUI;
@@ -46,7 +50,7 @@ public class World extends JFrame {
     /**
      * The bigger the value the smaller the islands are
      */
-    public static int LAND_SIZE = 6;
+    public static int LAND_SIZE = 10;
     /**
      * Describes the size of the World
      */
@@ -148,13 +152,14 @@ public class World extends JFrame {
 
     public static Optimisation performance = Optimisation.MIN;
 
-   // public static NetworkGUI networkGUI;
+    // public static NetworkGUI networkGUI;
 
     public boolean pause = false;
 
     public String currenDateiname = null;
 
-    JProgressBar progressBar;
+    MaterialProgressSpinner progressBar;
+    JLabel progressText;
 
     public World() {
         setTitle("World");
@@ -165,7 +170,7 @@ public class World extends JFrame {
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
 
-       // networkGUI = new NetworkGUI();
+        // networkGUI = new NetworkGUI();
 
         listener = new DragAndDropListener(this);
 
@@ -196,25 +201,7 @@ public class World extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_R:
-                        if (population != null) {
-                            for (int i = 0; i < population.size(); i++) {
-                                Bot b = population.get(i);
-                                b.kill();
-                                population.remove(b);
-                            }
-                            population.clear();
-                        }
-                        map=null;
-
-                        containerPanel.removeAll();
-                        containerPanel.update(containerPanel.getGraphics());
-
-                        CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
-                        if(CHUNK_SIZE<8)
-                            CHUNK_SIZE=8;
-                        createMap();
-                        resizeMap();
-                        currenDateiname = null;
+                        generateNewDialog();
                         break;
 
                     case KeyEvent.VK_UP:
@@ -377,115 +364,62 @@ public class World extends JFrame {
         ret.setBackground(Color.white);
         ret.setLayout(null);
 
-        JSlider w_width = new JSlider(JSlider.HORIZONTAL, 0, 300, WORLD_WIDTH);
-        JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 300, WORLD_HEIGHT);
-        JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 300, LAND_AMOUNT);
-        JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 50, LAND_SIZE);
+
         JSlider fps = new JSlider(JSlider.HORIZONTAL, 0, 300, FPS);
         JSlider food_distrib = new JSlider(JSlider.HORIZONTAL, 0, 80, FOOD_DISTRIBUTION);
         JSlider food_regrowth = new JSlider(JSlider.HORIZONTAL, 0, 100, FOOD_REGROWTH);//bis hier min +1 weil
         JSlider populationSlider = new JSlider(JSlider.HORIZONTAL, 0, 200, MIN_POP_SIZE);
-        JSlider smoothing = new JSlider(JSlider.HORIZONTAL, 0, 10, SMOOTHING_FAKTOR);
 
 
         int xOff = 150;
 
-        JLabel[] labels = new JLabel[9];
+        JLabel[] labels = new JLabel[4];
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel();
             labels[i].setBounds(20, (getHeight() / 12) * i, xOff - 10, getHeight() / 10);
             labels[i].setFont(new Font("Times New Roman", 0, 20));
             ret.add(labels[i]);
         }
-        labels[0].setText("World Width");
-        labels[1].setText("World Height");
-        labels[2].setText("Land Amount");
-        labels[3].setText("Land Size");
-        labels[4].setText("FPS");
-        labels[5].setText("Food Distrib.");
-        labels[6].setText("Food Regrowth");
-        labels[7].setText("Population");
-        labels[8].setText("Smoothing");
 
-        w_width.setBounds(xOff, 10, controlPanelWidth - xOff, getHeight() / 10);
-        w_height.setBounds(xOff, 10 + (getHeight() / 12), controlPanelWidth - xOff, (getHeight() / 10));
-        land_amount.setBounds(xOff, 10 + (getHeight() / 12) * 2, controlPanelWidth - xOff, getHeight() / 10);
-        land_size.setBounds(xOff, 10 + (getHeight() / 12) * 3, controlPanelWidth - xOff, getHeight() / 10);
-        fps.setBounds(xOff, 10 + (getHeight() / 12) * 4, controlPanelWidth - xOff, getHeight() / 10);
-        food_distrib.setBounds(xOff, 10 + (getHeight() / 12) * 5, controlPanelWidth - xOff, getHeight() / 10);
-        food_regrowth.setBounds(xOff, 10 + (getHeight() / 12) * 6, controlPanelWidth - xOff, getHeight() / 10);
-        populationSlider.setBounds(xOff, 10 + (getHeight() / 12) * 7, controlPanelWidth - xOff, getHeight() / 10);
-        smoothing.setBounds(xOff, 10 + (getHeight() / 12) * 8, controlPanelWidth - xOff, getHeight() / 10);
+        labels[0].setText("FPS");
+        labels[1].setText("Food Distrib.");
+        labels[2].setText("Food Regrowth");
+        labels[3].setText("Population");
 
-        w_width.setPaintLabels(true);
-        w_height.setPaintLabels(true);
-        land_amount.setPaintLabels(true);
-        land_size.setPaintLabels(true);
+
+        fps.setBounds(xOff, 10 + (getHeight() / 12) * 0, controlPanelWidth - xOff - 20, getHeight() / 10);
+        food_distrib.setBounds(xOff, 10 + (getHeight() / 12) * 1, controlPanelWidth - xOff - 20, getHeight() / 10);
+        food_regrowth.setBounds(xOff, 10 + (getHeight() / 12) * 2, controlPanelWidth - xOff - 20, getHeight() / 10);
+        populationSlider.setBounds(xOff, 10 + (getHeight() / 12) * 3, controlPanelWidth - xOff - 20, getHeight() / 10);
+
+
         fps.setPaintLabels(true);
         food_distrib.setPaintLabels(true);
         food_regrowth.setPaintLabels(true);
         populationSlider.setPaintLabels(true);
-        smoothing.setPaintLabels(true);
 
-        w_width.setPaintTicks(true);
-        w_height.setPaintTicks(true);
-        land_amount.setPaintTicks(true);
-        land_size.setPaintTicks(true);
+
+        fps.setBackground(Color.white);
+        food_distrib.setBackground(Color.white);
+        food_regrowth.setBackground(Color.white);
+        populationSlider.setBackground(Color.white);
+
+
         fps.setPaintTicks(true);
         food_distrib.setPaintTicks(true);
         food_regrowth.setPaintTicks(true);
         populationSlider.setPaintTicks(true);
-        smoothing.setPaintTicks(true);
 
-        w_width.setMajorTickSpacing(50);
-        w_height.setMajorTickSpacing(50);
-        land_amount.setMajorTickSpacing(50);
-        land_size.setMajorTickSpacing(10);
+
         fps.setMajorTickSpacing(100);
         food_distrib.setMajorTickSpacing(20);
         food_regrowth.setMajorTickSpacing(10);
         populationSlider.setMajorTickSpacing(50);
-        smoothing.setMajorTickSpacing(5);
 
-        w_width.setMinorTickSpacing(10);
-        w_height.setMinorTickSpacing(10);
-        land_amount.setMinorTickSpacing(10);
-        land_size.setMinorTickSpacing(2);
         fps.setMinorTickSpacing(20);
         food_distrib.setMinorTickSpacing(5);
         food_regrowth.setMinorTickSpacing(2);
         populationSlider.setMinorTickSpacing(10);
-        smoothing.setMinorTickSpacing(1);
-
-
-        w_width.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                WORLD_WIDTH = w_width.getValue() + 1;
-                requestFocus();
-            }
-        });
-        w_height.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                WORLD_HEIGHT = w_height.getValue() + 1;
-                requestFocus();
-            }
-        });
-        land_amount.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                LAND_AMOUNT = land_amount.getValue() + 1;
-                requestFocus();
-            }
-        });
-        land_size.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                LAND_SIZE = land_size.getValue() + 1;
-                requestFocus();
-            }
-        });
         fps.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -514,32 +448,32 @@ public class World extends JFrame {
                 requestFocus();
             }
         });
-        smoothing.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                SMOOTHING_FAKTOR = smoothing.getValue();
-                requestFocus();
-            }
-        });
 
-        ret.add(w_width);
-        ret.add(w_height);
-        ret.add(land_amount);
-        ret.add(land_size);
         ret.add(fps);
         ret.add(food_distrib);
         ret.add(food_regrowth);
         ret.add(populationSlider);
-        ret.add(smoothing);
 
-        JButton save = new JButton("SAVE");
-        JButton load = new JButton("LOAD");
+        MaterialButton save = new MaterialButton();
+        save.setText("SAVE");
+        MaterialButton load = new MaterialButton();
+        load.setText("LOAD");
+        MaterialButton generate = new MaterialButton();
+        generate.setText("GENERATE A NEW WORLD");
+
+        save.setType(MaterialButton.Type.RAISED);
+        load.setType(MaterialButton.Type.RAISED);
+        generate.setType(MaterialButton.Type.RAISED);
 
         save.setBounds(10, 10 + (getHeight() / 12) * 10, 180, 70);
         load.setBounds(200, 10 + (getHeight() / 12) * 10, 180, 70);
 
+        generate.setBounds(20, 10 + (getHeight() / 12) * 5, controlPanelWidth - 40, getHeight() / 16);
+
+
         ret.add(save);
         ret.add(load);
+        ret.add(generate);
 
         save.addActionListener(new ActionListener() {
             @Override
@@ -553,7 +487,160 @@ public class World extends JFrame {
                 load();
             }
         });
+        generate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateNewDialog();
+            }
+        });
         return ret;
+    }
+
+    /**
+     * creates a dialog for the new world generation
+     */
+    private void generateNewDialog() {
+
+
+        JPanel dialog = new JPanel();
+        dialog.setLayout(null);
+        dialog.addMouseListener(listener);
+        dialog.addMouseMotionListener(listener);
+
+        JPanel top = new JPanel();
+        top.setBackground(Color.ORANGE);
+        top.setLayout(null);
+        top.setBounds(0, 0, 480, 60);
+
+        dialog.setBounds(getWidth() / 2 - 240 - 200, getHeight() / 2 - 360, 480, 720);
+        dialog.setBackground(Color.WHITE);
+
+
+        JLabel exit = new JLabel("X");
+        exit.setFont(new Font("Times New Roman", Font.PLAIN, 50));
+        exit.setBounds(430, 0, 60, 60);
+        exit.setHorizontalTextPosition(SwingConstants.CENTER);
+        exit.setVerticalTextPosition(SwingConstants.TOP);
+        exit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                container.remove(dialog);
+            }
+        });
+
+
+        JSlider w_width = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_WIDTH);
+        JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_HEIGHT);
+        JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 100, LAND_AMOUNT);
+        JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 100, LAND_SIZE);
+        JSlider smoothing = new JSlider(JSlider.HORIZONTAL, 0, 10, SMOOTHING_FAKTOR);
+
+        int xOff = 190;
+
+        w_width.setBounds(xOff, 10 + 70, 480 - xOff - 20, 50);
+        w_height.setBounds(xOff, 10 + 60 + 70, 480 - xOff - 20, 50);
+        land_amount.setBounds(xOff, 10 + 60 * 2 + 70, 480 - xOff - 20, 50);
+        land_size.setBounds(xOff, 10 + 60 * 3 + 70, 480 - xOff - 20, 50);
+        smoothing.setBounds(xOff, 10 + 60 * 4 + 70, 480 - xOff - 20, 50);
+
+
+        w_width.setPaintLabels(true);
+        w_height.setPaintLabels(true);
+        land_amount.setPaintLabels(true);
+        land_size.setPaintLabels(true);
+        smoothing.setPaintLabels(true);
+
+        w_width.setBackground(Color.white);
+        w_height.setBackground(Color.white);
+        land_amount.setBackground(Color.white);
+        land_size.setBackground(Color.white);
+        smoothing.setBackground(Color.white);
+
+        w_width.setPaintTicks(true);
+        w_height.setPaintTicks(true);
+        land_amount.setPaintTicks(true);
+        land_size.setPaintTicks(true);
+        smoothing.setPaintTicks(true);
+
+        w_width.setMajorTickSpacing(100);
+        w_height.setMajorTickSpacing(100);
+        land_amount.setMajorTickSpacing(25);
+        land_size.setMajorTickSpacing(25);
+        smoothing.setMajorTickSpacing(5);
+
+        w_width.setMinorTickSpacing(20);
+        w_height.setMinorTickSpacing(20);
+        land_amount.setMinorTickSpacing(5);
+        land_size.setMinorTickSpacing(5);
+        smoothing.setMinorTickSpacing(1);
+
+        dialog.add(w_width);
+        dialog.add(w_height);
+        dialog.add(land_amount);
+        dialog.add(land_size);
+        dialog.add(smoothing);
+
+        JLabel[] labels = new JLabel[5];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = new JLabel();
+            labels[i].setBounds(22, 60 * i + 70, 150, 50);
+            labels[i].setFont(new Font("Times New Roman", 0, 20));
+            dialog.add(labels[i]);
+        }
+        labels[0].setText("World Width");
+        labels[1].setText("World Height");
+        labels[2].setText("Land Amount");
+        labels[3].setText("Land Size");
+        labels[4].setText("Smoothing");
+
+
+        container.add(dialog, 0);
+        dialog.add(top);
+        top.add(exit);
+
+        MaterialButton generate = new MaterialButton();
+        generate.setText("GENERATE");
+        generate.setBounds(20, 60 * 5 + 90, 440, 80);
+        generate.setBackground(Color.ORANGE);
+
+        dialog.add(generate);
+
+        generate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                WORLD_WIDTH = w_width.getValue();
+                WORLD_HEIGHT = w_height.getValue();
+                LAND_AMOUNT = land_amount.getValue();
+                LAND_SIZE = land_size.getValue();
+                SMOOTHING_FAKTOR = smoothing.getValue();
+
+                if (population != null) {
+                    for (int i = 0; i < population.size(); i++) {
+                        Bot b = population.get(i);
+                        b.kill();
+                        population.remove(b);
+                    }
+                    population.clear();
+                }
+                map = null;
+
+                containerPanel.removeAll();
+                containerPanel.update(containerPanel.getGraphics());
+
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
+                if (CHUNK_SIZE < 8)
+                    CHUNK_SIZE = 8;
+                createMap();
+                resizeMap();
+                currenDateiname = null;
+                container.remove(dialog);
+
+            }
+
+        });
+
+
     }
 
     private void dynamicResizer() {
@@ -748,10 +835,16 @@ public class World extends JFrame {
         ArrayList<Island> islands = new ArrayList<>();
         //first fill with Water
 
-        progressBar = new JProgressBar(0,WORLD_WIDTH);
-        progressBar.setBounds(getWidth()/2-200-controlPanelWidth/2,getHeight()/2-40,400,80);
-        progressBar.setValue(0);
+        progressText = new JLabel("0%");
+        progressText.setFont(new Font(null, 0, 40));
+        progressText.setSize(progressText.getPreferredSize());
+        progressText.setLocation(getWidth() / 2 - controlPanelWidth / 2 - progressText.getWidth() / 2, getHeight() / 2 - progressText.getHeight() / 2);
+
+        progressBar = new MaterialProgressSpinner();
+        progressBar.setBounds(getWidth() / 2 - 100 - controlPanelWidth / 2, getHeight() / 2 - 100, 200, 200);
+
         containerPanel.add(progressBar);
+        containerPanel.add(progressText);
         containerPanel.update(containerPanel.getGraphics());
 
         for (int i = 0; i < WORLD_WIDTH; i++) {
@@ -766,11 +859,15 @@ public class World extends JFrame {
                     e.printStackTrace();
                 }
                 if (LAND_AMOUNT > (Math.random() * 1000)) {
-                    islands.add(new Island(WORLD_WIDTH < WORLD_HEIGHT ? WORLD_WIDTH / LAND_SIZE : WORLD_HEIGHT / LAND_SIZE, i, j));
+                    islands.add(new Island(LAND_SIZE, i, j));
                 }
             }
-            progressBar.setValue(i);
+            progressText.setText((int) (100 * ((i + 0.0) / WORLD_WIDTH)) + "%");
+            progressText.setSize(progressText.getPreferredSize());
+            progressText.setLocation(getWidth() / 2 - controlPanelWidth / 2 - progressText.getWidth() / 2, getHeight() / 2 - progressText.getHeight() / 2);
             progressBar.update(progressBar.getGraphics());
+            container.repaint();
+
         }
 
         for (Island island : islands) {
@@ -788,6 +885,7 @@ public class World extends JFrame {
             }
         }
         containerPanel.remove(progressBar);
+        containerPanel.remove(progressText);
         containerPanel.update(containerPanel.getGraphics());
         repaint();
     }
@@ -908,7 +1006,7 @@ public class World extends JFrame {
 
             String subData;
 
-            map= new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
+            map = new Chunk[WORLD_WIDTH][WORLD_HEIGHT];
 
             for (int i = 0; i < WORLD_WIDTH; i++) {
                 for (int j = 0; j < WORLD_HEIGHT; j++) {

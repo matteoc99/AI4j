@@ -44,10 +44,10 @@ public class PopulationOrganizer {
                             agent[j] = new CosiAgent(new Network(3, 1, hiddAmm, hidd));
                         } else if ((neu == (int) (Math.random() * 6)) && goodParents.size() > 1) {
                             agent[j] = new CosiAgent(new Network(goodParents.get((int) (Math.random() * goodParents.size()))));
-                            agent[j].getNet().mutateSoft(neu);
+                            agent[j].getNet().mutateSoft(neu, 0.2);
                         } else {
                             agent[j] = new CosiAgent(new Network(bestDescriptor));
-                            agent[j].getNet().mutateSoft(neu);
+                            agent[j].getNet().mutateSoft(neu, 0.2);
                         }
                     }
                 }
