@@ -1,5 +1,7 @@
 package field;
 
+import math.Function;
+
 import java.awt.*;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,11 +50,11 @@ public class WallFunction extends Function {
         yOff = (int) (Math.random() * parent.height);
 
         // calculating k given deg
-        k = Math.tan(Math.toRadians(deg));
-        k = (int)(k*100000)/100000.0;
+        setK(Math.tan(Math.toRadians(deg)));
+        setK((int)(getK()*100000)/100000.0);
         // 50% of a negative k
         if (Math.random() < 0.5)
-            k = -k;
+            setK(-getK());
 
         // deciding length of the visible part of the wall + validation
         do {
@@ -68,7 +70,7 @@ public class WallFunction extends Function {
         if (b > parent.width) b = parent.width;
 
         // conversation to normal Function format for simpler calculation
-        d = k * -xOff + yOff;
+        d = getK() * -xOff + yOff;
     }
 
     /**
@@ -88,11 +90,11 @@ public class WallFunction extends Function {
     @Override
     public String toString() {
         return "WallFunction:"+iD+" {" +
-                "k=" + k +
+                "k=" + getK() +
                 ", d=" + d +
                 ", a=" + a +
                 ", b=" + b +
-                "}:\ny="+k+"*x+"+d;
+                "}:\ny="+getK()+"*x+"+d;
     }
 
     void paint(Graphics g) {
