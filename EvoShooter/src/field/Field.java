@@ -1,5 +1,8 @@
 package field;
 
+import math.Position;
+import values.Values;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -9,6 +12,11 @@ import java.util.ArrayList;
  * @since 18.07.2017
  */
 public class Field extends Container {
+
+    /**
+     * Tells if this is a valid random generated Field
+     */
+    public boolean valid = true;
 
     /** Const */
 
@@ -26,7 +34,7 @@ public class Field extends Container {
     /**
      * amount of walls initially created in this field
      */
-    private static final int wallAmount = 20;
+    private static final int wallAmount = 10;
 
     /**
      * storing all sections
@@ -40,19 +48,40 @@ public class Field extends Container {
     private ArrayList<WallFunction> walls = new ArrayList<>();
 
     public Field() {
+        createSections();
+        createWalls();
+        createSpawns();
+    }
+
+    private void createSections() {
         for (int y = 0; y < verticalSectionAmount; y++)
             for (int x = 0; x < horizontalSectionAmount; x++)
                 sections.add(new FieldSection(x,y));
-        createWalls();
     }
 
-    void createWalls() {
+    private void createWalls() {
         for (int i = 0; i < wallAmount; i++) {
             walls.add(new WallFunction(this));
         }
     }
 
-    BufferedImage createWallImage() {
+    private void createSpawns() {
+        // generate 8 spawn in the middle of the map
+        Position center = new Position(width/2, height/2);
+        Spawn[] spawns = new Spawn[8];
+        for (int i = 0; i < spawns.length; i++)
+            spawns[i] = new Spawn(((Position) center.clone()), Values.unitWidth);
+
+        // check if Position is free
+        for (WallFunction wall : walls) {
+            if (spawns[0].collides(wall) != null)
+                walls.remove(wall);
+        }
+
+        
+    }
+
+    BufferedImage createMapImage() {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = ((Graphics2D) bufferedImage.getGraphics());
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

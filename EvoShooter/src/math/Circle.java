@@ -1,5 +1,7 @@
 package math;
 
+import field.WallFunction;
+
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
@@ -34,7 +36,7 @@ public class Circle {
      * @param f to calculate with
      * @return Position[] of both collision points
      */
-    Position[] collides(Function f) {
+    public Position[] collides(Function f) {
         // create vertical Function to f
         Function fV = new Function(1/f.getK());
 
@@ -42,7 +44,10 @@ public class Circle {
         fV.translateToHit(center);
 
         // calculate collision P of given Functions
-        Position pS = f.collides(fV);
+        Position pS = f.collides((fV));
+
+        // In case of a WallFunction there might be no collision ever
+        if (pS == null) return null;
 
         double dis = pS.distance(this.center);
 
@@ -61,4 +66,5 @@ public class Circle {
         }
         return null;
     }
+
 }
