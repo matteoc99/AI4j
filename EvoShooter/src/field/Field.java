@@ -26,7 +26,7 @@ public class Field extends Container {
     /**
      * amount of walls initially created in this field
      */
-    private static final int wallAmount = 20;
+    private static final int wallAmount = 1;
 
     /**
      * storing all sections

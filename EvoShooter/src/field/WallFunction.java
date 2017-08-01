@@ -1,6 +1,7 @@
 package field;
 
 import math.Function;
+import math.Position;
 
 import java.awt.*;
 import java.util.Random;
@@ -38,7 +39,7 @@ public class WallFunction extends Function {
     private void create() {
         // degree of the function
         int     deg;
-        // offsets to guarantee the function as any Point within this field
+        // offsets to guarantee the function has any Point within this field
         int     xOff;
         int     yOff;
         // length of the visible function
@@ -71,6 +72,8 @@ public class WallFunction extends Function {
 
         // conversation to normal Function format for simpler calculation
         d = getK() * -xOff + yOff;
+
+        System.out.println(this);
     }
 
     /**
@@ -80,8 +83,8 @@ public class WallFunction extends Function {
 
     }
 
-    Point collides(WallFunction f2) {
-        Point p = super.collides(f2);
+    Position collides(WallFunction f2) {
+        Position p = super.collides(f2);
         if (p.getX() >= a && p.getX() <= b)
             return p;
         return null;

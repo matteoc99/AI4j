@@ -1,7 +1,5 @@
 package math;
 
-import java.awt.*;
-
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
@@ -30,6 +28,11 @@ public class Function {
         this(0);
     }
 
+    /**
+     * checks for k not to be to close to 0, as this could cause problems
+     * ex: calculating 1/k
+     * @param k to set
+     */
     public void setK(double k) {
         if (Math.abs(k) > 0.0001)
             this.k = k;
@@ -43,20 +46,40 @@ public class Function {
         return k;
     }
 
-    public Point collides(Function f) {
+    /**
+     * Calculates the collision of two functions
+     * @param f to calculate with
+     * @return Position of the collision
+     */
+    public Position collides(Function f) {
         int x = (int)((f.d-d)/(k-f.k));
-        return new Point(x, (int)calcY(x));
+        return new Position(x, (int)calcY(x));
     }
 
+    /**
+     * calculates result of the function given x
+     * @param x to fill in the function
+     * @return result y
+     */
     public double calcY(double x) {
         return k*x+d;
     }
 
-    public void translateToHit(Point p) {
+    /**
+     * Translates the function on the y-Axis so that it collides with Position p
+     * Changes var:d
+     * @param p to collide with
+     */
+    public void translateToHit(Position p) {
         d = p.getY()-k*p.getX();
     }
 
-    public void rotateToHit(Point p) {
+    /**
+     * Rotates the function so that it collides with Position p
+     * changes var:k
+     * @param p to collide with
+     */
+    public void rotateToHit(Position p) {
         // TODO: 01.08.2017
     }
 
