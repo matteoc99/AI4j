@@ -16,6 +16,11 @@ public class Position extends Point{
         super(x, y);
     }
 
+    /**
+     * Translates this point in a given direction for a given distance
+     * @param k direction
+     * @param distance distance
+     */
     public void translateTowards(double k, double distance) {
         double normDistance = Math.sqrt(Math.pow(k, 2) + 1);
         double factor = distance/normDistance;

@@ -7,4 +7,5 @@ import math.Circle;
  * @since 01.08.2017
  */
 public class Spawn extends Circle{
+
 }

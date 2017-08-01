@@ -34,7 +34,7 @@ public class WallFunction extends Function {
     }
 
     /**
-     * create the random function
+     * Creates the random function
      */
     private void create() {
         // degree of the function
@@ -51,8 +51,7 @@ public class WallFunction extends Function {
         yOff = (int) (Math.random() * parent.height);
 
         // calculating k given deg
-        setK(Math.tan(Math.toRadians(deg)));
-        setK((int)(getK()*100000)/100000.0);
+        setK((int)(Math.tan(Math.toRadians(deg))*100000)/100000.0);
         // 50% of a negative k
         if (Math.random() < 0.5)
             setK(-getK());
@@ -72,19 +71,23 @@ public class WallFunction extends Function {
 
         // conversation to normal Function format for simpler calculation
         d = getK() * -xOff + yOff;
-
-        System.out.println(this);
     }
 
     /**
-     * register this function within the fieldSections
+     * Registers this function within the fieldSections
      */
     private void register() {
 
     }
 
-    Position collides(WallFunction f2) {
-        Position p = super.collides(f2);
+    /**
+     * Calculates the collision of this Wall and a Function
+     * @param f to calculate with
+     * @return collision
+     */
+    @Override
+    public Position collides(Function f) {
+        Position p = super.collides(f);
         if (p.getX() >= a && p.getX() <= b)
             return p;
         return null;

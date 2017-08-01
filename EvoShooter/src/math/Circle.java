@@ -29,6 +29,11 @@ public class Circle {
         this(new Position(0, 0));
     }
 
+    /**
+     * Calculates the collision of this circle with a Function
+     * @param f to calculate with
+     * @return Position[] of both collision points
+     */
     Position[] collides(Function f) {
         // create vertical Function to f
         Function fV = new Function(1/f.getK());
@@ -44,8 +49,13 @@ public class Circle {
         // if the collisionPoint is within the circle, we know that there is a collision,
         // however we need to further calculate the exact Position
         if (dis <= this.radius) {
+            // Both collision points start at Position pS
             Position[] ret = new Position[] {((Position) pS.clone()), ((Position) pS.clone())};
+
+            // Distance to the border of this circle from Position pS on the line of Function f
             double translateDistance = Math.sqrt(Math.pow(this.radius, 2) - Math.pow(dis, 2));
+
+            // translating both positions in different directions
             ret[0].translateTowards(f.getK(), translateDistance);
             ret[1].translateTowards(f.getK(), -translateDistance);
         }

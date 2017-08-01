@@ -6,7 +6,7 @@ import javax.swing.*;
  * @author Maximilian Estfelller
  * @since 25.07.2017
  */
-public class Main {
+public class FieldMain {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Map");
         frame.setBounds(600,100,500,500);
