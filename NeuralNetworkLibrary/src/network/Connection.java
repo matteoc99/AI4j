@@ -51,7 +51,7 @@ public class Connection {
      *
      * @param from   {@link Neuron} where the connection begins
      * @param to     {@link Neuron} where the connection ends
-     * @param weight {@link Connection#weight} of the Synapse
+     * @param weight {@link Connection#weight} of the Connection
      */
     public Connection(Neuron from, Neuron to, double weight) {
         this(from, to, weight, true);
@@ -62,7 +62,7 @@ public class Connection {
      *
      * @param from   {@link Neuron} where the connection begins
      * @param to     {@link Neuron} where the connection ends
-     * @param weight {@link Connection#weight} of the Synapse
+     * @param weight {@link Connection#weight} of the Connection
      * @param active {@link #active} if the connection is active
      */
     public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight, boolean active) {

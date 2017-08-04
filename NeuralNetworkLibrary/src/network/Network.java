@@ -424,6 +424,12 @@ public class Network {
 
     }
 
+
+    /**
+     * returns the Descriptor or creates a new one in case it does not exist
+     *
+     * @return the descriptor for this Network
+     */
     public double[] getDescriptor() {
         if (descriptor == null)
             descriptor = generateDescriptor();

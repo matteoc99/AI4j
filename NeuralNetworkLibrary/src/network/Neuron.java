@@ -91,7 +91,7 @@ public class Neuron {
 
 
     /**
-     * sets the network.Layer, in which the network.Neuron is into
+     * returns the network.Layer, in which the network.Neuron is into
      *
      * @return {@link Layer} where the {@link Layer} is currently in. null, if there is no layer
      */
@@ -249,7 +249,7 @@ public class Neuron {
     /**
      * Remove an network.Connection from {@link #axons}
      *
-     * @param s {@link Connection} to add
+     * @param s {@link Connection} to remove
      * @return true if the connection was removed. Otherwise false
      */
     public boolean removeAxon(Connection s) {
@@ -264,8 +264,8 @@ public class Neuron {
     /**
      * remove a Dendrite from {@link #dendrites}
      *
-     * @param s {@link Connection} to add
-     * @return true if the connection was added. Otherwise false
+     * @param s {@link Connection} to remove
+     * @return true if the connection was removed. Otherwise false
      */
     public boolean removeDendrite(Connection s) {
         if (dendrites.contains(s)) {

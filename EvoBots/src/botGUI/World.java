@@ -158,8 +158,7 @@ public class World extends JFrame {
 
     public String currenDateiname = null;
 
-    MaterialProgressSpinner progressBar;
-    JLabel progressText;
+    JProgressBar progressBar;
 
     public World() {
         setTitle("World");
@@ -831,20 +830,21 @@ public class World extends JFrame {
      * method used to generate the Map
      */
     private void generateMap() {
-        containerPanel.removeAll();
         ArrayList<Island> islands = new ArrayList<>();
         //first fill with Water
 
-        progressText = new JLabel("0%");
-        progressText.setFont(new Font(null, 0, 40));
-        progressText.setSize(progressText.getPreferredSize());
-        progressText.setLocation(getWidth() / 2 - controlPanelWidth / 2 - progressText.getWidth() / 2, getHeight() / 2 - progressText.getHeight() / 2);
 
-        progressBar = new MaterialProgressSpinner();
-        progressBar.setBounds(getWidth() / 2 - 100 - controlPanelWidth / 2, getHeight() / 2 - 100, 200, 200);
+        progressBar = new JProgressBar();
+        progressBar.setBounds(getWidth() / 2 - 80 - controlPanelWidth / 2, getHeight() / 2 - 30, 160, 60);
+        progressBar.setMaximum(WORLD_WIDTH);
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
+        containerPanel.setBounds(0, 0, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
+
+        containerPanel.removeAll();
+        containerPanel.repaint();
         containerPanel.add(progressBar);
-        containerPanel.add(progressText);
         containerPanel.update(containerPanel.getGraphics());
 
         for (int i = 0; i < WORLD_WIDTH; i++) {
@@ -862,12 +862,20 @@ public class World extends JFrame {
                     islands.add(new Island(LAND_SIZE, i, j));
                 }
             }
-            progressText.setText((int) (100 * ((i + 0.0) / WORLD_WIDTH)) + "%");
-            progressText.setSize(progressText.getPreferredSize());
-            progressText.setLocation(getWidth() / 2 - controlPanelWidth / 2 - progressText.getWidth() / 2, getHeight() / 2 - progressText.getHeight() / 2);
-            progressBar.update(progressBar.getGraphics());
-            container.repaint();
-
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (i % (WIDTH / 50) == 0) {
+                progressBar.setValue((int) ((i + 0.0) / WORLD_WIDTH * 100));
+                progressBar.update(progressBar.getGraphics());
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         for (Island island : islands) {
@@ -885,8 +893,6 @@ public class World extends JFrame {
             }
         }
         containerPanel.remove(progressBar);
-        containerPanel.remove(progressText);
-        containerPanel.update(containerPanel.getGraphics());
         repaint();
     }
 

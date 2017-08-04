@@ -46,6 +46,7 @@ public class Player extends MobileObject {
             double value = agent.processData(data)[0];
             value -= 0.5;
             direction.y = 10 * value;
+            //TODO LIKE FLAPPY BIRD
         }
         if (getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) == null
                 || getObjectAt((int) (position.x + direction.x), (int) (position.y + direction.y)) instanceof Player) {

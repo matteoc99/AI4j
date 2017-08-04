@@ -148,55 +148,8 @@ public class NetworkGUI extends JFrame{
     public static void main(String[] args) {
         NetworkGUI g = new NetworkGUI();
 
-        Network network = new Network(2,2,2, new int[]{3,3});
+        Network network = new Network(3, 2, 2, new int[]{6, 3});
         g.addNetwork(network);
-
-        new Thread(() -> {
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                network.getAllNeurons().get(0).getAxons().get(0).setWeight(-1);
-                g.refreshNetwork(network);
-                try {
-                    TimeUnit.MILLISECONDS.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                network.getAllNeurons().get(0).getAxons().get(0).setWeight(1);
-                g.refreshNetwork(network);
-            }
-        }).start();
-
-
-        g.addNetwork(new network.Network(1,1,0,new int[]{}));
-        g.addNetwork(new network.Network(2,2,0,new int[]{}));
-        g.addNetwork(new network.Network(2,3,1,new int[]{2}));
-        try {
-            TimeUnit.MILLISECONDS.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        g.addNetwork(new network.Network(3,2,3,new int[]{4,2,2}));
-        g.addNetwork(new network.Network(2,3,2,new int[]{2,3}));
-        g.addNetwork(new network.Network(2,4,2,new int[]{3,2}));
-        g.addNetwork(new network.Network(4,1,3,new int[]{2,3,3}));
-        g.addNetwork(new network.Network(2,3,3,new int[]{2,1,2}));
-        g.addNetwork(new network.Network(3,2,4,new int[]{3,3,3,1}));
-        g.addNetwork(new network.Network(2,2,3,new int[]{3,4,4}));
-        g.addNetwork(new network.Network(1,3,3,new int[]{2,3,2}));
-        g.addNetwork(new network.Network(2,2,2,new int[]{2,2}));
-        g.addNetwork(new network.Network(2,3,0,new int[]{}));
-        g.addNetwork(new network.Network(2,3,3,new int[]{2,3,3}));
-        g.addNetwork(new network.Network(5,2,2,new int[]{4,4}));
-        g.addNetwork(new network.Network(3,3,3,new int[]{2,2,4}));
-        g.addNetwork(new network.Network(4,3,3,new int[]{4,2,4}));
-        g.addNetwork(new network.Network(3,4,2,new int[]{2,3}));
-        g.addNetwork(new network.Network(2,2,3,new int[]{2,1,3}));
-        g.addNetwork(new network.Network(7,2,4, new int[]{6, 5, 4, 3}));
-        g.addNetwork(new network.Network(2,5,3,new int[]{2,1,3}));
+        g.addNetwork(new network.Network(3, 2, 1, new int[]{2}));
     }
 }

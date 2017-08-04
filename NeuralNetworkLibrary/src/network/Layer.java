@@ -68,8 +68,7 @@ public class Layer {
             addNeuron(neurons[i]);
             neurons[i].setMyLayer(this);
         }
-        if (neurons.length <= 0) {
-        }
+
     }
 
     /**
@@ -99,7 +98,7 @@ public class Layer {
     }
 
     /**
-     * sets the type fro the {@link Layer}
+     * sets the type for the {@link Layer}
      *
      * @param type{@link LayerType} to set
      */
@@ -232,3 +231,5 @@ public class Layer {
         return neurons.get(i);
     }
 }
+
+
