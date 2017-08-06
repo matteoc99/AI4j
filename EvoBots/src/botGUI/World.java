@@ -3,6 +3,7 @@ package botGUI;
 
 import agent.Agent;
 import agent.cosi.CosiAgent;
+import botGUI.UI.MySlider;
 import botGUI.bot.Body;
 import botGUI.bot.Bot;
 import botGUI.bot.DragAndDropListener;
@@ -322,13 +323,16 @@ public class World extends JFrame {
 
     public JPanel addBotStats(Bot b) {
         JPanel ret = new JPanel();
+
+        ret.setBackground(Color.ORANGE);
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 400);
+        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 500);
         ret.setBackground(Color.white);
         ret.setLayout(null);
 
 
-        JLabel[] labels = new JLabel[6];
+        JLabel[] labels = new JLabel[4];
         for (int i = 0; i < labels.length; i++) {
             labels[i] = new JLabel();
             labels[i].setBounds(20, 60 * i + 20, 300, 50);
@@ -341,12 +345,9 @@ public class World extends JFrame {
         labels[3].setText("Color: " + b.red + " " + b.green + " " + b.blue);
         labels[3].setBackground(new Color(b.red, b.green, b.blue));
         labels[3].setOpaque(true);
-        labels[4].setText("Cur. Color: " + b.body.getBodyColor().getRed() + " " + b.body.getBodyColor().getGreen() + " " + b.body.getBodyColor().getBlue());
-        labels[4].setBackground(b.body.getBodyColor());
-        labels[4].setOpaque(true);
 
         NetworkPanel con = new NetworkPanel(b.agent.getNet());
-        con.setBounds(20, 60 * labels.length, 350, 300);
+        con.setBounds(20, 60 * labels.length + 20, 350, 300);
         ret.add(con);
         con.refresh();
         return ret;
@@ -358,17 +359,17 @@ public class World extends JFrame {
      */
     public JPanel addControls() {
         JPanel ret = new JPanel();
+
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, getHeight());
+        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 500);
         ret.setBackground(Color.white);
         ret.setLayout(null);
 
-
-        JSlider fps = new JSlider(JSlider.HORIZONTAL, 0, 300, FPS);
-        JSlider food_distrib = new JSlider(JSlider.HORIZONTAL, 0, 80, FOOD_DISTRIBUTION);
-        JSlider food_regrowth = new JSlider(JSlider.HORIZONTAL, 0, 100, FOOD_REGROWTH);//bis hier min +1 weil
-        JSlider populationSlider = new JSlider(JSlider.HORIZONTAL, 0, 200, MIN_POP_SIZE);
-
+        MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 300, FPS);
+        MySlider food_distrib = new MySlider(JSlider.HORIZONTAL, 0, 80, FOOD_DISTRIBUTION);
+        MySlider food_regrowth = new MySlider(JSlider.HORIZONTAL, 0, 100, FOOD_REGROWTH);//bis hier min +1 weil
+        MySlider populationSlider = new MySlider(JSlider.HORIZONTAL, 0, 200, MIN_POP_SIZE);
 
         int xOff = 150;
 
@@ -390,24 +391,6 @@ public class World extends JFrame {
         food_distrib.setBounds(xOff, 10 + (getHeight() / 12) * 1, controlPanelWidth - xOff - 20, getHeight() / 10);
         food_regrowth.setBounds(xOff, 10 + (getHeight() / 12) * 2, controlPanelWidth - xOff - 20, getHeight() / 10);
         populationSlider.setBounds(xOff, 10 + (getHeight() / 12) * 3, controlPanelWidth - xOff - 20, getHeight() / 10);
-
-
-        fps.setPaintLabels(true);
-        food_distrib.setPaintLabels(true);
-        food_regrowth.setPaintLabels(true);
-        populationSlider.setPaintLabels(true);
-
-
-        fps.setBackground(Color.white);
-        food_distrib.setBackground(Color.white);
-        food_regrowth.setBackground(Color.white);
-        populationSlider.setBackground(Color.white);
-
-
-        fps.setPaintTicks(true);
-        food_distrib.setPaintTicks(true);
-        food_regrowth.setPaintTicks(true);
-        populationSlider.setPaintTicks(true);
 
 
         fps.setMajorTickSpacing(100);
@@ -464,10 +447,14 @@ public class World extends JFrame {
         load.setType(MaterialButton.Type.RAISED);
         generate.setType(MaterialButton.Type.RAISED);
 
-        save.setBounds(10, 10 + (getHeight() / 12) * 10, 180, 70);
-        load.setBounds(200, 10 + (getHeight() / 12) * 10, 180, 70);
+        save.setBounds(10, 40 + (getHeight() / 12) * 5, 190, 70);
+        load.setBounds(200, 40 + (getHeight() / 12) * 5, 190, 70);
 
-        generate.setBounds(20, 10 + (getHeight() / 12) * 5, controlPanelWidth - 40, getHeight() / 16);
+        generate.setBounds(10, 50 + (getHeight() / 12) * 4, 380, 70);
+
+        save.setBackground(Color.ORANGE);
+        load.setBackground(Color.ORANGE);
+        generate.setBackground(Color.ORANGE);
 
 
         ret.add(save);
@@ -511,7 +498,7 @@ public class World extends JFrame {
         top.setLayout(null);
         top.setBounds(0, 0, 480, 60);
 
-        dialog.setBounds(getWidth() / 2 - 240 - 200, getHeight() / 2 - 360, 480, 720);
+        dialog.setBounds(getWidth() / 2 - 240 - 200, getHeight() / 2 - 250, 480, 500);
         dialog.setBackground(Color.WHITE);
 
 
@@ -528,11 +515,11 @@ public class World extends JFrame {
         });
 
 
-        JSlider w_width = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_WIDTH);
-        JSlider w_height = new JSlider(JSlider.HORIZONTAL, 0, 400, WORLD_HEIGHT);
-        JSlider land_amount = new JSlider(JSlider.HORIZONTAL, 0, 100, LAND_AMOUNT);
-        JSlider land_size = new JSlider(JSlider.HORIZONTAL, 0, 100, LAND_SIZE);
-        JSlider smoothing = new JSlider(JSlider.HORIZONTAL, 0, 10, SMOOTHING_FAKTOR);
+        MySlider w_width = new MySlider(JSlider.HORIZONTAL, 0, 400, WORLD_WIDTH);
+        MySlider w_height = new MySlider(JSlider.HORIZONTAL, 0, 400, WORLD_HEIGHT);
+        MySlider land_amount = new MySlider(JSlider.HORIZONTAL, 0, 100, LAND_AMOUNT);
+        MySlider land_size = new MySlider(JSlider.HORIZONTAL, 0, 100, LAND_SIZE);
+        MySlider smoothing = new MySlider(JSlider.HORIZONTAL, 0, 10, SMOOTHING_FAKTOR);
 
         int xOff = 190;
 
@@ -541,25 +528,6 @@ public class World extends JFrame {
         land_amount.setBounds(xOff, 10 + 60 * 2 + 70, 480 - xOff - 20, 50);
         land_size.setBounds(xOff, 10 + 60 * 3 + 70, 480 - xOff - 20, 50);
         smoothing.setBounds(xOff, 10 + 60 * 4 + 70, 480 - xOff - 20, 50);
-
-
-        w_width.setPaintLabels(true);
-        w_height.setPaintLabels(true);
-        land_amount.setPaintLabels(true);
-        land_size.setPaintLabels(true);
-        smoothing.setPaintLabels(true);
-
-        w_width.setBackground(Color.white);
-        w_height.setBackground(Color.white);
-        land_amount.setBackground(Color.white);
-        land_size.setBackground(Color.white);
-        smoothing.setBackground(Color.white);
-
-        w_width.setPaintTicks(true);
-        w_height.setPaintTicks(true);
-        land_amount.setPaintTicks(true);
-        land_size.setPaintTicks(true);
-        smoothing.setPaintTicks(true);
 
         w_width.setMajorTickSpacing(100);
         w_height.setMajorTickSpacing(100);
@@ -867,7 +835,7 @@ public class World extends JFrame {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (i % (WIDTH / 50) == 0) {
+            if (i % (WORLD_WIDTH / 50) == 0) {
                 progressBar.setValue((int) ((i + 0.0) / WORLD_WIDTH * 100));
                 progressBar.update(progressBar.getGraphics());
                 try {

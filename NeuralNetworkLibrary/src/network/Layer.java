@@ -178,8 +178,8 @@ public class Layer {
             Neuron from = neurons.get(i);
             for (int j = 0; j < layer.neurons.size(); j++) {
                 Neuron to = layer.neurons.get(j);
-                //TODO may contain a bug
-                Connection con = new Connection(from, to, Math.random() * 2 - 1,true);
+                double rand = Math.random() * 2 - 1;
+                Connection con = new Connection(from, to, rand, true);
             }
         }
     }

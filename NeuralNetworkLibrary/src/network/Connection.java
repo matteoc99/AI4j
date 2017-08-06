@@ -177,11 +177,13 @@ public class Connection {
     }
 
     public void changeWeightRelativeToError(double error) {
-        this.weight=weight+weight*(error/(int)(Math.random()*30+1));
-        if(weight>1)
+        weight = weight + 0.1 * (error);
+        if (weight > 1) {
             weight=1;
-        else if (weight<-1)
+        }
+        if (weight < -1) {
             weight=-1;
-        from.processError(error*weight);
+        }
+        from.processError(error * Math.abs(weight));
     }
 }
