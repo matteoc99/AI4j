@@ -40,7 +40,7 @@ public class Starter extends JFrame {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
     };
 
-    Network net = Network.createDFF(7, 10, 1, 400);
+    Network net = Network.createDFF(7, 10, 1, 250);
 
 
     public Starter() {
@@ -90,8 +90,8 @@ public class Starter extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int iterations = 1;
-                double rate = 0.03;
-                while (iterations < 2000) {
+                double rate = 0.02;
+                while (iterations < 5000) {
                     for (int i = 0; i < data.length; i++) {
                         double[] y = net.processData(data[i]);
                         double[] error = new double[expected[i].length];
@@ -101,12 +101,18 @@ public class Starter extends JFrame {
                         net.propagateBack(rate, error);
                     }
                     iterations++;
-                    if (iterations % 20 == 0) {
-                        output.setText(iterations / 20 + "%");
+                    if (iterations % 50 == 0) {
+                        output.setText(iterations / 50 + "%");
                         output.update(output.getGraphics());
                     }
                 }
+                System.out.print("{");
+                for (int i = 0; i < net.getDescriptor().length; i++) {
+                    System.out.print(", " + net.getDescriptor()[i]);
+                }
+                System.out.print("}\n");
             }
+
         });
 
         guess.addActionListener(new ActionListener() {
