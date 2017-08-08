@@ -1,20 +1,12 @@
 package botGUI;
 
 
-import agent.Agent;
 import agent.cosi.CosiAgent;
 import botGUI.UI.MySlider;
-import botGUI.bot.Body;
 import botGUI.bot.Bot;
-import botGUI.bot.DragAndDropListener;
-import botGUI.bot.Sensor;
+import botGUI.UI.DragAndDropListener;
 import de.craften.ui.swingmaterial.MaterialButton;
-import de.craften.ui.swingmaterial.MaterialPanel;
-import de.craften.ui.swingmaterial.MaterialProgressSpinner;
-import de.craften.ui.swingmaterial.MaterialWindow;
 import network.Network;
-import network_gui.NetworkContainer;
-import network_gui.NetworkGUI;
 import network_gui.NetworkPanel;
 
 import javax.swing.*;
@@ -166,6 +158,8 @@ public class World extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
+        if (CHUNK_SIZE < 8)
+            CHUNK_SIZE = 8;
         setBounds(0, 0, screenSize.width, screenSize.height);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
@@ -181,7 +175,7 @@ public class World extends JFrame {
         containerPanel.setBounds(0, 0, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
         containerPanel.setLayout(null);
 
-        controlPanel = addControls();
+        controlPanel = addControls(screenSize.width - controlPanelWidth, 0);
 
         containerPanel.addMouseListener(listener);
         containerPanel.addMouseMotionListener(listener);
@@ -189,8 +183,6 @@ public class World extends JFrame {
 
         container.add(controlPanel);
         container.add(containerPanel);
-
-        addControls();
 
         setVisible(true);
 
@@ -321,16 +313,18 @@ public class World extends JFrame {
         requestFocus();
     }
 
-    public JPanel addBotStats(Bot b) {
+    public JPanel addBotStats(Bot b, int x, int y) {
         JPanel ret = new JPanel();
 
-        ret.setBackground(Color.ORANGE);
+        ret.addMouseListener(listener);
+        ret.addMouseMotionListener(listener);
+        ret.setBackground(Color.white);
+
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 500);
-        ret.setBackground(Color.white);
-        ret.setLayout(null);
+        ret.setBounds(x, y, controlPanelWidth, screenSize.height - 500);
 
+        ret.setLayout(null);
 
         JLabel[] labels = new JLabel[4];
         for (int i = 0; i < labels.length; i++) {
@@ -357,13 +351,16 @@ public class World extends JFrame {
     /**
      * add all the Controls components on a JPanel
      */
-    public JPanel addControls() {
+    public JPanel addControls(int x, int y) {
         JPanel ret = new JPanel();
 
+        ret.addMouseListener(listener);
+        ret.addMouseMotionListener(listener);
+        ret.setBackground(Color.white);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        ret.setBounds(screenSize.width - controlPanelWidth, 0, controlPanelWidth, screenSize.height - 500);
-        ret.setBackground(Color.white);
+        ret.setBounds(x, y, controlPanelWidth, screenSize.height - 500);
+
         ret.setLayout(null);
 
         MySlider fps = new MySlider(JSlider.HORIZONTAL, 0, 300, FPS);
@@ -575,6 +572,8 @@ public class World extends JFrame {
         generate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                container.remove(dialog);
+
                 WORLD_WIDTH = w_width.getValue();
                 WORLD_HEIGHT = w_height.getValue();
                 LAND_AMOUNT = land_amount.getValue();
@@ -592,16 +591,24 @@ public class World extends JFrame {
                 map = null;
 
                 containerPanel.removeAll();
-                containerPanel.update(containerPanel.getGraphics());
-
+                container.remove(containerPanel);
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
                 CHUNK_SIZE = (int) ((screenSize.getWidth() - controlPanelWidth) / WORLD_WIDTH);
                 if (CHUNK_SIZE < 8)
                     CHUNK_SIZE = 8;
+                containerPanel.setBounds(0, 0, WORLD_WIDTH * CHUNK_SIZE, WORLD_HEIGHT * CHUNK_SIZE);
+                containerPanel.setLayout(null);
+
+                containerPanel.addMouseListener(listener);
+                containerPanel.addMouseMotionListener(listener);
+                container.add(containerPanel);
+                containerPanel.update(containerPanel.getGraphics());
+                container.update(container.getGraphics());
+
                 createMap();
                 resizeMap();
                 currenDateiname = null;
-                container.remove(dialog);
 
             }
 
@@ -708,7 +715,7 @@ public class World extends JFrame {
             if (Bot.useMemorie) {
                 b = new Bot(new CosiAgent(new Network(14, 4, 2, new int[]{14, 8})), this, 0);
             } else {
-                b = new Bot(new CosiAgent(new Network(5, 4, 1, new int[]{8})), this, 0);
+                b = new Bot(new CosiAgent(new Network(5, 4, 1, new int[]{(int) (Math.random() * 8 + 4)})), this, 0);
             }
 
             population.add(b);
@@ -731,16 +738,20 @@ public class World extends JFrame {
             if (selectedBot != null) {
                 if (selectedBot.hp > 0) {
                     controlPanel.removeAll();
+                    int x = controlPanel.getX();
+                    int y = controlPanel.getY();
                     container.remove(controlPanel);
                     controlPanel = new JPanel();
-                    controlPanel = addBotStats(selectedBot);
+                    controlPanel = addBotStats(selectedBot, x, y);
                     container.add(controlPanel, 0);
                 } else {
                     selectedBot = null;
+                    int x = controlPanel.getX();
+                    int y = controlPanel.getY();
                     controlPanel.removeAll();
                     container.remove(controlPanel);
                     controlPanel = new JPanel();
-                    controlPanel = addControls();
+                    controlPanel = addControls(x, y);
                     container.add(controlPanel, 0);
                 }
             }
@@ -835,15 +846,14 @@ public class World extends JFrame {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (i % (WORLD_WIDTH / 50) == 0) {
-                progressBar.setValue((int) ((i + 0.0) / WORLD_WIDTH * 100));
-                progressBar.update(progressBar.getGraphics());
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            progressBar.setValue((int) ((i + 0.0) / WORLD_WIDTH * 100));
+            progressBar.update(progressBar.getGraphics());
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
         }
 
         for (Island island : islands) {
@@ -1091,7 +1101,8 @@ public class World extends JFrame {
             controlPanel.removeAll();
             container.remove(controlPanel);
             controlPanel = new JPanel();
-            controlPanel = addControls();
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            controlPanel = addControls(screenSize.width - controlPanelWidth, 0);
             container.add(controlPanel, 0);
             requestFocus();
         }

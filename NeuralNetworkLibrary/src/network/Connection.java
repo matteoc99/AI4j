@@ -176,14 +176,14 @@ public class Connection {
 
     }
 
-    public void changeWeightRelativeToError(double error) {
-        weight = weight + 0.1 * (error);
+    public void changeWeightRelativeToError(double rate, double error) {
+        weight = rate * error * from.getPrevValue() + weight;
         if (weight > 1) {
             weight=1;
         }
         if (weight < -1) {
             weight=-1;
         }
-        from.processError(error * Math.abs(weight));
+        from.processError(rate, error * weight);
     }
 }

@@ -471,11 +471,7 @@ public class Bot extends JPanel {
      * @return 0-1 the health of the bot
      */
     public double getHp() {
-        if (hp >= MAX_HP / 2) {
-            return (MAX_HP - hp) / (MAX_HP / 2.0);
-        } else {
-            return (hp) / (MAX_HP / 2.0);
-        }
+        return (hp) / (MAX_HP / 1.0);
     }
 
     /**

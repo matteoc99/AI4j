@@ -1,8 +1,9 @@
-package botGUI.bot;
+package botGUI.UI;
 
 import agent.cosi.CosiAgent;
 import botGUI.Chunk;
 import botGUI.World;
+import botGUI.bot.Bot;
 import network.Network;
 
 import javax.swing.*;
@@ -34,19 +35,23 @@ public class DragAndDropListener extends MouseAdapter {
                     w.selectedBot.selected = false;
                 w.selectedBot = bf;
                 bf.selected = true;
+                int x = w.controlPanel.getX();
+                int y = w.controlPanel.getY();
                 w.controlPanel.removeAll();
                 w.container.remove(w.controlPanel);
-                w.controlPanel = new JPanel();
-                w.controlPanel = w.addBotStats(bf);
+                w.controlPanel = null;
+                w.controlPanel = w.addBotStats(bf, x, y);
                 w.container.add(w.controlPanel, 0);
             } else {
                 if (w.selectedBot != null)
                     w.selectedBot.selected = false;
                 w.selectedBot = null;
+                int x = w.controlPanel.getX();
+                int y = w.controlPanel.getY();
                 w.controlPanel.removeAll();
                 w.container.remove(w.controlPanel);
-                w.controlPanel = new JPanel();
-                w.controlPanel = w.addControls();
+                w.controlPanel = null;
+                w.controlPanel = w.addControls(x, y);
                 w.container.add(w.controlPanel, 0);
             }
         }
@@ -75,7 +80,6 @@ public class DragAndDropListener extends MouseAdapter {
             w.containerPanel.setLocation(e.getX(), e.getY());
         } else {
             e.translatePoint(e.getComponent().getLocation().x - x, e.getComponent().getLocation().y - y);
-
             e.getComponent().setLocation(e.getX(), e.getY());
         }
     }

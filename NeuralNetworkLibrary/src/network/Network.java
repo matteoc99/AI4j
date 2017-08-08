@@ -420,8 +420,6 @@ public class Network {
             layers.get(layers.size() - 1).getNeuronAt(i).setValue(0);
         }
         return ret;
-
-
     }
 
 
@@ -629,12 +627,13 @@ public class Network {
     /**
      * first implementation of backpropagation
      *
+     * @param rate
      * @param error the error of the net
      */
-    public void propagateBack(double error) {
+    public void propagateBack(double rate, double error) {
         for (int i = 0; i < layers.get(layers.size() - 1).getNeuronCount(); i++) {
             Neuron n = layers.get(layers.size() - 1).getNeuronAt(i);
-            n.processError(error);
+            n.processError(rate, error);
         }
     }
 

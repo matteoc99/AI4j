@@ -28,6 +28,12 @@ public class Neuron {
     private double value = 0;
 
     /**
+     * previous value of the node
+     * 0.5 so it is neutral. not 1 and not 0
+     */
+    private double prevValue = 0.5;
+
+    /**
      * for identification purposes inside a {@link Layer}
      */
     private int index;
@@ -195,8 +201,28 @@ public class Neuron {
      * @param value {@link #value}
      */
     public void setValue(double value) {
+        prevValue = this.value;
         this.value = value;
     }
+
+    /**
+     * returns the prevValue of the current {@link Neuron}
+     *
+     * @return {@link Neuron#prevValue}
+     */
+    public double getPrevValue() {
+        return function.calculate(prevValue);
+    }
+
+    /**
+     * sets the prevValue of the current {@link Neuron}
+     *
+     * @param prevValue {@link #prevValue}
+     */
+    public void setPrevValue(double prevValue) {
+        this.prevValue = prevValue;
+    }
+
 
     /**
      * returns the index of the current {@link Neuron}
@@ -215,6 +241,7 @@ public class Neuron {
         for (int i = 0; i < axons.size(); i++) {
             axons.get(i).send(function.calculate(value));
         }
+        prevValue = value;
         value = 0;
     }
 
@@ -428,12 +455,13 @@ public class Neuron {
 
     /**
      * Changes the Weights of the Dendrites
+     * @param rate
      * @param error how much to change
      */
-    public void processError(double error) {
+    public void processError(double rate, double error) {
         for (int i = 0; i < dendrites.size(); i++) {
             Connection c = dendrites.get(i);
-            c.changeWeightRelativeToError(error);
+            c.changeWeightRelativeToError(rate, error);
         }
     }
 }
