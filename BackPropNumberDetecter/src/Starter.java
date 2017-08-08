@@ -42,7 +42,6 @@ public class Starter extends JFrame {
 
     Network net = Network.createDFF(7, 10, 1, 400);
 
-    NetworkGUI netGUI = new NetworkGUI();
 
     public Starter() {
         setTitle("Number Guesser");
@@ -64,7 +63,6 @@ public class Starter extends JFrame {
         guess.setBounds(560, 460, 80, 60);
         c.add(guess);
 
-        netGUI.addNetwork(net);
 
         for (int i = 0; i < leds.length; i++) {
             leds[i] = new MyTextField();
@@ -108,7 +106,6 @@ public class Starter extends JFrame {
                         output.update(output.getGraphics());
                     }
                 }
-                netGUI.addNetwork(new Network(net.getDescriptor()));
             }
         });
 
