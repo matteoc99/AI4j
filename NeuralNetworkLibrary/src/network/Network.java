@@ -539,7 +539,7 @@ public class Network {
     public static double[] stringToDescriptor(String descriptor) {
         ArrayList<Double> desc = new ArrayList<>();
         int index = descriptor.indexOf("}");
-        descriptor = descriptor.substring(0,index);
+        descriptor = descriptor.substring(0, index);
         index = descriptor.indexOf("{");
         descriptor = descriptor.substring(index + 1);
         while (true) {
@@ -555,6 +555,20 @@ public class Network {
         double[] ret = new double[desc.size()];
         for (int i = 0; i < desc.size(); i++) {
             ret[i] = desc.get(i);
+        }
+        return ret;
+    }
+
+
+    /**
+     * Returns this Network in the form of a readable String
+     *
+     * @return Network as a String
+     */
+    public String toString() {
+        String ret = "";
+        for (int i = 0; i < layers.size(); i++) {
+            ret += "  Layer:" + i + "\n  " + layers.get(i).toString() + "\n";
         }
         return ret;
     }
@@ -606,13 +620,13 @@ public class Network {
     /**
      * Changes the weight of a connection in the Network
      */
-    public void mutateSoft(int howOften,double strength) {
+    public void mutateSoft(int howOften, double strength) {
         for (int i = 0; i < howOften; i++) {
             int layer = (int) (Math.random() * (layers.size() - 1));
             int neuron = (int) (Math.random() * layers.get(layer).getNeuronCount());
             int connection = (int) (Math.random() * layers.get(layer).getNeuronAt(neuron).getAxons().size());
             Connection c = layers.get(layer).getNeuronAt(neuron).getAxons().get(connection);
-            c.setWeight(c.getWeight() + Math.random() * strength - strength/2);
+            c.setWeight(c.getWeight() + Math.random() * strength - strength / 2);
 
             //TODO bias mutation
 
@@ -630,10 +644,20 @@ public class Network {
      * @param rate
      * @param error the error of the net
      */
-    public void propagateBack(double rate, double error) {
+    public void propagateBack(double rate, double error[]) {
+        if (layers.get(layers.size() - 1).getNeuronCount() != error.length)
+            System.out.println("ERR");
+
         for (int i = 0; i < layers.get(layers.size() - 1).getNeuronCount(); i++) {
             Neuron n = layers.get(layers.size() - 1).getNeuronAt(i);
-            n.processError(rate, error);
+            n.setError(error[i]);
+            n.processError(rate);
+        }
+        for (int i = layers.size() - 2; i >= 0; i--) {
+            for (int j = 0; j < layers.get(i).getNeuronCount(); j++) {
+                Neuron n = layers.get(i).getNeuronAt(j);
+                n.processError(rate);
+            }
         }
     }
 

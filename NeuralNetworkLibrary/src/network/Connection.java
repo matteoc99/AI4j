@@ -184,6 +184,6 @@ public class Connection {
         if (weight < -1) {
             weight=-1;
         }
-        from.processError(rate, error * weight);
+        from.setError(error * weight);
     }
 }

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AI4j.iml" filepath="$PROJECT_DIR$/AI4j.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BackPropNumberDetecter/BackPropNumberDetecter.iml" filepath="$PROJECT_DIR$/BackPropNumberDetecter/BackPropNumberDetecter.iml" />
       <module fileurl="file://$PROJECT_DIR$/ClassifierBackprop/ClassifierBackprop.iml" filepath="$PROJECT_DIR$/ClassifierBackprop/ClassifierBackprop.iml" />
       <module fileurl="file://$PROJECT_DIR$/EvoBots/EvoBots.iml" filepath="$PROJECT_DIR$/EvoBots/EvoBots.iml" />
       <module fileurl="file://$PROJECT_DIR$/EvoShooter/EvoShooter.iml" filepath="$PROJECT_DIR$/EvoShooter/EvoShooter.iml" />

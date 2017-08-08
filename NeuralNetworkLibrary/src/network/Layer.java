@@ -230,6 +230,20 @@ public class Layer {
             throw new IndexOutOfBoundsException("Index out of Bound");
         return neurons.get(i);
     }
+
+
+    /**
+     * Returns this Layer in the form of a readable String
+     *
+     * @return Layer as a String
+     */
+    public String toString() {
+        String ret = "";
+        for (int i = 0; i < neurons.size(); i++) {
+            ret += "       " + neurons.get(i).toString() + "\n";
+        }
+        return ret;
+    }
 }
 
 

@@ -34,6 +34,11 @@ public class Neuron {
     private double prevValue = 0.5;
 
     /**
+     * The error to propagate back
+     */
+    private double error = 0;
+
+    /**
      * for identification purposes inside a {@link Layer}
      */
     private int index;
@@ -192,6 +197,7 @@ public class Neuron {
      * @return {@link Neuron#value}
      */
     public double getValue() {
+        prevValue = value;
         return function.calculate(value);
     }
 
@@ -239,7 +245,7 @@ public class Neuron {
      */
     public void send() {
         for (int i = 0; i < axons.size(); i++) {
-            axons.get(i).send(function.calculate(value));
+            axons.get(i).send(getValue());
         }
         prevValue = value;
         value = 0;
@@ -455,13 +461,29 @@ public class Neuron {
 
     /**
      * Changes the Weights of the Dendrites
-     * @param rate
+
      * @param error how much to change
      */
-    public void processError(double rate, double error) {
+    public void setError(double error) {
+        this.error = error;
+    }
+
+    public void processError(double rate) {
         for (int i = 0; i < dendrites.size(); i++) {
             Connection c = dendrites.get(i);
             c.changeWeightRelativeToError(rate, error);
         }
     }
+
+    /**
+     * Returns this Layer in the form of a readable String
+     *
+     * @return Layer as a String
+     */
+    public String toString() {
+        String ret = "index" + index + " val:" + prevValue;
+        return ret;
+    }
+
+
 }
