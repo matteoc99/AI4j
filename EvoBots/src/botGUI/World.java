@@ -5,7 +5,6 @@ import agent.cosi.CosiAgent;
 import botGUI.UI.MySlider;
 import botGUI.bot.Bot;
 import botGUI.UI.DragAndDropListener;
-import de.craften.ui.swingmaterial.MaterialButton;
 import network.Network;
 import network_gui.NetworkPanel;
 
@@ -125,7 +124,7 @@ public class World extends JFrame {
     /**
      * describes the min Population size, if the value drops below a new {@link Bot} is created
      */
-    public static int MIN_POP_SIZE = 0;
+    public static int MIN_POP_SIZE = 100;
 
     /**
      * Contains the Population
@@ -433,21 +432,18 @@ public class World extends JFrame {
         ret.add(food_regrowth);
         ret.add(populationSlider);
 
-        MaterialButton save = new MaterialButton();
+        JButton save = new JButton();
         save.setText("SAVE");
-        MaterialButton load = new MaterialButton();
+        JButton load = new JButton();
         load.setText("LOAD");
-        MaterialButton generate = new MaterialButton();
+        JButton generate = new JButton();
         generate.setText("GENERATE A NEW WORLD");
 
-        save.setType(MaterialButton.Type.RAISED);
-        load.setType(MaterialButton.Type.RAISED);
-        generate.setType(MaterialButton.Type.RAISED);
 
-        save.setBounds(10, 40 + (getHeight() / 12) * 5, 190, 70);
-        load.setBounds(200, 40 + (getHeight() / 12) * 5, 190, 70);
+        save.setBounds(10, 40 + (getHeight() / 12) * 5, 170, 50);
+        load.setBounds(220, 40 + (getHeight() / 12) * 5, 170, 50);
 
-        generate.setBounds(10, 50 + (getHeight() / 12) * 4, 380, 70);
+        generate.setBounds(10, 50 + (getHeight() / 12) * 4, 380, 50);
 
         save.setBackground(Color.ORANGE);
         load.setBackground(Color.ORANGE);
@@ -562,9 +558,9 @@ public class World extends JFrame {
         dialog.add(top);
         top.add(exit);
 
-        MaterialButton generate = new MaterialButton();
+        JButton generate = new JButton();
         generate.setText("GENERATE");
-        generate.setBounds(20, 60 * 5 + 90, 440, 80);
+        generate.setBounds(20, 60 * 5 + 90, 440, 50);
         generate.setBackground(Color.ORANGE);
 
         dialog.add(generate);

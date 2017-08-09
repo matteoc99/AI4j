@@ -151,5 +151,7 @@ public class NetworkGUI extends JFrame{
         Network network = new Network(3, 2, 2, new int[]{6, 3});
         g.addNetwork(network);
         g.addNetwork(new network.Network(3, 2, 1, new int[]{2}));
+        g.addNetwork(new network.Network(6, 3, 3, new int[]{8, 4, 5}));
+        g.addNetwork(new network.Network(3, 2, 1, new int[]{2}));
     }
 }
