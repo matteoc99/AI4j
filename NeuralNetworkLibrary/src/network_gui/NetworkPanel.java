@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
  */
 public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
 
+    /* boolean is used to force a call on layoutComponents() after the first setBounds()
+     * called on this Panel
+     */
+    private boolean bugFlag = true;
+
     private final int rightPadding = 8;
     private final int leftPadding = 8;
     private final int topPadding = 18;
@@ -36,6 +41,8 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
      * Reference to the network.Network of this Panel
      */
     private Network network;
+
+    private String networkName;
 
     /**
      * Size of a NetworkPanelNeuron
@@ -51,12 +58,7 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
      * It is a TitleBorder with a CompoundBorder as Border
      * The CompoundBorder consists of a gray LineBorder (Outer) and a EmptyBorder(Inner) as a placeHolder
      */
-    private static final Border NORMAL_BORDER = new TitledBorder(
-            new CompoundBorder(
-                    new LineBorder(Color.GRAY,3,true),
-                    new EmptyBorder(2,2,2,2)),
-            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-            new Font("Arial Black", Font.PLAIN, 14));
+    private Border normalBorder;
 
     /**
      * This is the Border used, while the mouse is on this JPanel
@@ -64,21 +66,21 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
      * The CompoundBorder consists of a gray LineBorder (Outer) and another gray LineBorder(Inner),
      * so that the Border's size can be increases without increasing the size of this JPanel
      */
-    private static final Border SELECTED_BORDER = new TitledBorder(
-            new CompoundBorder(
-                    new LineBorder(Color.GRAY,3,true),
-                    new LineBorder(Color.GRAY,2,false)),
-            "Network-23451", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
-            new Font("Arial Black", Font.PLAIN, 14));
+    private Border selectedBorder;
 
     private ArrayList<ArrayList<NetworkPanelNeuron>> neuronLayers;
 
     private ArrayList<NetworkPanelConnection> connections;
 
-    public NetworkPanel(Network network) {
+    public NetworkPanel(Network network, String name) {
         this.network = network;
+        this.networkName = name;
+
+        // creates the normal/selected Border
+        createBorders();
+
         // Settings
-        this.setBorder(NORMAL_BORDER);
+        this.setBorder(normalBorder);
         this.setLayout(null);
         this.setPreferredSize(new Dimension(-1, 400));
 
@@ -100,11 +102,38 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
         });
     }
 
+    void createBorders() {
+        normalBorder = new TitledBorder(
+                new CompoundBorder(
+                        new LineBorder(Color.GRAY,3,true),
+                        new EmptyBorder(2,2,2,2)),
+                networkName, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                new Font("Arial Black", Font.PLAIN, 14));
+
+        selectedBorder = new TitledBorder(
+                new CompoundBorder(
+                        new LineBorder(Color.GRAY,3,true),
+                        new LineBorder(Color.GRAY,2,false)),
+                networkName, TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION,
+                new Font("Arial Black", Font.PLAIN, 14));
+    }
 
     @Override
     public void setBounds(int x, int y, int width, int height) {
+        if (bugFlag) {
+            bugFlag = false;
+            layoutComponents();
+        }
+
+        // no layoutComponents() call after resizing
+        int oldWidth = this.width;
+        int oldHeight = this.height;
+
         super.setBounds(x, y, width, height);
-        layoutComponents();
+
+        if (this.width != oldWidth || this.height != oldHeight) {
+            layoutComponents();
+        }
     }
 
     @Override
@@ -153,7 +182,7 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
         }
     }
 
-    private void layoutComponents() {
+    void layoutComponents() {
         width = getWidth()-rightPadding-leftPadding;
         height = getHeight()-topPadding-botPadding;
         layoutNeurons();
@@ -301,6 +330,17 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
     }
 
     @Override
+    public void reset() {
+        for (ArrayList<NetworkPanelNeuron> neuronLayer : neuronLayers)
+            for (NetworkPanelNeuron neuron : neuronLayer)
+                neuron.reset();
+        for (NetworkPanelConnection connection : connections)
+            connection.reset();
+        layoutComponents();
+        focusMode = false;
+    }
+
+    @Override
     public NetworkGUIComponentType getNetworkGUIComponentType() {
         return NetworkGUIComponentType.NETWORK_PANEL;
     }
@@ -350,7 +390,7 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
         @Override
         public void mouseEntered(MouseEvent e) {
             // changes the Border
-            NetworkPanel.this.setBorder(SELECTED_BORDER);
+            NetworkPanel.this.setBorder(selectedBorder);
         }
 
         /**
@@ -361,7 +401,7 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
             if (NetworkPanel.this.contains(e.getPoint()))
                 return;
             // changes the Border
-            NetworkPanel.this.setBorder(NORMAL_BORDER);
+            NetworkPanel.this.setBorder(normalBorder);
         }
     }
 }

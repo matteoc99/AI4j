@@ -8,12 +8,10 @@ import java.awt.*;
  */
 public class Position extends Point{
 
-    public Position() {
-        super();
-    }
-
     public Position(int x, int y) {
         super(x, y);
+        if (x < 0) this.x = 0;
+        if (y < 0) this.y = 0;
     }
 
     /**

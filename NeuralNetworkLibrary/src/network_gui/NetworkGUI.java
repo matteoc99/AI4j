@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +33,7 @@ public class NetworkGUI extends JFrame{
      */
     private NetworkContainer networkContainer;
 
-    public NetworkGUI(Network... networks) {
+    public NetworkGUI() {
         // KeyListener
         this.addKeyListener(new KeyAdapter() {
             @Override
@@ -63,18 +65,27 @@ public class NetworkGUI extends JFrame{
 
         // adds the fileMenu to the menuBar and fills it with Items
         JMenu file = new JMenu("File");
+
         JMenuItem settings = new JMenuItem("Settings");
         file.add(settings);
-        JMenuItem synchronize = new JMenuItem("Synchronize");
-        file.add(synchronize);
+
+        JMenuItem refresh = new JMenuItem("Refresh All");
+        refresh.addActionListener((event) -> networkContainer.refresh());
+        file.add(refresh);
+
         JMenuItem exit = new JMenuItem("Exit");
+        exit.addActionListener((event) -> System.exit(0));
         file.add(exit);
+
         menuBar.add(file);
 
         // adds the editMenu to the menuBar and fills it with Items
         JMenu edit = new JMenu("Edit");
-        JMenuItem restore = new JMenuItem("Restore NetworkPanels");
-        edit.add(restore);
+
+        JMenuItem reset = new JMenuItem("Restore Default");
+        reset.addActionListener((event) -> networkContainer.reset());
+        edit.add(reset);
+
         menuBar.add(edit);
 
         container.add(menuBar, BorderLayout.PAGE_START);
@@ -96,9 +107,9 @@ public class NetworkGUI extends JFrame{
         });
 
         // No usage yet
-        JLabel westPlaceHolder = new JLabel("Look at me, I'm a placeholder!");
-        westPlaceHolder.setPreferredSize(new Dimension(200,(int)(d.getHeight()/4*3)));
-        centerSplitter.add(westPlaceHolder);
+        JLabel leftPlaceHolder = new JLabel("Look at me, I'm a placeholder!");
+        leftPlaceHolder.setPreferredSize(new Dimension(200,(int)(d.getHeight()/4*3)));
+        centerSplitter.add(leftPlaceHolder);
 
         // JPanel containing all NetworkPanels
         networkContainer = new NetworkContainer();
@@ -119,15 +130,10 @@ public class NetworkGUI extends JFrame{
         bottomPlaceHolder.setPreferredSize(new Dimension(-1,100));
         endSplitter.add(bottomPlaceHolder);
 
-        container.add(endSplitter, BorderLayout.CENTER);
+        container.add(scroll, BorderLayout.CENTER);
         // components end
 
         this.getContentPane().add(container);
-
-        // adds the first set of Networks to this NetworkGUI
-        for (Network network : networks) {
-            networkContainer.addNetwork(network);
-        }
 
         this.setVisible(true);
         SwingUtilities.invokeLater(() -> {
@@ -137,8 +143,8 @@ public class NetworkGUI extends JFrame{
     }
 
 
-    public void addNetwork(Network network) {
-        SwingUtilities.invokeLater(() -> networkContainer.addNetwork(network));
+    public void addNetwork(Network network, String networkName) {
+        SwingUtilities.invokeLater(() -> networkContainer.addNetwork(network, networkName));
     }
 
     public void refreshNetwork(Network network) {
@@ -149,9 +155,18 @@ public class NetworkGUI extends JFrame{
         NetworkGUI g = new NetworkGUI();
 
         Network network = new Network(3, 2, 2, new int[]{6, 3});
-        g.addNetwork(network);
-        g.addNetwork(new network.Network(3, 2, 1, new int[]{2}));
-        g.addNetwork(new network.Network(6, 3, 3, new int[]{8, 4, 5}));
-        g.addNetwork(new network.Network(3, 2, 1, new int[]{2}));
+        g.addNetwork(network, "NameName");
+        g.addNetwork(new Network(3, 2, 1, new int[]{2}), "123");
+        g.addNetwork(new Network(6, 3, 3, new int[]{8, 4, 5}), "455");
+        g.addNetwork(new Network(3, 2, 1, new int[]{2}), "jwg");
+
+        try {
+            while(true) {
+                TimeUnit.MILLISECONDS.sleep(500);
+                network.mutateHard(10);
+            }
+        } catch (InterruptedException e) {
+
+        }
     }
 }

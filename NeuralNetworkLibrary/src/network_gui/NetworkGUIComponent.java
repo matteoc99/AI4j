@@ -21,5 +21,7 @@ interface NetworkGUIComponent {
 
     void refresh();
 
+    void reset();
+
     NetworkGUIComponentType getNetworkGUIComponentType();
 }

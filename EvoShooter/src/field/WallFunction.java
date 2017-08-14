@@ -69,7 +69,7 @@ public class WallFunction extends Function {
         if (a < 0) a = 0;
         if (b > parent.width) b = parent.width;
 
-        // conversation to normal Function format for simpler calculation
+        // conversion to normal Function format for simpler calculation
         d = getK() * -xOff + yOff;
     }
 
@@ -77,7 +77,13 @@ public class WallFunction extends Function {
      * Registers this function within the fieldSections
      */
     private void register() {
+        int startY = (int)calcY(a);
+        int endY = (int)calcY(b);
 
+        int startSectionX;
+        int startSectionY;
+        int endSectionX;
+        int endSectionY;
     }
 
     /**

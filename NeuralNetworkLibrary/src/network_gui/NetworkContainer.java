@@ -38,14 +38,15 @@ public class NetworkContainer extends JPanel implements NetworkGUIComponent{
      *
      * @param network to add
      */
-    public void addNetwork(@NotNull Network network) {
+    public void addNetwork(@NotNull Network network, String networkName) {
         if (network == null) return;
         for (NetworkPanel networkPanel : networkPanels)
             if (networkPanel.getEquivalent().equals(network))
                 return;
-        NetworkPanel networkPanel = new NetworkPanel(network);
+        NetworkPanel networkPanel = new NetworkPanel(network, networkName);
         networkPanels.add(networkPanel);
         this.add(networkPanel);
+        //todo maybe this call isn't needed
         revalidate();
     }
 
@@ -85,6 +86,14 @@ public class NetworkContainer extends JPanel implements NetworkGUIComponent{
     public void refresh() {
         for (NetworkPanel networkPanel : networkPanels)
             networkPanel.refresh();
+    }
+
+    @Override
+    public void reset() {
+        for (NetworkPanel networkPanel : networkPanels)
+            networkPanel.reset();
+        if (developerMode)
+            toggleDeveloperMode();
     }
 
     @Override

@@ -84,6 +84,7 @@ class NetworkPanelNeuron extends MovableComponent implements NetworkGUIComponent
         this.equivalent = equivalent;
     }
 
+    @Override
     public void toggleDeveloperMode() {
         developerMode=!developerMode;
         if (developerMode)
@@ -102,7 +103,7 @@ class NetworkPanelNeuron extends MovableComponent implements NetworkGUIComponent
                 focusState = FocusState.values()[0];
             if (focusState == FocusState.NONE)
                 ((NetworkPanel) getParent()).tryDeactivateFocusMode();
-            // repaint the network.Neuron and all affected Connections
+            // repaint the Neuron and all affected Connections
             repaint();
             axons.forEach(Component::repaint);
             dendrites.forEach(Component::repaint);
@@ -175,6 +176,10 @@ class NetworkPanelNeuron extends MovableComponent implements NetworkGUIComponent
 
     @Override
     public void refresh() {
+        // nothing to refresh yet
+    }
 
+    public void reset() {
+        focusState = FocusState.ALL;
     }
 }

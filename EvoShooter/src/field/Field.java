@@ -23,8 +23,12 @@ public class Field extends Container {
     final int width = 500;
     final int height = 500;
 
-    private final int horizontalSectionAmount = 10;
-    private final int verticalSectionAmount = 10;
+
+    /**
+     * ATTENTION: The following values modulus the width or height has to be 0!
+     */
+    public final int horizontalSectionAmount = 10;
+    public final int verticalSectionAmount = 10;
 
     /**
      * amount of mapTicks per second
@@ -38,9 +42,9 @@ public class Field extends Container {
 
     /**
      * storing all sections
-     * a Section is a part of this field
+     * a Section is a specific area of this Field
      */
-    private ArrayList<FieldSection> sections = new ArrayList<>();
+    private FieldSection[][] sections = new FieldSection[horizontalSectionAmount][verticalSectionAmount];
 
     /**
      * storing all walls
@@ -56,7 +60,7 @@ public class Field extends Container {
     private void createSections() {
         for (int y = 0; y < verticalSectionAmount; y++)
             for (int x = 0; x < horizontalSectionAmount; x++)
-                sections.add(new FieldSection(x,y));
+                sections[x][y] = new FieldSection();
     }
 
     private void createWalls() {
@@ -79,6 +83,21 @@ public class Field extends Container {
         }
 
         
+    }
+
+    /**
+     * Method returns the Section containing the given Position
+     * @param pos to check
+     * @return FieldSection at Position pos
+     */
+    FieldSection getSectionAt(Position pos) {
+        if (pos.x == width) pos.x -=1;
+        if (pos.y == height) pos.y -=1;
+
+        int x = pos.x / (width / horizontalSectionAmount);
+        int y = pos.y / (height / verticalSectionAmount);
+
+        return sections[x][y];
     }
 
     BufferedImage createMapImage() {

@@ -144,4 +144,9 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
     public void refresh() {
         this.weight = ((Connection) getEquivalent()).getWeight();
     }
+
+    @Override
+    public void reset() {
+        // nothing to reset yet
+    }
 }
