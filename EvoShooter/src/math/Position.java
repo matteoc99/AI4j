@@ -26,4 +26,9 @@ public class Position extends Point{
         this.x+=factor;
         this.y+=factor*k;
     }
+
+    @Override
+    public Position clone() {
+        return (Position)super.clone();
+    }
 }

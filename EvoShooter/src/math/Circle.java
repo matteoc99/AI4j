@@ -1,7 +1,5 @@
 package math;
 
-import field.WallFunction;
-
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
@@ -66,5 +64,4 @@ public class Circle {
         }
         return null;
     }
-
 }
