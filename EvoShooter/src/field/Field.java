@@ -1,5 +1,6 @@
 package field;
 
+import math.Function;
 import math.Position;
 import values.Values;
 
@@ -72,6 +73,7 @@ public class Field extends Container {
     }
 
     private void createSections() {
+        // per index
         int widthPI = width/horizontalSectionAmount;
         int heightPI = height/verticalSectionAmount;
 
@@ -103,10 +105,39 @@ public class Field extends Container {
         }
 
         // calculate and set goal for each spawn
+        setGoalsToSpawns(spawns);
+    }
+
+    /**
+     * sets different goals for each spawn
+     */
+    private void setGoalsToSpawns(Spawn[] spawns) {
         for (int i = 0; i < spawns.length; i++) {
             Position goal = spawns[i].center.clone();
-            int deg = -1+45*i;
+
+            // spread spawns in different directions
+            double deg = 360.0/spawns.length*i;
+            double k = Function.calcSlopeByDeg(deg);
+
+            // in order to move to the left, the distance must be negative
+            double distance = (deg > 90 && deg < 270)? -calculateDistance(goal, deg) : calculateDistance(goal, deg);
+
+            goal.translateTowards(k, distance);
+            spawns[i].setGoal(goal);
         }
+    }
+
+    /**
+     * Method returns the distance from pos to the edge of the map
+     * in the given direction deg
+     * @param pos Position to start from
+     * @param deg degree to go to
+     * @return distance to the edge of the map
+     */
+    private double calculateDistance(Position pos, double deg) {
+        // TODO: 19.08.2017 calculate distance
+        int less = (width < height)? width : height;
+        return less/3;
     }
 
     /**
@@ -124,8 +155,8 @@ public class Field extends Container {
         return sections[x][y];
     }
 
-    FieldSection getSectionFromArray(int x, int y) {
-        return sections[x][y];
+    FieldSection[][] getSections() {
+        return sections;
     }
 
     BufferedImage createMapImage() {

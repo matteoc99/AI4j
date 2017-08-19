@@ -57,7 +57,7 @@ public class WallFunction extends Function {
         do {
             length = (parent.width + parent.height) / 4 + new Random().nextGaussian() * 10;
         } while (length < (parent.width + parent.height) / 20 || length > parent.width || length > parent.height);
-        int h = (int) (Math.cos(Math.toRadians(Math.abs(deg))) * length);
+        int h = (int) (Math.abs(Math.cos(Math.toRadians(deg))) * length);
 
         a = xOff -h/2;
         b = xOff +h/2;
@@ -101,7 +101,7 @@ public class WallFunction extends Function {
         if (startSection.X != endSection.X) {
             for (int i = startSection.X; i < endSection.X; i++) {
                 // line indicating the start of a new Section
-                int rightLine = parent.getSectionFromArray(i, 0).RIGHT + 1; // add 1 to get to the next Section
+                int rightLine = parent.getSections()[i][0].RIGHT + 1; // add 1 to get to the next Section
 
                 // calculating the height at which this WallFunction enters a new Section
                 int yRes = (int)calcY(rightLine);
@@ -118,7 +118,7 @@ public class WallFunction extends Function {
 
             for (int i = smallerSection.Y; i < biggerSection.Y; i++) {
                 // line indicating the start of a new Section
-                int botLine = parent.getSectionFromArray(0, i).BOT + 1; // add 1 to get to the next Section
+                int botLine = parent.getSections()[0][i].BOT + 1; // add 1 to get to the next Section
 
                 // calculating the width at which this WallFunction enters a new Section
                 int xRes = (int)calcX(botLine);

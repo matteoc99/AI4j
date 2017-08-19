@@ -39,7 +39,7 @@ public class Spawn extends Circle {
     }
 
     void moveToGoal(int jumps) {
-        if (jumps >0) {
+        if (jumps > 0) {
             moveToGoal(jumps - 1);
         }
     }

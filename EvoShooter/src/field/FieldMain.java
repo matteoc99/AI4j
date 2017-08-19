@@ -25,20 +25,5 @@ public class FieldMain {
         frame.getContentPane().add(label);
 
         frame.setVisible(true);
-
-
-        System.out.println(Function.calcSlopeByDeg(0));
-        System.out.println(Function.calcSlopeByDeg(90));
-        System.out.println(Function.calcSlopeByDeg(180));
-        System.out.println(Function.calcSlopeByDeg(270));
-        System.out.println(Function.calcSlopeByDeg(360));
-        System.out.println(Function.calcSlopeByDeg(1));
-        System.out.println(Function.calcSlopeByDeg(359));
-        System.out.println(Function.calcSlopeByDeg(91));
-        System.out.println(Function.calcSlopeByDeg(89));
-        System.out.println(Function.calcSlopeByDeg(269));
-        System.out.println(Function.calcSlopeByDeg(271));
-        System.out.println(Function.calcSlopeByDeg(179));
-        System.out.println(Function.calcSlopeByDeg(181));
     }
 }
