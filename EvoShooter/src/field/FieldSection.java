@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class FieldSection {
 
-    private List<WallFunction> walls = new ArrayList<>();
+    private ArrayList<WallFunction> walls = new ArrayList<>();
 
     public final int X;
     public final int Y;
@@ -35,7 +35,15 @@ public class FieldSection {
 
     void addWall(WallFunction wallFunction) {
         if (!walls.contains(wallFunction))
-            walls.add(wallFunction);
+            ;
+        else
+            System.out.println("Meh! AddWallTwice");
+
+        walls.add(wallFunction);
+    }
+
+    public ArrayList<WallFunction> getWalls() {
+        return walls;
     }
 
     @Override

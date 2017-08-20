@@ -21,7 +21,7 @@ public class Function {
     }
 
     public Function(double k) {
-        this(k,0);
+        this(k, 0);
     }
 
     public Function() {
@@ -168,7 +168,7 @@ public class Function {
     }
 
     /**
-     * Rotates the function so that it collides with Position p
+     * Rotates the Function in Position(0, d), so that it collides with Position p
      * changes var:k
      * @param p to collide with
      */

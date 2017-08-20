@@ -1,6 +1,7 @@
 package field;
 
 import math.Function;
+import math.LineFunction;
 import math.Position;
 import values.Values;
 
@@ -31,8 +32,8 @@ public class Field extends Container {
     /**
      * ATTENTION: The following values, modulus the width or height, have to be 0!
      */
-    public final int horizontalSectionAmount = 10;
-    public final int verticalSectionAmount = 10;
+    public final int horizontalSectionAmount = 5;
+    public final int verticalSectionAmount = 5;
 
     /**
      * amount of mapTicks per second
@@ -141,6 +142,92 @@ public class Field extends Container {
     }
 
     /**
+     * Method returns every Position in which the given LineFunciton collides
+     * with a WallFunction on this Field
+     * @param f to calculate with
+     * @return collision Points
+     */
+    public ArrayList<Position> calcCollisionsWithWalls(LineFunction f) {
+        ArrayList<Position> ret = new ArrayList<>();
+
+        ArrayList<FieldSection> sectionsToCheck = getTouchedSections(f);
+
+        // lists walls that have been checked already, to avoid repetition
+        ArrayList<WallFunction> checkedWalls = new ArrayList<>();
+
+        for (FieldSection fieldSection : sectionsToCheck) {
+            fieldSection.getWalls().stream().filter(wall -> !checkedWalls.contains(wall)).forEach(wall -> {
+                Position pos = wall.collides(f);
+                if (pos != null) ret.add(pos);
+
+                checkedWalls.add(wall);
+            });
+        }
+
+        return ret;
+    }
+
+    /**
+     * Method returns all Sections touched by the given LineFunction
+     * @param f to calculate with
+     * @return touched FieldSections
+     */
+    public ArrayList<FieldSection> getTouchedSections(LineFunction f) {
+        ArrayList<FieldSection> ret = new ArrayList<>();
+        int startY = (int)f.calcY(f.getA());
+        int endY = (int)f.calcY(f.getB());
+
+        FieldSection startSection = getSectionAt(new Position(f.getA(), startY));
+        FieldSection endSection = getSectionAt(new Position(f.getB(), endY));
+
+        //start and end
+        ret.add(startSection);
+        //ret.add(endSection);
+
+        // Finding affected Sections between startSection and endSection
+
+        // Horizontal
+        if (startSection.X != endSection.X) {
+            for (int i = startSection.X; i < endSection.X; i++) {
+                // line indicating the start of a new Section
+                int rightLine = getSections()[i][0].RIGHT + 1; // add 1 to get to the next Section
+
+                // calculating the height at which this WallFunction enters a new Section
+                int yRes = (int)f.calcY(rightLine);
+
+                ret.add(getSectionAt(new Position(rightLine, yRes)));
+            }
+        }
+
+        // Vertical
+        if (startSection.Y != endSection.Y) {
+            // order
+            FieldSection smallerY_Section = (startSection.Y < endSection.Y)? startSection:endSection;
+            FieldSection biggerY_Section = (startSection.Y > endSection.Y)? startSection:endSection;
+
+            for (int i = smallerY_Section.Y; i < biggerY_Section.Y; i++) {
+                // line indicating the start of a new Section
+                int botLine = getSections()[0][i].BOT;
+                // FIXME: 20.08.2017 !!!!!!!
+                botLine += (f.getK() < 0)? 0:1; // add 1 to get to the next Section
+
+                // calculating the width at which this WallFunction enters a new Section
+                int xRes = (int)f.calcX(botLine);
+                try {
+                    ret.add(getSectionAt(new Position(xRes, botLine)));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println(botLine);
+                    System.out.println(xRes);
+                    System.out.println(f);
+                    throw e;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    /**
      * Method returns the Section containing the given Position
      * @param pos to check
      * @return FieldSection at Position pos
@@ -166,6 +253,7 @@ public class Field extends Container {
         g2.setStroke(new BasicStroke(2));
 
         //https://stackoverflow.com/a/6297069
+
         //clear
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
         g2.fillRect(0,0,width,height);
@@ -181,14 +269,14 @@ public class Field extends Container {
         }
 
         // sections
-        /*
+
         g2.setColor(Color.RED.brighter());
         g2.setStroke(new BasicStroke(1));
         for (int i = 0; i <= horizontalSectionAmount; i++)
             g2.drawLine(i*width/horizontalSectionAmount, 0, i*width/horizontalSectionAmount, height);
         for (int i = 0; i <= verticalSectionAmount; i++)
             g2.drawLine(0, i*height/verticalSectionAmount, width, i*height/verticalSectionAmount);
-        */
+
 
         return bufferedImage;
     }

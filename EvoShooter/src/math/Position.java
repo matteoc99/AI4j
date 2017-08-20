@@ -10,8 +10,6 @@ public class Position extends Point{
 
     public Position(int x, int y) {
         super(x, y);
-        if (x < 0) this.x = 0;
-        if (y < 0) this.y = 0;
     }
 
     /**
@@ -25,6 +23,14 @@ public class Position extends Point{
 
         this.x+=factor;
         this.y+=factor*k;
+    }
+
+    public double getSlopeTo(Position pos) {
+        // TODO: 20.08.2017 Verify by testing
+        if (this.y == pos.y) return 0.0001;
+        if (this.x == pos.x) return 10000;
+
+        return (this.y-pos.y)/(this.x-pos.x);
     }
 
     @Override

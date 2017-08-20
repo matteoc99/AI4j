@@ -1,7 +1,5 @@
 package field;
 
-import math.Function;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,7 +9,7 @@ import java.awt.*;
  */
 public class FieldMain {
     public static void main(String[] args) {
-        Field field = new Field();
+        Field field = new Field(10000);
 
         JFrame frame = new JFrame("Map");
         frame.pack();
@@ -25,5 +23,11 @@ public class FieldMain {
         frame.getContentPane().add(label);
 
         frame.setVisible(true);
+
+        for (FieldSection[] fieldSections : field.getSections()) {
+            for (FieldSection fieldSection : fieldSections) {
+                System.out.println(fieldSection);
+            }
+        }
     }
 }
