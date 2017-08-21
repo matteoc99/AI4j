@@ -1,9 +1,11 @@
 package field;
 
-import math.Function;
+import math.FunctionData;
+import math.LineFunction;
 import math.Position;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -12,19 +14,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 18.07.2017
  * y=kx+d
  */
-public class WallFunction extends Function {
+public class WallFunction extends LineFunction {
 
     private static AtomicInteger nextID = new AtomicInteger(0);
 
     public final int iD;
 
-    /**
-     * start-X and end-X
-     */
-    private int a;
-    private int b;
-
     private Field parent;
+
+    private ArrayList<FieldSection> touchedSections = new ArrayList<>();
 
     WallFunction(Field field) {
         this.parent = field;
@@ -32,6 +30,17 @@ public class WallFunction extends Function {
 
         create();
         register();
+    }
+
+    WallFunction(Field field, FunctionData data) {
+        this.parent = field;
+        this.iD = nextID.getAndIncrement();
+
+        this.a = data.getA();
+        this.b = data.getB();
+
+        setK(data.getK());
+        this.d = data.getD();
     }
 
     /**
@@ -84,61 +93,15 @@ public class WallFunction extends Function {
     /**
      * Registers this Function within the FieldSections
      */
-    private void register() {
-        int startY = (int)calcY(a);
-        int endY = (int)calcY(b);
-
-        FieldSection startSection = parent.getSectionAt(new Position(a, startY));
-        FieldSection endSection = parent.getSectionAt(new Position(b, endY));
-
-        // register at start and end
-        startSection.addWall(this);
-        endSection.addWall(this);
-
-        // Finding affected Sections between startSection and endSection
-
-        // Horizontal
-        if (startSection.X != endSection.X) {
-            for (int i = startSection.X; i < endSection.X; i++) {
-                // line indicating the start of a new Section
-                int rightLine = parent.getSections()[i][0].RIGHT + 1; // add 1 to get to the next Section
-
-                // calculating the height at which this WallFunction enters a new Section
-                int yRes = (int)calcY(rightLine);
-
-                parent.getSectionAt(new Position(rightLine, yRes)).addWall(this);
-            }
-        }
-
-        // Vertical
-        if (startSection.Y != endSection.Y) {
-            // order
-            FieldSection smallerSection = (startSection.Y < endSection.Y)? startSection:endSection;
-            FieldSection biggerSection = (startSection.Y > endSection.Y)? startSection:endSection;
-
-            for (int i = smallerSection.Y; i < biggerSection.Y; i++) {
-                // line indicating the start of a new Section
-                int botLine = parent.getSections()[0][i].BOT + 1; // add 1 to get to the next Section
-
-                // calculating the width at which this WallFunction enters a new Section
-                int xRes = (int)calcX(botLine);
-
-                parent.getSectionAt(new Position(xRes, botLine)).addWall(this);
-            }
+    public void register() {
+        for (FieldSection fieldSection : parent.getTouchedSections(this)) {
+            fieldSection.addWall(this);
+            touchedSections.add(fieldSection);
         }
     }
 
-    /**
-     * Calculates the collision of this Wall and a Function
-     * @param f to calculate with
-     * @return collision
-     */
-    @Override
-    public Position collides(Function f) {
-        Position p = super.collides(f);
-        if (p.getX() >= a && p.getX() <= b)
-            return p;
-        return null;
+    public ArrayList<FieldSection> getTouchedSections() {
+        return touchedSections;
     }
 
     @Override
@@ -152,6 +115,6 @@ public class WallFunction extends Function {
     }
 
     void paint(Graphics g) {
-        g.drawLine(a, (int) calcY(a), b, (int) calcY(b));
+        g.drawLine((int) a, (int) calcY(a), (int) b, (int) calcY(b));
     }
 }

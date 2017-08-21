@@ -1,6 +1,8 @@
 package field;
 
 import math.Function;
+import math.FunctionData;
+import math.LineFunction;
 import math.Position;
 import values.Values;
 
@@ -29,10 +31,10 @@ public class Field extends Container {
 
 
     /**
-     * ATTENTION: The following values, modulus the width or height, have to be 0!
+     * ATTENTION: the height or width, modulus the following values, have to be 0!
      */
-    public final int horizontalSectionAmount = 10;
-    public final int verticalSectionAmount = 10;
+    public final int horizontalSectionAmount = width/(4*Values.unitRadius);
+    public final int verticalSectionAmount = height/(4*Values.unitRadius);
 
     /**
      * amount of mapTicks per second
@@ -63,12 +65,15 @@ public class Field extends Container {
         this(additionWallAmount, new ArrayList<>());
     }
 
-    public Field(int additionWallAmount, ArrayList<WallFunction> walls) {
+    public Field(int additionWallAmount, ArrayList<FunctionData> wallData) {
+        if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
+            throw new BadFieldException("Bad Width or Height");
         this.wallAmount = additionWallAmount;
-        this.walls.addAll(walls);
+
 
         createSections();
         createWalls();
+        addWalls(wallData);
         createSpawns();
     }
 
@@ -91,18 +96,29 @@ public class Field extends Container {
         }
     }
 
+    private void addWalls(ArrayList<FunctionData> wallData) {
+        for (FunctionData wallDatum : wallData) {
+            WallFunction wall = new WallFunction(this, wallDatum);
+            wall.register();
+            walls.add(wall);
+        }
+    }
+
     private void createSpawns() {
         // generate 8 spawns in the middle of the map
         Position center = new Position(width/2, height/2);
         Spawn[] spawns = new Spawn[8];
         for (int i = 0; i < spawns.length; i++)
-            spawns[i] = new Spawn(this, center.clone(), Values.unitWidth);
+            spawns[i] = new Spawn(this, center.clone(), Values.unitRadius);
 
         // check if Position is free, possibly clear it
-        for (WallFunction wall : walls) {
-            if (spawns[0].collides(wall) != null)
-                walls.remove(wall);
-        }
+        walls.removeIf((WallFunction wall) -> {
+            if (spawns[0].collides(wall) != null) {
+                for (FieldSection fieldSection : wall.getTouchedSections())
+                    fieldSection.removeWall(wall);
+                return true;
+            } else return false;
+        });
 
         // calculate and set goal for each spawn
         setGoalsToSpawns(spawns);
@@ -141,16 +157,114 @@ public class Field extends Container {
     }
 
     /**
+     * Method returns every Position in which the given LineFunction collides
+     * with a WallFunction on this Field
+     * @param f to calculate with
+     * @return collision Points
+     */
+    public ArrayList<Position> calcCollisionsWithWalls(LineFunction f) {
+        ArrayList<Position> ret = new ArrayList<>();
+
+        ArrayList<FieldSection> sectionsToCheck = getTouchedSections(f);
+
+        // lists walls that have been checked already, to avoid repetition
+        ArrayList<WallFunction> checkedWalls = new ArrayList<>();
+
+        for (FieldSection fieldSection : sectionsToCheck) {
+            fieldSection.getWalls().stream().filter(wall -> !checkedWalls.contains(wall)).forEach(wall -> {
+                Position pos = wall.collides(f);
+                if (pos != null) ret.add(pos);
+
+                checkedWalls.add(wall);
+            });
+        }
+
+        return ret;
+    }
+
+    /**
+     * Method returns all Sections touched by the given LineFunction
+     * @param f to calculate with
+     * @return touched FieldSections
+     */
+    public ArrayList<FieldSection> getTouchedSections(LineFunction f) {
+        ArrayList<FieldSection> ret = new ArrayList<>();
+        double startY = f.calcY(f.getA());
+        double endY = f.calcY(f.getB());
+
+
+        // FIXME: 21/08/2017 Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 6
+        FieldSection startSection;
+        FieldSection endSection;
+        try {
+            startSection = getSectionAt(new Position(f.getA(), startY));
+            endSection = getSectionAt(new Position(f.getB(), endY));
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println(f);
+            System.out.println(new Position(f.getA(), startY));
+            throw e;
+        }
+
+        //start and end
+        ret.add(startSection);
+
+        // Finding affected Sections between startSection and endSection
+
+        // Horizontal
+        if (startSection.X != endSection.X) {
+            for (int i = startSection.X; i < endSection.X; i++) {
+                // line indicating the start of a new Section
+                int rightLine = getSections()[i][0].RIGHT + 1; // add 1 to get to the next Section
+
+                // calculating the height at which this WallFunction enters a new Section
+                int yRes = (int)f.calcY(rightLine);
+
+                ret.add(getSectionAt(new Position(rightLine, yRes)));
+            }
+        }
+
+        // Vertical
+        if (startSection.Y != endSection.Y) {
+            // order
+            FieldSection smallerY_Section = (startSection.Y < endSection.Y)? startSection:endSection;
+            FieldSection biggerY_Section = (startSection.Y > endSection.Y)? startSection:endSection;
+
+            for (int i = smallerY_Section.Y; i < biggerY_Section.Y; i++) {
+                // line indicating the start of a new Section
+                int botLine = getSections()[0][i].BOT;
+                // FIXME: 21/08/2017 Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 25
+                botLine += (f.getK() < 0)? 0:1; // add 1 to get to the next Section
+
+                // calculating the xPos at which this WallFunction enters a new Section
+                double xRes = f.calcX(botLine);
+                try {
+                    ret.add(getSectionAt(new Position((int)xRes, botLine)));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Start:"+new Position(f.getA(), (int)f.calcY(f.getA())));
+                    System.out.println("End:"+new Position(f.getB(), (int)f.calcY(f.getB())));
+                    System.out.println("EndY:"+ f.calcY(f.getB()));
+                    System.out.print(xRes+"/");
+                    System.out.println(botLine);
+                    System.out.println(f);
+                    throw e;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    /**
      * Method returns the Section containing the given Position
      * @param pos to check
      * @return FieldSection at Position pos
      */
     FieldSection getSectionAt(Position pos) {
-        if (pos.x == width) pos.x -=1;
-        if (pos.y == height) pos.y -=1;
+        if (pos.getX() == width) pos.setX(pos.getX()-1);
+        if (pos.getY() == height) pos.setY(pos.getY()-1);
 
-        int x = pos.x / (width / horizontalSectionAmount);
-        int y = pos.y / (height / verticalSectionAmount);
+        int x = (int)pos.getX() / (width / horizontalSectionAmount);
+        int y = (int)pos.getY() / (height / verticalSectionAmount);
 
         return sections[x][y];
     }
@@ -166,6 +280,7 @@ public class Field extends Container {
         g2.setStroke(new BasicStroke(2));
 
         //https://stackoverflow.com/a/6297069
+
         //clear
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
         g2.fillRect(0,0,width,height);
@@ -181,14 +296,14 @@ public class Field extends Container {
         }
 
         // sections
-        /*
+
         g2.setColor(Color.RED.brighter());
         g2.setStroke(new BasicStroke(1));
         for (int i = 0; i <= horizontalSectionAmount; i++)
             g2.drawLine(i*width/horizontalSectionAmount, 0, i*width/horizontalSectionAmount, height);
         for (int i = 0; i <= verticalSectionAmount; i++)
             g2.drawLine(0, i*height/verticalSectionAmount, width, i*height/verticalSectionAmount);
-        */
+
 
         return bufferedImage;
     }

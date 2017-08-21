@@ -21,11 +21,15 @@ public class Function {
     }
 
     public Function(double k) {
-        this(k,0);
+        this(k, 0);
     }
 
     public Function() {
         this(0);
+    }
+
+    public Function(FunctionData data) {
+        this(data.getK(), data.getD());
     }
 
     /**
@@ -108,11 +112,20 @@ public class Function {
      * @return Position of the collision
      */
     public Position collides(Function f) {
-        // The Slope of a WallFunction hat at most 5 point numbers and therefore will never call the else block
+        return collidesForceBase(f);
+    }
+
+    /**
+     * Method can be used by LineFunctions, that DO NOT want to call their override-method
+     * @param f to calculate with
+     * @return Position of the collision
+     */
+    public final Position collidesForceBase(Function f) {
+        // The Slope of a Function has at most 5 point numbers and therefore will never call the else block
         // Exception: Equal slope
         if (Math.abs(k-f.k) > 0.00001) {
-            int x = (int)((f.d - d) / (k - f.k));
-            return new Position(x, (int)calcY(x));
+            double x = ((f.d - d) / (k - f.k));
+            return new Position(x, calcY(x));
         } else {
             // Slopes are very similar, result could extend range of an Integer
             return secureCollides(f);
@@ -168,7 +181,7 @@ public class Function {
     }
 
     /**
-     * Rotates the function so that it collides with Position p
+     * Rotates the Function in Position(0, d), so that it collides with Position p
      * changes var:k
      * @param p to collide with
      */
@@ -176,11 +189,15 @@ public class Function {
         // TODO: 01.08.2017
     }
 
+    FunctionData getFunctionData() {
+        return new FunctionData().setFunction(this);
+    }
+
     @Override
     public String toString() {
         return "Function{" +
                 "k=" + k +
                 ", d=" + d +
-                '}';
+                "}:\ny=" + getK() + "*x+" + d;
     }
 }

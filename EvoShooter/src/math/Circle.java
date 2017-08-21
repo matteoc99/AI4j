@@ -36,16 +36,13 @@ public class Circle {
      */
     public Position[] collides(Function f) {
         // create vertical Function to f
-        Function fV = new Function(1/f.getK());
+        Function fV = new Function(-1/f.getK());
 
         // translate vertical Function to hit the center of this Circle
         fV.translateToHit(center);
 
         // calculate collision P of given Functions
-        Position pS = f.collides((fV));
-
-        // In case of a WallFunction there might be no collision ever
-        if (pS == null) return null;
+        Position pS = f.collidesForceBase((fV));
 
         double dis = pS.distance(this.center);
 
@@ -53,7 +50,7 @@ public class Circle {
         // however we need to further calculate the exact Position
         if (dis <= this.radius) {
             // Both collision points start at Position pS
-            Position[] ret = new Position[] {((Position) pS.clone()), ((Position) pS.clone())};
+            Position[] ret = new Position[] {(pS.clone()), (pS.clone())};
 
             // Distance to the border of this circle from Position pS on the line of Function f
             double translateDistance = Math.sqrt(Math.pow(this.radius, 2) - Math.pow(dis, 2));
@@ -61,6 +58,8 @@ public class Circle {
             // translating both positions in different directions
             ret[0].translateTowards(f.getK(), translateDistance);
             ret[1].translateTowards(f.getK(), -translateDistance);
+
+            return ret;
         }
         return null;
     }

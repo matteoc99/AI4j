@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class FieldSection {
 
-    private List<WallFunction> walls = new ArrayList<>();
+    private ArrayList<WallFunction> walls = new ArrayList<>();
 
     public final int X;
     public final int Y;
@@ -25,17 +25,27 @@ public class FieldSection {
 
 
     public FieldSection(int x, int y, Position topLeft, Position botRight) {
-        X = x;
-        Y = y;
-        TOP = topLeft.y;
-        BOT = botRight.y;
-        LEFT = topLeft.x;
-        RIGHT = botRight.x;
+        X       = x;
+        Y       = y;
+        TOP     = (int) topLeft.getY();
+        BOT     = (int) botRight.getY();
+        LEFT    = (int) topLeft.getX();
+        RIGHT   = (int) botRight.getX();
     }
 
     void addWall(WallFunction wallFunction) {
         if (!walls.contains(wallFunction))
             walls.add(wallFunction);
+        else
+            System.out.println("Meh! AddWallTwice");
+    }
+
+    void removeWall(WallFunction wallFunction) {
+        walls.remove(wallFunction);
+    }
+
+    public ArrayList<WallFunction> getWalls() {
+        return walls;
     }
 
     @Override

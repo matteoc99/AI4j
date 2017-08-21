@@ -1,9 +1,12 @@
 package field;
 
 import math.Function;
+import math.FunctionData;
+import math.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * @author Maximilian Estfelller
@@ -11,7 +14,15 @@ import java.awt.*;
  */
 public class FieldMain {
     public static void main(String[] args) {
-        Field field = new Field();
+        ArrayList<FunctionData> data = new ArrayList<>();
+        data.add(new FunctionData().setA(248).setB(250).setFunction(new Function(100.9407, -24863.2343)));
+
+        Field field;
+        int i = 0;
+        do {
+            field = new Field(2000);
+            i++;
+        } while (i < 500);
 
         JFrame frame = new JFrame("Map");
         frame.pack();
@@ -25,5 +36,9 @@ public class FieldMain {
         frame.getContentPane().add(label);
 
         frame.setVisible(true);
+
+        for (FieldSection[] fieldSections : field.getSections())
+            for (FieldSection fieldSection : fieldSections)
+                System.out.println(fieldSection);
     }
 }
