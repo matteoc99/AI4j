@@ -17,20 +17,10 @@ import java.util.ArrayList;
  */
 public class FieldMain {
     public static void main(String[] args) {
-        ArrayList<FunctionData> data = new ArrayList<>();
-        try {
-            File file = new File("C:\\Users\\guest\\Desktop\\o.ser");
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
-
-            Object obj = ois.readObject();
-            data = ((ArrayList<FunctionData>) obj);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Field field = new Field(0, data);
+        Field field = new Field(10);
 
         long start = System.nanoTime();
-        for (int i = 0; i < 000; i++) {
+        for (int i = 0; i < 1000; i++) {
             field = new Field(10);
         }
         System.out.println(System.nanoTime()-start);
