@@ -6,6 +6,9 @@ import math.Position;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -15,30 +18,39 @@ import java.util.ArrayList;
 public class FieldMain {
     public static void main(String[] args) {
         ArrayList<FunctionData> data = new ArrayList<>();
-        data.add(new FunctionData().setA(248).setB(250).setFunction(new Function(100.9407, -24863.2343)));
+        try {
+            File file = new File("C:\\Users\\guest\\Desktop\\o.ser");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 
-        Field field;
-        int i = 0;
-        do {
-            field = new Field(2000);
-            i++;
-        } while (i < 500);
+            Object obj = ois.readObject();
+            data = ((ArrayList<FunctionData>) obj);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Field field = new Field(0, data);
+
+        long start = System.nanoTime();
+        for (int i = 0; i < 000; i++) {
+            field = new Field(10);
+        }
+        System.out.println(System.nanoTime()-start);
 
         JFrame frame = new JFrame("Map");
+        frame.setLayout(null);
         frame.pack();
         Insets insets = frame.getInsets();
-        frame.setBounds(600, 100, field.width + insets.left + insets.right, field.height + insets.top + insets.bottom);
+        frame.setBounds(600, 100, field.getWidth() + insets.left + insets.right, field.getHeight() + insets.top + insets.bottom);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JLabel label = new JLabel(new ImageIcon(field.createMapImage()));
-        label.setBounds(0, 0, field.width, field.height);
+        label.setBounds(0, 0, field.getWidth(), field.getHeight());
         frame.getContentPane().add(label);
 
         frame.setVisible(true);
 
         for (FieldSection[] fieldSections : field.getSections())
             for (FieldSection fieldSection : fieldSections)
-                System.out.println(fieldSection);
+                ;//System.out.println(fieldSection);
     }
 }

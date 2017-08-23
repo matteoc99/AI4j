@@ -1,9 +1,6 @@
 package field;
 
-import math.Function;
-import math.FunctionData;
-import math.LineFunction;
-import math.Position;
+import math.*;
 import values.Values;
 
 import java.awt.*;
@@ -26,15 +23,22 @@ public class Field extends Container {
     /**
      * ATTENTION: Do not increase this number over 2000 unless you have spoken to the author!
      */
-    final int width = 500;
-    final int height = 500;
+    private final int width  = 500;
+    private final int height = 500;
 
 
     /**
-     * ATTENTION: the height or width, modulus the following values, have to be 0!
+     * ATTENTION: the height or width, modulus the following values, must be 0!
+     * ATTENTION: the width or height, divided by the following values, must be greater or equal 2*Values.unitRadius
      */
-    public final int horizontalSectionAmount = width/(4*Values.unitRadius);
-    public final int verticalSectionAmount = height/(4*Values.unitRadius);
+    final int horizontalSectionAmount = width  / (4*Values.unitRadius);
+    final int verticalSectionAmount   = height / (4*Values.unitRadius);
+
+    /**
+     * storing all sections
+     * a Section is a specified area of this Field
+     */
+    private FieldSection[][] sections = new FieldSection[horizontalSectionAmount][verticalSectionAmount];
 
     /**
      * amount of mapTicks per second
@@ -45,12 +49,6 @@ public class Field extends Container {
      * amount of walls initially created in this field
      */
     private final int wallAmount;
-
-    /**
-     * storing all sections
-     * a Section is a specified area of this Field
-     */
-    public FieldSection[][] sections = new FieldSection[horizontalSectionAmount][verticalSectionAmount];
 
     /**
      * storing all walls
@@ -66,11 +64,16 @@ public class Field extends Container {
     }
 
     public Field(int additionWallAmount, ArrayList<FunctionData> wallData) {
+        // Validation of class variables
         if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
             throw new BadFieldException("Bad Width or Height");
+        if (width / horizontalSectionAmount < 2 * Values.unitRadius ||
+                height / verticalSectionAmount < 2 * Values.unitRadius)
+            throw new BadFieldException("Sections too small");
+
         this.wallAmount = additionWallAmount;
 
-
+        // creates Map
         createSections();
         createWalls();
         addWalls(wallData);
@@ -84,9 +87,9 @@ public class Field extends Container {
 
         for (int y = 0; y < verticalSectionAmount; y++)
             for (int x = 0; x < horizontalSectionAmount; x++)
-                sections[x][y] = new FieldSection(x, y,
+                sections[x][y] = new FieldSection(this, x, y,
                         new Position(x*widthPI,       y*heightPI),
-                        new Position((x+1)*widthPI-1, (y+1)*heightPI-1)
+                        new Position((x+1)*widthPI, (y+1)*heightPI)
                 );
     }
 
@@ -97,6 +100,7 @@ public class Field extends Container {
     }
 
     private void addWalls(ArrayList<FunctionData> wallData) {
+        if (wallData == null) return;
         for (FunctionData wallDatum : wallData) {
             WallFunction wall = new WallFunction(this, wallDatum);
             wall.register();
@@ -112,16 +116,26 @@ public class Field extends Container {
             spawns[i] = new Spawn(this, center.clone(), Values.unitRadius);
 
         // check if Position is free, possibly clear it
-        walls.removeIf((WallFunction wall) -> {
-            if (spawns[0].collides(wall) != null) {
-                for (FieldSection fieldSection : wall.getTouchedSections())
-                    fieldSection.removeWall(wall);
-                return true;
-            } else return false;
-        });
+        clearPosition(spawns[0]);
 
         // calculate and set goal for each spawn
         setGoalsToSpawns(spawns);
+    }
+
+    /**
+     * Clears a part of the map from all walls
+     * @param circle defining position to clear
+     */
+    private void clearPosition(Circle circle) {
+        for (WallFunction wallFunction : getWallsCollidingWith(circle)) {
+
+            // removing walls from Sections
+            for (FieldSection fieldSection : wallFunction.getTouchedSections())
+                fieldSection.removeWall(wallFunction);
+
+            // removing walls from Field
+            walls.remove(wallFunction);
+        }
     }
 
     /**
@@ -154,6 +168,21 @@ public class Field extends Container {
         // TODO: 19.08.2017 calculate distance
         int less = (width < height)? width : height;
         return less/3;
+    }
+
+    /**
+     * Checks for walls, that are colliding with the given Circle
+     * @param circle looking for its place in life
+     * @return walls blocking the Position
+     */
+    public ArrayList<WallFunction> getWallsCollidingWith(Circle circle) {
+        ArrayList<WallFunction> ret = new ArrayList<>();
+
+        for (WallFunction wall : walls)
+            if (circle.collides(wall) != null)
+                ret.add(wall);
+
+        return ret;
     }
 
     /**
@@ -192,38 +221,43 @@ public class Field extends Container {
         double startY = f.calcY(f.getA());
         double endY = f.calcY(f.getB());
 
+        FieldSection startSection = getSectionAt(new Position(f.getA(), startY));
+        FieldSection endSection = getSectionAt(new Position(f.getB(), endY));
 
-        // FIXME: 21/08/2017 Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 6
-        FieldSection startSection;
-        FieldSection endSection;
-        try {
-            startSection = getSectionAt(new Position(f.getA(), startY));
-            endSection = getSectionAt(new Position(f.getB(), endY));
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println(f);
-            System.out.println(new Position(f.getA(), startY));
-            throw e;
-        }
-
-        //start and end
         ret.add(startSection);
 
         // Finding affected Sections between startSection and endSection
-
         // Horizontal
+        ret.addAll(touchHorizontal(f, startSection, endSection));
+        // Vertical
+        ret.addAll(touchVertical(f, startSection, endSection));
+
+        return ret;
+    }
+
+    private ArrayList<FieldSection> touchHorizontal(LineFunction f,
+                                                    FieldSection startSection,
+                                                    FieldSection endSection) {
+        ArrayList<FieldSection> ret = new ArrayList<>();
         if (startSection.X != endSection.X) {
             for (int i = startSection.X; i < endSection.X; i++) {
                 // line indicating the start of a new Section
-                int rightLine = getSections()[i][0].RIGHT + 1; // add 1 to get to the next Section
+                double rightLine = getSections()[i][0].RIGHT;
 
                 // calculating the height at which this WallFunction enters a new Section
-                int yRes = (int)f.calcY(rightLine);
+                double yRes = f.calcY(rightLine);
 
                 ret.add(getSectionAt(new Position(rightLine, yRes)));
             }
         }
 
-        // Vertical
+        return ret;
+    }
+
+    private ArrayList<FieldSection> touchVertical(LineFunction f,
+                                                  FieldSection startSection,
+                                                  FieldSection endSection) {
+        ArrayList<FieldSection> ret = new ArrayList<>();
         if (startSection.Y != endSection.Y) {
             // order
             FieldSection smallerY_Section = (startSection.Y < endSection.Y)? startSection:endSection;
@@ -231,23 +265,13 @@ public class Field extends Container {
 
             for (int i = smallerY_Section.Y; i < biggerY_Section.Y; i++) {
                 // line indicating the start of a new Section
-                int botLine = getSections()[0][i].BOT;
-                // FIXME: 21/08/2017 Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: 25
-                botLine += (f.getK() < 0)? 0:1; // add 1 to get to the next Section
+                double botLine = getSections()[0][i].BOT;
+                if (f.getK() < 0)
+                    botLine = Math.nextDown(Math.nextDown(botLine)); // decrement for a minimal amount
 
                 // calculating the xPos at which this WallFunction enters a new Section
                 double xRes = f.calcX(botLine);
-                try {
-                    ret.add(getSectionAt(new Position((int)xRes, botLine)));
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    System.out.println("Start:"+new Position(f.getA(), (int)f.calcY(f.getA())));
-                    System.out.println("End:"+new Position(f.getB(), (int)f.calcY(f.getB())));
-                    System.out.println("EndY:"+ f.calcY(f.getB()));
-                    System.out.print(xRes+"/");
-                    System.out.println(botLine);
-                    System.out.println(f);
-                    throw e;
-                }
+                ret.add(getSectionAt(new Position(xRes, botLine)));
             }
         }
 
@@ -260,19 +284,42 @@ public class Field extends Container {
      * @return FieldSection at Position pos
      */
     FieldSection getSectionAt(Position pos) {
-        if (pos.getX() == width) pos.setX(pos.getX()-1);
-        if (pos.getY() == height) pos.setY(pos.getY()-1);
+        int xPos = (int)pos.getX();
+        int yPos = (int)pos.getY();
 
-        int x = (int)pos.getX() / (width / horizontalSectionAmount);
-        int y = (int)pos.getY() / (height / verticalSectionAmount);
+        if (xPos == width) xPos --;
+        if (yPos == height) yPos--;
 
-        return sections[x][y];
+        return sections
+                [xPos / (width / horizontalSectionAmount)]
+                [yPos / (height / verticalSectionAmount)]
+                ;
     }
 
     FieldSection[][] getSections() {
         return sections;
     }
 
+    public ArrayList<WallFunction> getWalls() {
+        return walls;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * In order to safe on pp, walls are only painted once and
+     * stored within a BufferedImage
+     *
+     * @return Image representing the map
+     */
     BufferedImage createMapImage() {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = ((Graphics2D) bufferedImage.getGraphics());

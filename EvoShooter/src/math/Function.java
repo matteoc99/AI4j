@@ -189,7 +189,7 @@ public class Function {
         // TODO: 01.08.2017
     }
 
-    FunctionData getFunctionData() {
+    public FunctionData getFunctionData() {
         return new FunctionData().setFunction(this);
     }
 

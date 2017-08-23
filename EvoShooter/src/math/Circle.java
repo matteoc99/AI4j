@@ -56,11 +56,35 @@ public class Circle {
             double translateDistance = Math.sqrt(Math.pow(this.radius, 2) - Math.pow(dis, 2));
 
             // translating both positions in different directions
-            ret[0].translateTowards(f.getK(), translateDistance);
-            ret[1].translateTowards(f.getK(), -translateDistance);
+            ret[0].translateTowards(f.getK(), -translateDistance); // always left
+            ret[1].translateTowards(f.getK(), translateDistance); // always right
 
-            return ret;
+            // all calculations above base on Function f to have no limits like a LineFunction
+            // a LineFunction however can end before reaching the Circle
+            if (f instanceof LineFunction && !verifyCollision((LineFunction)f, ret))
+                return null;
+            else
+                return ret;
         }
         return null;
+    }
+
+    /**
+     * Method verifies a collision calculated by collides(Function) by checking
+     * whether the given Positions are part of the LineFunction or not
+     *
+     * Positions need to be sorted from left to right
+     *
+     * @see #collides(Function)
+     *
+     * @param f LineFunction
+     * @param collision collision calculated by collides(Function)
+     * @return verification
+     */
+    private boolean verifyCollision(LineFunction f, Position[] collision) {
+        if (collision[0].getX() > collision[1].getX())
+            throw new RuntimeException("Wrong use of method");
+
+        return !(f.b <= collision[0].getX() || f.a >= collision[1].getX());
     }
 }

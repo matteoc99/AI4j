@@ -60,9 +60,11 @@ public class Spawn extends Circle {
      * ATTENTION: There is still a chance for walls to be completely within the above mentioned area,
      * and thereby basically invisible.
      *
+     * NOTE: A better solution has been found
+     *
      * @param pos1 start
      * @param pos2 end
-     * @return LineFunctions[3]
+     * @return LineFunction[3]
      */
     private LineFunction[] getMovementLines(Position pos1, Position pos2) {
         Position h = pos1;

@@ -18,7 +18,7 @@ public class WallFunction extends LineFunction {
 
     private static AtomicInteger nextID = new AtomicInteger(0);
 
-    public final int iD;
+    private final int iD;
 
     private Field parent;
 
@@ -57,16 +57,16 @@ public class WallFunction extends LineFunction {
 
         // generating random values
         deg = (Math.random() * 360);
-        xOff = (int) (Math.random() * parent.width);
-        yOff = (int) (Math.random() * parent.height);
+        xOff = (int) (Math.random() * (parent.getWidth()-1));
+        yOff = (int) (Math.random() * (parent.getHeight()-1));
 
         setK(calcSlopeByDeg(deg));
 
         // deciding length of the visible part of the wall + validation
         do {
-            length = (parent.width + parent.height) / 4 + new Random().nextGaussian() * 10;
-        } while (length < (parent.width + parent.height) / 20 || length > parent.width || length > parent.height);
-        int h = (int) (Math.abs(Math.cos(Math.toRadians(deg))) * length);
+            length = (parent.getWidth() + parent.getHeight()) / 4 + new Random().nextGaussian() * 10;
+        } while (length < (parent.getWidth() + parent.getHeight()) / 20 || length > parent.getWidth() || length > parent.getHeight());
+        double h = (Math.abs(Math.cos(Math.toRadians(deg))) * length);
 
         a = xOff -h/2;
         b = xOff +h/2;
@@ -76,15 +76,15 @@ public class WallFunction extends LineFunction {
 
         // adjusting a and b to be within the field
         if (a < 0) a = 0;
-        if (b > parent.width) b = parent.width;
+        if (b > parent.getWidth()-1) b = parent.getWidth()-1;
 
         // adjusting a and b so that their y-value is within the field
 
-        double topOut = calcX(parent.height);
+        double topOut = calcX(parent.getHeight()-1);
         double botOut = calcX(0);
 
-        int aOut = (topOut < botOut)? (int)topOut+1:(int)botOut+1;
-        int bOut = (topOut > botOut)? (int)topOut:(int)botOut;
+        double aOut = (topOut < botOut)? topOut : botOut;
+        double bOut = (topOut > botOut)? topOut : botOut;
 
         if (a < aOut) a = aOut;
         if (b > bOut) b = bOut;
@@ -102,6 +102,10 @@ public class WallFunction extends LineFunction {
 
     public ArrayList<FieldSection> getTouchedSections() {
         return touchedSections;
+    }
+
+    public int getiD() {
+        return iD;
     }
 
     @Override

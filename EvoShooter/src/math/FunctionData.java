@@ -1,10 +1,12 @@
 package math;
 
+import java.io.Serializable;
+
 /**
  * @author Maximilian Estfelller
  * @since 21.08.2017
  */
-public class FunctionData {
+public class FunctionData implements Serializable {
     private Double a;
     private Double b;
 

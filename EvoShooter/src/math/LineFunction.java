@@ -38,7 +38,7 @@ public class LineFunction extends Function {
     }
 
     @Override
-    FunctionData getFunctionData() {
+    public FunctionData getFunctionData() {
         return super.getFunctionData().setA(a).setB(b);
     }
 
