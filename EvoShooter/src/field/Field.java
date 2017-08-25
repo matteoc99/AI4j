@@ -5,7 +5,7 @@ import values.Values;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * @author Maximilian Estfelller
@@ -46,38 +46,36 @@ public class Field extends Container {
     private final int tickRate = 60;
 
     /**
-     * amount of walls initially created in this field
-     */
-    private final int wallAmount;
-
-    /**
      * storing all walls
      */
     private ArrayList<WallFunction> walls = new ArrayList<>();
 
-    public Field() {
-        this(10, new ArrayList<>());
+    /**
+     * No usage yet
+     *
+     * Later represents the goal of the game.
+     */
+    private Flag flag;
+
+    public Field(int additionWallAmount, Collection<FunctionData> wallData) {
+        // Validation of class variables
+        validationClassVariables();
+
+        // creates Map
+        createSections();
+        createWalls(additionWallAmount);
+        addWalls(wallData);
+        createFlag();
+        validationPlayableMapSize();
+        createSpawns();
     }
 
     public Field(int additionWallAmount) {
         this(additionWallAmount, new ArrayList<>());
     }
 
-    public Field(int additionWallAmount, ArrayList<FunctionData> wallData) {
-        // Validation of class variables
-        if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
-            throw new BadFieldException("Bad Width or Height");
-        if (width / horizontalSectionAmount < 2 * Values.unitRadius ||
-                height / verticalSectionAmount < 2 * Values.unitRadius)
-            throw new BadFieldException("Sections too small");
-
-        this.wallAmount = additionWallAmount;
-
-        // creates Map
-        createSections();
-        createWalls();
-        addWalls(wallData);
-        createSpawns();
+    public Field() {
+        this(10, new ArrayList<>());
     }
 
     private void createSections() {
@@ -93,19 +91,35 @@ public class Field extends Container {
                 );
     }
 
-    private void createWalls() {
-        for (int i = 0; i < wallAmount; i++) {
+    private void createWalls(int amount) {
+        for (int i = 0; i < amount; i++) {
             walls.add(new WallFunction(this));
         }
     }
 
-    private void addWalls(ArrayList<FunctionData> wallData) {
+    private void addWalls(Collection<FunctionData> wallData) {
         if (wallData == null) return;
         for (FunctionData wallDatum : wallData) {
             WallFunction wall = new WallFunction(this, wallDatum);
             wall.register();
             walls.add(wall);
         }
+    }
+
+    private void createFlag() {
+        // middle Section
+        FieldSection section = getSections()[horizontalSectionAmount/2][verticalSectionAmount/2];
+
+        Position center = new Position((section.LEFT+section.RIGHT)/2, (section.TOP+section.BOT)/2);
+        flag = new Flag(this, center);
+
+        // check if Position is free, possibly clear it
+        clearPosition(flag);
+
+        if (!section.isFreeToMoveOn) throw new BadFieldException("FlagSection not fully cleared");
+
+        // method gets automatically called on all Sections of this Field, that can reach the flag
+        section.reachesFlag();
     }
 
     private void createSpawns() {
@@ -127,7 +141,7 @@ public class Field extends Container {
      * @param circle defining position to clear
      */
     private void clearPosition(Circle circle) {
-        for (WallFunction wallFunction : getWallsCollidingWith(circle)) {
+        for (WallFunction wallFunction : calcCollisionsWithWalls(circle).keySet()) {
 
             // removing walls from Sections
             for (FieldSection fieldSection : wallFunction.getTouchedSections())
@@ -153,7 +167,7 @@ public class Field extends Container {
             double distance = (deg > 90 && deg < 270)? -calculateDistance(goal, deg) : calculateDistance(goal, deg);
 
             goal.translateTowards(k, distance);
-            spawns[i].setGoal(goal);
+            //spawns[i].setGoal(goal);
         }
     }
 
@@ -164,45 +178,46 @@ public class Field extends Container {
      * @param deg degree to go to
      * @return distance to the edge of the map
      */
-    private double calculateDistance(Position pos, double deg) {
-        // TODO: 19.08.2017 calculate distance
-        int less = (width < height)? width : height;
-        return less/3;
+    public double calculateDistance(Position pos, double deg) {
+        deg = Function.normalizeDeg(deg);
+
+        // Δx:Δy ratio equals Δx:factor*Δx (tangents), can be infinitive
+        double horizontalFactor = Math.abs(1/Math.tan(Math.toRadians(deg)));
+        // Δx:Δy ratio equals factor*Δy:Δy (cotangents), can be infinitive
+        double verticalFactor   = Math.abs(Math.tan(Math.toRadians(deg)));
+
+        // calculated towards top ([0°,180°[) or bot ([180°,360°[) edge
+        double katA1 = (deg < 180)? height-pos.getX() : pos.getX();
+        double katA2 = katA1*horizontalFactor;
+
+        // calculated towards right ([0°,90°[ | [270°,360°[) or left ([90°,270°[) edge
+        double katB1 = (deg < 90 || deg > 270)? width-pos.getY() : pos.getY();
+        double katB2 = katB1*verticalFactor;
+
+        // calculating the hypotenuse
+        double hypA = Math.sqrt(katA1*katA1 + katA2*katA2);
+        double hypB = Math.sqrt(katB1*katB1 +  katB2*katB2);
+
+        return (hypA < hypB)?  hypA : hypB;
     }
 
     /**
      * Checks for walls, that are colliding with the given Circle
-     * @param circle looking for its place in life
-     * @return walls blocking the Position
+     * @param circle looking for its place in life :(
+     * @return Map where and whit what
      */
-    public ArrayList<WallFunction> getWallsCollidingWith(Circle circle) {
-        ArrayList<WallFunction> ret = new ArrayList<>();
+    public HashMap<WallFunction, ArrayList<Position>> calcCollisionsWithWalls(Circle circle) {
+        HashMap<WallFunction, ArrayList<Position>> ret = new HashMap<>();
 
-        for (WallFunction wall : walls)
-            if (circle.collides(wall) != null)
-                ret.add(wall);
-
-        return ret;
-    }
-
-    /**
-     * Method returns every Position in which the given LineFunction collides
-     * with a WallFunction on this Field
-     * @param f to calculate with
-     * @return collision Points
-     */
-    public ArrayList<Position> calcCollisionsWithWalls(LineFunction f) {
-        ArrayList<Position> ret = new ArrayList<>();
-
-        ArrayList<FieldSection> sectionsToCheck = getTouchedSections(f);
+        Collection<FieldSection> sectionsToCheck = getTouchedSections(circle);
 
         // lists walls that have been checked already, to avoid repetition
         ArrayList<WallFunction> checkedWalls = new ArrayList<>();
 
         for (FieldSection fieldSection : sectionsToCheck) {
             fieldSection.getWalls().stream().filter(wall -> !checkedWalls.contains(wall)).forEach(wall -> {
-                Position pos = wall.collides(f);
-                if (pos != null) ret.add(pos);
+                Position[] positions = circle.collides(wall);
+                if (positions != null) ret.put(wall, new ArrayList<>(Arrays.asList(positions)));
 
                 checkedWalls.add(wall);
             });
@@ -212,11 +227,44 @@ public class Field extends Container {
     }
 
     /**
+     * Method returns collisions of the given Function f with a wall
+     * @param f to calculate with
+     * @return Map where and with what
+     */
+    public HashMap<WallFunction, Position> calcCollisionsWithWalls(LineFunction f) {
+        HashMap<WallFunction, Position> ret = new HashMap<>();
+
+        Collection<FieldSection> sectionsToCheck = getTouchedSections(f);
+
+        // lists walls that have been checked already, to avoid repetition
+        ArrayList<WallFunction> checkedWalls = new ArrayList<>();
+
+        for (FieldSection fieldSection : sectionsToCheck) {
+            fieldSection.getWalls().stream().filter(wall -> !checkedWalls.contains(wall)).forEach(wall -> {
+                Position pos = wall.collides(f);
+                if (pos != null) ret.put(wall, pos);
+
+                checkedWalls.add(wall);
+            });
+        }
+
+        return ret;
+    }
+
+    public Collection<FieldSection> getTouchedSections(Circle circle) {
+        ArrayList<FieldSection> ret = new ArrayList<>();
+        for (FieldSection[] fieldSections : getSections())
+            Collections.addAll(ret, fieldSections);
+
+        return ret;
+    }
+
+    /**
      * Method returns all Sections touched by the given LineFunction
      * @param f to calculate with
      * @return touched FieldSections
      */
-    public ArrayList<FieldSection> getTouchedSections(LineFunction f) {
+    public Collection<FieldSection> getTouchedSections(LineFunction f) {
         ArrayList<FieldSection> ret = new ArrayList<>();
         double startY = f.calcY(f.getA());
         double endY = f.calcY(f.getB());
@@ -353,5 +401,32 @@ public class Field extends Container {
 
 
         return bufferedImage;
+    }
+
+
+    @SuppressWarnings("all")
+    private void validationClassVariables() {
+        if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
+            throw new BadFieldException("Bad Width or Height");
+        if (width / horizontalSectionAmount < 2 * Values.unitRadius ||
+                height / verticalSectionAmount < 2 * Values.unitRadius)
+            throw new BadFieldException("Sections too small");
+    }
+
+    private void validationPlayableMapSize() {
+        double totalSections = horizontalSectionAmount*verticalSectionAmount;
+
+        // all Sections, that can reach the flag
+        int sectionsToPlayWith = 0;
+
+        for (FieldSection[] fieldSections : getSections())
+            for (FieldSection fieldSection : fieldSections)
+                if (fieldSection.canReachTheFlag)
+                    sectionsToPlayWith++;
+
+        int percent = (int)(sectionsToPlayWith/totalSections*100);
+
+        if (percent < Values.reachFlagMinimumPercentage)
+            throw new BadFieldException("Only "+percent+"% of the map can reach the flag");
     }
 }

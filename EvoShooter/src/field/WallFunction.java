@@ -12,9 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Maximilian Estfelller
  * @since 18.07.2017
- * y=kx+d
  */
-public class WallFunction extends LineFunction {
+class WallFunction extends LineFunction {
 
     private static AtomicInteger nextID = new AtomicInteger(0);
 
@@ -48,7 +47,7 @@ public class WallFunction extends LineFunction {
      */
     private void create() {
         // degree of the function
-        double     deg;
+        double  deg;
         // offsets to guarantee the function has any Point within this field
         int     xOff;
         int     yOff;
@@ -93,7 +92,7 @@ public class WallFunction extends LineFunction {
     /**
      * Registers this Function within the FieldSections
      */
-    public void register() {
+    void register() {
         for (FieldSection fieldSection : parent.getTouchedSections(this)) {
             fieldSection.addWall(this);
             touchedSections.add(fieldSection);
@@ -104,7 +103,7 @@ public class WallFunction extends LineFunction {
         return touchedSections;
     }
 
-    public int getiD() {
+    public int getID() {
         return iD;
     }
 
@@ -115,7 +114,8 @@ public class WallFunction extends LineFunction {
                 ", d=" + d +
                 ", a=" + a +
                 ", b=" + b +
-                "}:\ny="+getK()+"*x+"+d;
+                "}:\n" +
+                "y="+getK()+"*x+"+d;
     }
 
     void paint(Graphics g) {

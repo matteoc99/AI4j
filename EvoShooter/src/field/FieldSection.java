@@ -2,16 +2,14 @@ package field;
 
 import math.Position;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * @author Maximilian Estfelller
  * @since 18.07.2017
  */
-public class FieldSection {
+class FieldSection {
 
     /**
      * Index in the Section[][] of a Field
@@ -38,15 +36,21 @@ public class FieldSection {
     private Field parent;
 
     /**
-     * A Section is movable as long as addWall has not been called
+     * A Section is free to move on as long as addWall has not been called.
      * @see #addWall(WallFunction)
      *
-     * Walls that have been added directly do not change this value
+     * Walls that have been added directly to the List do not change this value.
      */
-    private boolean movable = true;
+    boolean isFreeToMoveOn = true;
+
+    /**
+     * A Section is reachable, when there is a path from the flag to this Section.
+     * A Section which isn't free to move on can never be reachable.
+     */
+    boolean canReachTheFlag = false;
 
 
-    public FieldSection(Field parent, int x, int y, Position topLeft, Position botRight) {
+    FieldSection(Field parent, int x, int y, Position topLeft, Position botRight) {
         this.parent = parent;
         X           = x;
         Y           = y;
@@ -57,7 +61,7 @@ public class FieldSection {
     }
 
     void addWall(WallFunction wallFunction) {
-        movable = false;
+        isFreeToMoveOn = false;
         if (!walls.contains(wallFunction))
             walls.add(wallFunction);
         else {
@@ -65,6 +69,20 @@ public class FieldSection {
                 fieldSection.walls.remove(wallFunction);
                 fieldSection.walls.add(wallFunction);
             }
+        }
+    }
+
+    /**
+     * Tells this Section, that it can reach the flag.
+     *
+     * Then also tells every neighbour, which is free to move on, that it reaches the flag too
+     */
+    void reachesFlag() {
+        if (!canReachTheFlag) { // avoids infinite loops
+            canReachTheFlag = true;
+            
+            for (FieldSection fieldSection : getNeighbours())
+                if (fieldSection.isFreeToMoveOn) fieldSection.reachesFlag();
         }
     }
 
@@ -88,6 +106,7 @@ public class FieldSection {
 
     void removeWall(WallFunction wallFunction) {
         walls.remove(wallFunction);
+        if (walls.isEmpty()) isFreeToMoveOn = true;
     }
 
     ArrayList<WallFunction> getWalls() {
@@ -108,7 +127,7 @@ public class FieldSection {
     }
 
     /**
-     * Returns the IDs of the stored wall as a String
+     * Returns the IDs of the stored wall as a String.
      * @return wallIDs
      */
     private String getWallIDs() {
@@ -116,7 +135,7 @@ public class FieldSection {
 
         StringBuilder ret = new StringBuilder();
         for (WallFunction wall : walls) {
-            ret.append(wall.getiD()).append(", ");
+            ret.append(wall.getID()).append(", ");
         }
         return ret.substring(0, ret.length()-2);
     }

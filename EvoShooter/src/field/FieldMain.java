@@ -1,15 +1,9 @@
 package field;
 
-import math.Function;
-import math.FunctionData;
 import math.Position;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.ArrayList;
 
 /**
  * @author Maximilian Estfelller
@@ -17,13 +11,8 @@ import java.util.ArrayList;
  */
 public class FieldMain {
     public static void main(String[] args) {
-        Field field = new Field(10);
 
-        long start = System.nanoTime();
-        for (int i = 0; i < 1000; i++) {
-            field = new Field(10);
-        }
-        System.out.println(System.nanoTime()-start);
+        Field field = new Field(10);
 
         JFrame frame = new JFrame("Map");
         frame.setLayout(null);
@@ -42,5 +31,29 @@ public class FieldMain {
         for (FieldSection[] fieldSections : field.getSections())
             for (FieldSection fieldSection : fieldSections)
                 ;//System.out.println(fieldSection);
+    }
+
+    private static void speedTest() {
+        long start = System.nanoTime();
+        for (int i = 0; i < 1000; i++) {
+            Field field = new Field(10);
+        }
+        System.out.println(System.nanoTime()-start);
+    }
+
+    private static void calculateDistanceTest() {
+        Field field = new Field(0);
+        System.out.println(field.calculateDistance(new Position(250, 250), 0));
+        System.out.println(field.calculateDistance(new Position(250, 250), 90));
+        System.out.println(field.calculateDistance(new Position(250, 250), 180));
+        System.out.println(field.calculateDistance(new Position(250, 250), 270));
+        System.out.println(field.calculateDistance(new Position(250, 250), 45));
+        System.out.println(field.calculateDistance(new Position(250, 250), 135));
+        System.out.println(field.calculateDistance(new Position(250, 250), 225));
+        System.out.println(field.calculateDistance(new Position(250, 250), 315));
+        System.out.println(field.calculateDistance(new Position(250, 250), 26));
+        System.out.println(field.calculateDistance(new Position(250, 250), 142));
+        System.out.println(field.calculateDistance(new Position(250, 250), 241));
+        System.out.println(field.calculateDistance(new Position(250, 250), 299));
     }
 }

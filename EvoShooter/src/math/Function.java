@@ -5,13 +5,14 @@ package math;
  * @since 01.08.2017
  */
 public class Function {
+
     /**
-     * Function of type y=kx+d
+     * Slope
      */
     private double k;
 
     /**
-     * equals xOff & yOff as a single value
+     * Y-Offset
      */
     public double d;
 
@@ -80,7 +81,7 @@ public class Function {
      * @param deg to calculate with
      * @return normalized degree-value
      */
-    private static double normalizeDeg(double deg) {
+    public static double normalizeDeg(double deg) {
         if (deg < 0)
             return normalizeDeg(deg + 360);
 
@@ -198,6 +199,7 @@ public class Function {
         return "Function{" +
                 "k=" + k +
                 ", d=" + d +
-                "}:\ny=" + getK() + "*x+" + d;
+                "}:\n" +
+                "y=" + getK() + "*x+" + d;
     }
 }

@@ -14,9 +14,9 @@ package field;
  * @author Maximilian Estfeller
  * @since 01.08.2017
  */
-public class BadFieldException extends RuntimeException {
+class BadFieldException extends RuntimeException {
 
-    public BadFieldException(String msg) {
+    BadFieldException(String msg) {
         super(msg);
     }
 }

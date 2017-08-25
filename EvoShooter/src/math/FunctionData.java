@@ -1,6 +1,8 @@
 package math;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * @author Maximilian Estfelller
@@ -16,6 +18,16 @@ public class FunctionData implements Serializable {
     public FunctionData setA(double a) {
         this.a = a;
         return this;
+    }
+
+    public static ArrayList<FunctionData> transformToFD(Collection functions) {
+        ArrayList<FunctionData> ret = new ArrayList<>();
+
+        for (Object function : functions)
+            if (function instanceof Function)
+                ret.add(((Function) function).getFunctionData());
+
+        return ret;
     }
 
     public double getA() {
@@ -41,6 +53,16 @@ public class FunctionData implements Serializable {
         return this;
     }
 
+    public FunctionData setK(double k) {
+        this.k = k;
+        return this;
+    }
+
+    public FunctionData setD(double d) {
+        this.d = d;
+        return this;
+    }
+
     public double getK() {
         if (k != null)
             return k;
@@ -53,8 +75,8 @@ public class FunctionData implements Serializable {
         throw new InsufficientFunctionDataException("D");
     }
 
-    public class InsufficientFunctionDataException extends RuntimeException {
-        public InsufficientFunctionDataException(String msg) {
+    private class InsufficientFunctionDataException extends RuntimeException {
+        private InsufficientFunctionDataException(String msg) {
             super(msg);
         }
     }
