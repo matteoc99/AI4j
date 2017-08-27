@@ -3,8 +3,8 @@ package utils.storage;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,14 +13,43 @@ import java.util.Map;
  */
 public class DataRepository {
 
-    private static Map<String, List<String>> repositoryFiles = new HashMap<>();
+    private static HashMap<String, Collection<String>> repositoryFiles = new HashMap<>();
 
     private String repositoryPath;
+
+    public static Map<String, Collection<String>> getRepositoryFiles() {
+        return repositoryFiles;
+    }
+
+    public static void setRepositoryFiles(String path) {
+        try {
+            HashMap readList = (HashMap) DataIOs.read(path);
+            for (Object key : readList.keySet()) {
+                repositoryFiles.put((String) key, new ArrayList<>());
+                for (Object o : ((ArrayList) readList.get(key)))
+                    repositoryFiles.get(key).add((String) o);
+            }
+        } catch (DataException e) {
+            System.out.println(e.getMessage());
+        } catch (ClassCastException e) {
+            System.out.println("ERROR: can't resolve repositoryFiles on given path ("+path+")" +
+                    " as an HaspMap<String, ArrayList<String>>");
+        }
+    }
+
+    public static void printRepositoryFiles(String path) {
+        try {
+            DataIOs.print(path, repositoryFiles);
+        } catch (DataException e) {
+            System.out.println("Can't print repositoryFiles");
+        }
+    }
 
     public DataRepository(String repositoryPath) {
         this.repositoryPath = repositoryPath;
 
-        repositoryFiles.put(repositoryPath, new ArrayList<>());
+        if (!repositoryFiles.containsKey(repositoryPath))
+            repositoryFiles.put(repositoryPath, new ArrayList<>());
     }
 
     public void print(String fileName, Serializable obj) throws DataException {
@@ -35,7 +64,7 @@ public class DataRepository {
     }
 
     /**
-     * removes this repository from the list, and deletes all of it's files
+     * Removes this repository from the list, and deletes all of it's files.
      */
     public void deleteRepository() {
         clearRepository();
@@ -43,7 +72,7 @@ public class DataRepository {
     }
 
     /**
-     * Deletes all Files from this repository
+     * Deletes all Files from this repository.
      */
     public void clearRepository() {
         repositoryFiles.get(repositoryPath).removeIf(s -> {
@@ -58,7 +87,7 @@ public class DataRepository {
     }
 
     /**
-     * removes the given File from the list and deletes it
+     * Removes the given File from the list and deletes it.
      *
      * @param fileName path of the File to delete
      * @throws DataException when deletion fails
