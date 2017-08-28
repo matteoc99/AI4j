@@ -16,7 +16,22 @@ package field;
  */
 class BadFieldException extends RuntimeException {
 
-    BadFieldException(String msg) {
+    public enum BadFieldType {
+        RandomError, ConstError, BugError
+    }
+
+    private BadFieldType type;
+
+    BadFieldException(String msg, BadFieldType type) {
         super(msg);
+        this.type = type;
+    }
+
+    public boolean isBug() {
+        return type == BadFieldType.BugError;
+    }
+
+    public boolean isRandom() {
+        return type == BadFieldType.RandomError;
     }
 }

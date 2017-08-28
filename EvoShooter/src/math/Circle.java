@@ -28,6 +28,10 @@ public class Circle {
         this(center, 1);
     }
 
+    public Circle(int radius) {
+        this(new Position(0, 0), radius);
+    }
+
     public Circle() {
         this(new Position(0, 0));
     }
@@ -57,7 +61,7 @@ public class Circle {
         // calculate collision P of given Functions
         Position pS = f.collidesForceBase((fV));
 
-        double dis = pS.distance(this.center);
+        double dis = pS.distanceTo(this.center);
 
         // if the collisionPoint is within the circle, we know that there (most likely) is a collision,
         // however we need to further calculate the exact Position

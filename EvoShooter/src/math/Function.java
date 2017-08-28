@@ -151,7 +151,7 @@ public class Function {
         } catch (ArithmeticException e) {
             return new Position(Integer.MAX_VALUE, Integer.MAX_VALUE);
         }
-        return new Position(x, (int)calcY(x));
+        return new Position(x, calcY(x));
     }
 
     /**

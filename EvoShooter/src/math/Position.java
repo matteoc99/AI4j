@@ -37,7 +37,7 @@ public class Position implements Cloneable{
      * @param pos Position to calculate with
      * @return the distance
      */
-    public double distance(Position pos) {
+    public double distanceTo(Position pos) {
         double pX = pos.getX() - getX();
         double pY = pos.getY() - getY();
 

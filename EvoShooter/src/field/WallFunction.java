@@ -2,7 +2,6 @@ package field;
 
 import math.FunctionData;
 import math.LineFunction;
-import math.Position;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,9 +14,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 class WallFunction extends LineFunction {
 
-    private static AtomicInteger nextID = new AtomicInteger(0);
+    private static AtomicInteger nextId = new AtomicInteger(0);
 
-    private final int iD;
+    private final int id;
 
     private Field parent;
 
@@ -25,7 +24,7 @@ class WallFunction extends LineFunction {
 
     WallFunction(Field field) {
         this.parent = field;
-        this.iD = nextID.getAndIncrement();
+        this.id = nextId.getAndIncrement();
 
         create();
         register();
@@ -33,7 +32,7 @@ class WallFunction extends LineFunction {
 
     WallFunction(Field field, FunctionData data) {
         this.parent = field;
-        this.iD = nextID.getAndIncrement();
+        this.id = nextId.getAndIncrement();
 
         this.a = data.getA();
         this.b = data.getB();
@@ -103,13 +102,13 @@ class WallFunction extends LineFunction {
         return touchedSections;
     }
 
-    public int getID() {
-        return iD;
+    public int getId() {
+        return id;
     }
 
     @Override
     public String toString() {
-        return "WallFunction:"+iD+" {" +
+        return "WallFunction:"+ id +" {" +
                 "k=" + getK() +
                 ", d=" + d +
                 ", a=" + a +
