@@ -4,6 +4,7 @@ package math;
  * @author Maximilian Estfelller
  * @since 20.08.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class LineFunction extends Function {
 
     /**

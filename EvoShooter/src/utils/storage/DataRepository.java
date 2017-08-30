@@ -11,6 +11,7 @@ import java.util.Map;
  * @author Maximilian Estfeller
  * @since 27.08.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class DataRepository {
 
     private static HashMap<String, Collection<String>> repositoryFiles = new HashMap<>();

@@ -5,6 +5,7 @@ package math;
  * @author Maximilian Estfelller
  * @since 01.08.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Position implements Cloneable{
 
     private double x;

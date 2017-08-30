@@ -9,21 +9,21 @@ import java.util.ArrayList;
  * @author Maximilian Estfelller
  * @since 18.07.2017
  */
-class FieldSection {
+public class FieldSection {
 
     /**
      * Index in the Section[][] of a Field
      */
-    public final int X;
-    public final int Y;
+    final int X;
+    final int Y;
 
     /**
      * X or Y Values of where this Section ends
      */
-    public final double TOP;
-    public final double BOT;
-    public final double LEFT;
-    public final double RIGHT;
+    final double TOP;
+    final double BOT;
+    final double LEFT;
+    final double RIGHT;
 
     /**
      * List storing all WallFunctions of this Section

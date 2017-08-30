@@ -1,9 +1,12 @@
 package math;
 
+import values.Values;
+
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Function {
 
     /**
@@ -34,37 +37,11 @@ public class Function {
     }
 
     /**
-     * checks for k not to be to close to 0, as this could cause problems
-     * ex: calculating 1/k given k = 0;
-     *
-     * k has to be in range of [0.0001, 10000]
-     *
-     * @param k to set
-     */
-    public void setK(double k) {
-        if (Math.abs(k) > 0.0001)
-            this.k = (int) (k*10000) / 10000.0;
-        else if (k > 0)
-            this.k = 0.0001;
-        else
-            this.k = -0.0001;
-
-        if (k > 10000) this.k = 10000;
-    }
-
-    public double getK() {
-        return k;
-    }
-
-    /**
      * Method return the equivalent k-value for a given degree value
      * @param deg to calculate with (must be in range 1-89)
      * @return k
      */
     public static double calcSlopeByDeg(double deg) {
-        // deg has to be in range [0, 360[
-        deg = normalizeDeg(deg);
-
         // deg has to be in range [0, 90] or ]270, 360[
         deg = simplifyDeg(deg);
 
@@ -97,7 +74,10 @@ public class Function {
      * @param deg to simplify
      * @return simplified deg
      */
-    private static double simplifyDeg(double deg) {
+    public static double simplifyDeg(double deg) {
+        // in order to simplify a degree, it must be normalized first
+        deg = normalizeDeg(deg);
+
         if (deg > 90) {
             if (deg < 180)
                 deg += 180;
@@ -105,6 +85,40 @@ public class Function {
                 deg -= 180;
         }
         return deg;
+    }
+
+    /**
+     * Method is used for calculating the x-value for a given y-value
+     * without creating a FunctionObject
+     * @param y to calculate with
+     * @param data storing data to calc with
+     * @return x-value
+     */
+    public static double calcXRaw(double y, FunctionData data) {
+        return (y-data.getD())/data.getK();
+    }
+
+    /**
+     * checks for k not to be to close to 0, as this could cause problems
+     * ex: calculating 1/k given k = 0;
+     *
+     * k has to be in range of [0.0001, 10000]
+     *
+     * @param k to set
+     */
+    public void setK(double k) {
+        if (Math.abs(k) > Values.K_MIN)
+            this.k = (int) (k*Values.K_MAX) / Values.K_MAX;
+        else if (k > 0)
+            this.k = Values.K_MIN;
+        else
+            this.k = -Values.K_MIN;
+
+        if (k > Values.K_MAX) this.k = Values.K_MAX;
+    }
+
+    public double getK() {
+        return k;
     }
 
     /**
@@ -122,9 +136,9 @@ public class Function {
      * @return Position of the collision
      */
     public final Position collidesForceBase(Function f) {
-        // The Slope of a Function has at most 5 point numbers and therefore will never call the else block
+        // The Slope of a Function has at most 4 (see Values) point numbers and therefore will never call the else block
         // Exception: Equal slope
-        if (Math.abs(k-f.k) > 0.00001) {
+        if (Math.abs(k-f.k) > Values.K_MIN/10) {
             double x = ((f.d - d) / (k - f.k));
             return new Position(x, calcY(x));
         } else {

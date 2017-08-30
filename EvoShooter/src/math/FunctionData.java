@@ -1,5 +1,7 @@
 package math;
 
+import values.Values;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,6 +10,7 @@ import java.util.Collection;
  * @author Maximilian Estfelller
  * @since 21.08.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess", "UnusedReturnValue"})
 public class FunctionData implements Serializable {
     private Double a;
     private Double b;
@@ -54,7 +57,15 @@ public class FunctionData implements Serializable {
     }
 
     public FunctionData setK(double k) {
-        this.k = k;
+        if (Math.abs(k) > Values.K_MIN)
+            this.k = (int) (k* Values.K_MAX) / Values.K_MAX;
+        else if (k > 0)
+            this.k = Values.K_MIN;
+        else
+            this.k = -Values.K_MIN;
+
+        if (k > Values.K_MAX) this.k = Values.K_MAX;
+
         return this;
     }
 

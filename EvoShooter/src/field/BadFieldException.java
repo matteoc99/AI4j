@@ -6,7 +6,7 @@ package field;
  * Basically things, that make the map unplayable or almost senseless to train on.
  *
  * Further reasons are:
- * Map which imply calculations towards infinity or sometimes over Integer's limit.
+ * Maps, which imply calculations towards infinity or sometimes over Integer's limit.
  * Whenever specific mapObjects are broken. (stuck..)
  * Constants are set wrong.
  *
@@ -17,7 +17,18 @@ package field;
 class BadFieldException extends RuntimeException {
 
     public enum BadFieldType {
-        RandomError, ConstError, BugError
+        /**
+         * Occurs when, due to the use of randomness, a Field turns out to be bad
+         */
+        RANDOM_ERROR,
+        /**
+         * One or more Constants are set wrongly
+         */
+        CONST_ERROR,
+        /**
+         * Unexpected error
+         */
+        BUG_ERROR
     }
 
     private BadFieldType type;
@@ -28,10 +39,10 @@ class BadFieldException extends RuntimeException {
     }
 
     public boolean isBug() {
-        return type == BadFieldType.BugError;
+        return type == BadFieldType.BUG_ERROR;
     }
 
     public boolean isRandom() {
-        return type == BadFieldType.RandomError;
+        return type == BadFieldType.RANDOM_ERROR;
     }
 }

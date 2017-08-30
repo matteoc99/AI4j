@@ -7,6 +7,7 @@ import java.util.Arrays;
  * @author Maximilian Estfelller
  * @since 01.08.2017
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Circle {
 
     /**

@@ -10,12 +10,12 @@ import java.awt.*;
  * @author Maximilian Estfeller
  * @since 25.08.2017
  */
-class Flag extends Circle {
+public class Flag extends Circle {
 
     private final Field parent;
 
     Flag(Field parent, Position center) {
-        super(center, Values.flagRadius);
+        super(center, Values.FLAG_RADIUS);
         this.parent = parent;
     }
 
@@ -24,7 +24,6 @@ class Flag extends Circle {
     }
 
     void paint(Graphics g) {
-        g.setColor(Color.GREEN.darker());
         g.fillOval((int)center.getX()-radius/2, (int)center.getY()-radius/2, radius, radius);
     }
 }

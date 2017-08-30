@@ -4,45 +4,38 @@ import math.*;
 import values.Values;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * @author Maximilian Estfelller
  * @since 18.07.2017
  */
-public class Field extends Container {
+public class Field extends Canvas {
 
     /* Const */
 
     /**
      * ATTENTION: Do not increase this number over 2000 unless you have spoken to the author!
      */
-    private final int width  = 500;
-    private final int height = 500;
-    // to skip calculation
-    private final double diaDistance = Math.sqrt(width*width+height*height);
+    public final int width;
+    public final int height;
+    // for code readability, optimization should be done by automatically anyways
+    public final double diameter;
 
 
     /**
      * ATTENTION: the height or width, modulus the following values, must be 0!
-     * ATTENTION: the width or height, divided by the following values, must be greater or equal 2*Values.unitRadius
+     * ATTENTION: the width or height, divided by the following values, must be greater or equal 2*Values.UNIT_RADIUS
      */
-    final int horizontalSectionAmount = width  / (4*Values.unitRadius);
-    final int verticalSectionAmount   = height / (4*Values.unitRadius);
+    public final int horizontalSectionAmount;
+    public final int verticalSectionAmount;
 
     /**
      * storing all sections
      * a Section is a specified area of this Field
      */
-    private FieldSection[][] sections = new FieldSection[horizontalSectionAmount][verticalSectionAmount];
-
-    /**
-     * amount of mapTicks per second
-     */
-    private final int tickRate = 60;
+    private final FieldSection[][] sections;
 
     /**
      * storing all walls
@@ -58,25 +51,24 @@ public class Field extends Container {
      */
     private Flag flag;
 
-    public Field(int additionWallAmount, Collection<FunctionData> wallData) {
-        // Validation of class variables
+    Field(int width,
+                 int height,
+                 int horizontalSectionAmount,
+                 int verticalSectionAmount) {
+
+        this.width = width;
+        this.height = height;
+        this.horizontalSectionAmount = horizontalSectionAmount;
+        this.verticalSectionAmount = verticalSectionAmount;
+
         validationClassVariables();
 
-        // creates Map
+        this.diameter = Math.sqrt(width*width+height*height);
+        this.sections = new FieldSection[horizontalSectionAmount][verticalSectionAmount];
+
         createSections();
-        createWalls(additionWallAmount);
-        addWalls(wallData);
-        createFlag();
-        validationPlayableMapSize();
-        createSpawns();
-    }
 
-    public Field(int additionWallAmount) {
-        this(additionWallAmount, new ArrayList<>());
-    }
-
-    public Field() {
-        this(10, new ArrayList<>());
+        this.setBounds(0, 0, width, height);
     }
 
     private void createSections() {
@@ -92,138 +84,18 @@ public class Field extends Container {
                 );
     }
 
-    private void createWalls(int amount) {
-        for (int i = 0; i < amount; i++) {
-            walls.add(new WallFunction(this));
-        }
-    }
-
-    private void addWalls(Collection<FunctionData> wallData) {
-        if (wallData == null) return;
+    public void addWalls(Collection<FunctionData> wallData) {
         for (FunctionData wallDatum : wallData) {
             WallFunction wall = new WallFunction(this, wallDatum);
-            wall.register();
             walls.add(wall);
         }
     }
 
-    private void createFlag() {
-        // middle Section
-        FieldSection section = getSections()[horizontalSectionAmount/2][verticalSectionAmount/2];
-
-        Position center = new Position((section.LEFT+section.RIGHT)/2, (section.TOP+section.BOT)/2);
-        flag = new Flag(this, center);
-
-        // check if Position is free, possibly clear it
-        clearPosition(getSections()[horizontalSectionAmount/2][verticalSectionAmount/2]);
-
-        if (!section.isFreeToMoveOn) throw new BadFieldException("FlagSection not fully cleared",
-                    BadFieldException.BadFieldType.BugError);
-
-        // method gets automatically called on all Sections of this Field, that can reach the flag
-        section.reachesFlag(1);
+    public void addSpawns(Collection<Spawn> spawns) {
+        this.spawns.addAll(spawns);
     }
 
-    private void createSpawns() {
-        for (int i = 0; i < Values.possibleSpawnPositionsCount; i++)
-            spawns.add(new Spawn(this));
-
-        setStartPosToSpawns(spawns, flag.center);
-
-        // removes all spawns that can't reach the flag
-        spawns.removeIf(spawn -> !getSectionAt(spawn.center).canReachTheFlag);
-
-        // removes all spawns that can see directly to the flag
-        spawns.removeIf(spawn -> {
-            LineFunction visionLine = new LineFunction(spawn.center, flag.center);
-            return calcCollisionsWithWalls(visionLine).isEmpty();
-        });
-
-        // Each pair of spawns, that do not see each other, have a calculated amount of points
-        Map<Integer, Collection<Spawn>> spawnPairPoints = getPoints();
-
-        int bestPoints = 0;
-        for (Integer points : spawnPairPoints.keySet()) {
-            if (points > bestPoints)
-                bestPoints = points;
-        }
-
-        // remove all other spawns
-        Collection<Spawn> bestPair = (spawnPairPoints.get(bestPoints) != null)?
-                spawnPairPoints.get(bestPoints) : new ArrayList<>();
-        spawns.removeIf(spawn -> !bestPair.contains(spawn));
-
-        if (spawns.size() > 2)
-            throw new BadFieldException("Too many spawns", BadFieldException.BadFieldType.BugError);
-        if (spawns.size() < 2)
-            throw new BadFieldException("Not enough spawns", BadFieldException.BadFieldType.RandomError);
-    }
-
-    /**
-     * calculates and returns the points of each spawnPair
-     *
-     * @return points of each pair in form of a Map
-     */
-    private Map<Integer, Collection<Spawn>> getPoints() {
-        Map<Integer, Collection<Spawn>> spawnPairPoints = new HashMap<>();
-
-        for (int i = 0; i < spawns.size(); i++) {
-            for (int j = i; j < spawns.size(); j++) {
-                // same Spawns
-                if (spawns.get(i) == spawns.get(j)) continue;
-
-                // no entry in case the spawns see each other
-                if (calcCollisionsWithWalls(
-                        new LineFunction(spawns.get(i).center, spawns.get(j).center)).isEmpty())
-                    continue;
-
-                Collection<Spawn> pair = Arrays.asList(spawns.get(i), spawns.get(j));
-
-                // entry
-                spawnPairPoints.put(getIndividualPoints(spawns.get(i), spawns.get(j)), pair);
-            }
-        }
-
-        return spawnPairPoints;
-    }
-
-    /**
-     * calculates the points for a pair of spawns
-     * points = (Sum)stepsToFlag * distance between the points relative to the map size (0-1)
-     *
-     * @return points
-     */
-    private int getIndividualPoints(Spawn sp1, Spawn sp2) {
-        int stepPoints = getSectionAt(sp1.center).stepsToFlag +
-                getSectionAt(sp2.center).stepsToFlag;
-
-        double distanceFactor = sp1.center.distanceTo(sp2.center) / diaDistance;
-
-        return (int)(stepPoints*distanceFactor);
-    }
-    /**
-     * sets different goals for each spawn
-     */
-    private void setStartPosToSpawns(List<Spawn> spawns, Position center) {
-        for (int i = 0; i < spawns.size(); i++) {
-
-            Position goal = center.clone();
-
-            // spread spawns in different directions
-            double deg = 360.0/spawns.size()*i;
-            double k = Function.calcSlopeByDeg(deg);
-
-            // in order to move to the left, the distance must be negative
-            double distance = (deg > 90 && deg < 270)? -calculateDistance(goal, deg) : calculateDistance(goal, deg);
-
-            goal.translateTowards(k, distance*0.8);
-
-            FieldSection section = getSectionAt(goal);
-            spawns.get(i).center = new Position((section.LEFT+section.RIGHT)/2, (section.TOP+section.BOT)/2);
-        }
-    }
-
-    private void clearPosition(FieldSection... sections) {
+    public void clearPosition(FieldSection... sections) {
         // gathers all walls in another List (to avoid ConcurrentModificationException)
         List<WallFunction> affectedWalls = new ArrayList<>();
         for (FieldSection section : sections)
@@ -262,9 +134,9 @@ public class Field extends Container {
 
         // calculating the hypotenuse
         double hypA = Math.sqrt(katA1*katA1 + katA2*katA2);
-        double hypB = Math.sqrt(katB1*katB1 +  katB2*katB2);
+        double hypB = Math.sqrt(katB1*katB1 + katB2*katB2);
 
-        return (hypA < hypB)?  hypA : hypB;
+        return (hypA < hypB)? hypA : hypB;
     }
 
     /**
@@ -292,15 +164,19 @@ public class Field extends Container {
         return ret;
     }
 
-    /**
-     * Method returns collisions of the given Function f with a wall
-     * @param f to calculate with
-     * @return Map where and with what
-     */
     public HashMap<WallFunction, Position> calcCollisionsWithWalls(LineFunction f) {
-        HashMap<WallFunction, Position> ret = new HashMap<>();
+        return calcCollisionsWithWalls(f, getTouchedSections(f));
+    }
 
-        Collection<FieldSection> sectionsToCheck = getTouchedSections(f);
+        /**
+         * Method returns collisions of the given Function f with a wall, listed
+         * in one of the Sections to check
+         * @param f to calculate with
+         * @return Map where and with what
+         */
+    public HashMap<WallFunction, Position> calcCollisionsWithWalls(LineFunction f,
+                                                                   Collection<FieldSection> sectionsToCheck) {
+        HashMap<WallFunction, Position> ret = new HashMap<>();
 
         // lists walls that have been checked already, to avoid repetition
         ArrayList<WallFunction> checkedWalls = new ArrayList<>();
@@ -404,6 +280,19 @@ public class Field extends Container {
         return ret;
     }
 
+    public void setFlag(Flag flag) {
+        this.flag = flag;
+
+        // method gets automatically called on all Sections of this Field, that can reach the flag
+        getSectionAt(flag.center).reachesFlag(1);
+
+        validationPlayableMapSize();
+    }
+
+    public Flag getFlag() {
+        return flag;
+    }
+
     /**
      * Method returns the Section containing the given Position
      * @param pos to check
@@ -417,85 +306,47 @@ public class Field extends Container {
         if (yPos == height) yPos--;
 
         return sections
-                [xPos / (width / horizontalSectionAmount)]
-                [yPos / (height / verticalSectionAmount)]
-                ;
+                [xPos / (width  / horizontalSectionAmount)]
+                [yPos / (height / verticalSectionAmount)];
     }
 
     FieldSection[][] getSections() {
         return sections;
     }
 
-    public ArrayList<WallFunction> getWalls() {
-        return walls;
-    }
-
     @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
-    }
-
-    /**
-     * In order to safe on pp, walls are only painted once and
-     * stored within a BufferedImage
-     *
-     * @return Image representing the map
-     */
-    BufferedImage createMapImage() {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = ((Graphics2D) bufferedImage.getGraphics());
+    public void paint(Graphics g) {
+        super.paint(g);
+        Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(2));
 
-        //https://stackoverflow.com/a/6297069
-
-        //clear
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
-        g2.fillRect(0,0,width,height);
-
-        //reset composite
-        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-
-        g2.setColor(Color.BLACK);
         g2.translate(0, height);
         g2.scale(1.0, -1.0);
-        for (WallFunction wall : walls) {
-            wall.paint(g2);
-        }
 
-        // sections
-        /*
-        g2.setColor(Color.RED.brighter());
-        g2.setStroke(new BasicStroke(1));
-        for (int i = 0; i <= horizontalSectionAmount; i++)
-            g2.drawLine(i*width/horizontalSectionAmount, 0, i*width/horizontalSectionAmount, height);
-        for (int i = 0; i <= verticalSectionAmount; i++)
-            g2.drawLine(0, i*height/verticalSectionAmount, width, i*height/verticalSectionAmount);
-            */
+        g2.setStroke(new BasicStroke(2));
+        g2.setColor(Color.BLACK);
+        // walls
+        for (WallFunction wall : walls)
+            wall.paint(g2);
 
         // flag
+        g.setColor(Color.GREEN.darker());
         flag.paint(g2);
 
         // spawns
+        g.setColor(Color.BLUE);
         for (Spawn spawn : spawns)
             spawn.paint(g2);
-
-        return bufferedImage;
     }
 
 
     @SuppressWarnings("all")
     private void validationClassVariables() {
         if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
-            throw new BadFieldException("Bad Width or Height", BadFieldException.BadFieldType.ConstError);
-        if (width / horizontalSectionAmount < 2 * Values.unitRadius ||
-                height / verticalSectionAmount < 2 * Values.unitRadius)
-            throw new BadFieldException("Sections too small", BadFieldException.BadFieldType.ConstError);
+            throw new BadFieldException("Bad Width or Height", BadFieldException.BadFieldType.CONST_ERROR);
+        if (width / horizontalSectionAmount < 2 * Values.UNIT_RADIUS ||
+                height / verticalSectionAmount < 2 * Values.UNIT_RADIUS)
+            throw new BadFieldException("Sections too small", BadFieldException.BadFieldType.CONST_ERROR);
     }
 
     private void validationPlayableMapSize() {
@@ -511,8 +362,8 @@ public class Field extends Container {
 
         int percent = (int)(sectionsToPlayWith/totalSections*100);
 
-        if (percent <= Values.reachFlagMinimumPercentage)
+        if (percent < Values.REACH_FLAG_MINIMUM_PERCENTAGE)
             throw new BadFieldException("Only "+percent+"% of the map can reach the flag",
-                    BadFieldException.BadFieldType.RandomError);
+                    BadFieldException.BadFieldType.RANDOM_ERROR);
     }
 }
