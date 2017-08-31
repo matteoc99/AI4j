@@ -15,9 +15,9 @@ final class DataIOs {
     private DataIOs() {}
 
     /**
-     * write a File to the given Path
+     * Writes a File to the given Path
      *
-     * path get validated first
+     * Path get validated first
      * @see #validatePath(String)
      *
      * @param path to the File
@@ -41,9 +41,9 @@ final class DataIOs {
     }
 
     /**
-     * reads a File from the given Path
+     * Reads a File from the given Path
      *
-     * path get validated first
+     * Path get validated first
      * @see #validatePath(String)
      * @param path to the File
      * @return an Object
