@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
  */
 public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
 
-    /* boolean is used to force a call on layoutComponents() after the first setBounds()
+    /*
+     * boolean is used to force a call on layoutComponents() after the first setBounds()
      * called on this Panel
      */
     private boolean bugFlag = true;
@@ -120,16 +121,17 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
 
     @Override
     public void setBounds(int x, int y, int width, int height) {
-        if (bugFlag) {
-            bugFlag = false;
-            layoutComponents();
-        }
-
         // no layoutComponents() call after resizing
         int oldWidth = this.width;
         int oldHeight = this.height;
 
         super.setBounds(x, y, width, height);
+
+        if (bugFlag) {
+            bugFlag = false;
+            layoutComponents();
+            return;
+        }
 
         if (this.width != oldWidth || this.height != oldHeight) {
             layoutComponents();
