@@ -1,6 +1,5 @@
 package field_library.math;
 
-
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
@@ -64,8 +63,8 @@ public class Position implements Cloneable{
     }
 
     public double getSlopeTo(Position pos) {
-        if (this.y == pos.y) return 0.0001;
-        if (this.x == pos.x) return 10000;
+        if (this.y == pos.y) return Values.K_MIN;
+        if (this.x == pos.x) return Values.K_MAX;
 
         return (this.y - pos.y) / (this.x - pos.x);
     }

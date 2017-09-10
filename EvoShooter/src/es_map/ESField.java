@@ -1,13 +1,13 @@
 package es_map;
 
+import bot.Unit;
 import field_library.field.BadFieldException;
 import field_library.field.Field;
 import field_library.field.FieldSection;
 import values.Values;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * @author Maximilian Estfeller
@@ -24,6 +24,9 @@ public class ESField extends Field{
      */
     private Flag flag;
 
+    private int nextTeamIndex = 0;
+
+    private Map<Integer, ArrayList<Unit>> teams = new HashMap<>();
 
     public ESField(int width,
                  int height,
@@ -34,6 +37,28 @@ public class ESField extends Field{
 
     public void addSpawns(Collection<Spawn> spawns) {
         this.spawns.addAll(spawns);
+        for (Spawn spawn : spawns) {
+            spawn.setTeamIndex(nextTeamIndex);
+            teams.putIfAbsent(nextTeamIndex, new ArrayList<>());
+            nextTeamIndex++;
+        }
+    }
+
+    public void addUnits(Unit... units) {
+        if (teams.isEmpty())
+            throw new BadFieldException("Set teams before adding Units", BadFieldException.BadFieldType.BUG_ERROR);
+
+        for (Unit unit : units) {
+            Integer smallestTeam = 0;
+
+            // find smallest team
+            for (Integer integer : teams.keySet())
+                if (teams.get(integer).size() < teams.get(smallestTeam).size())
+                    smallestTeam = integer;
+
+            teams.get(smallestTeam).add(unit);
+            unit.setTeamIndex(smallestTeam);
+        }
     }
 
     public void setFlag(Flag flag) {

@@ -10,11 +10,11 @@ import network.Network;
 public abstract class Agent {
 
     /**
-     * contains the {@link Network} of the Agent
+     * Contains the {@link Network} of the Agent
      */
     private Network net;
     /**
-     * describes the fitness of an Agent
+     * Describes the fitness of an Agent
      */
     private double fitness = 0;
 
@@ -32,22 +32,22 @@ public abstract class Agent {
     }
 
     /**
-     * Processes the data thought the {@link Network}
-     *
-     * @param in values for the input Neuron
-     * @return values of the output Neuron
-     */
-    public double[] processData(double[] in) { 
-        return net.processData(in);
-    }
-
-    /**
-     * sets the {@link Network} for the agent
+     * Sets the {@link Network} for the agent
      *
      * @param net {@link #net} of this agent
      */
     public void setNet(Network net) {
         this.net = net;
+    }
+
+    /**
+     * Processes the data thought the {@link Network}
+     *
+     * @param in values for the input Neuron
+     * @return values of the output Neuron
+     */
+    public double[] processData(double[] in) {
+        return net.processData(in);
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class Agent {
     }
 
     /**
-     * sets the fitness of an Agent
+     * Sets the fitness of an Agent
      *
      * @param fitness {@link #fitness}
      */
@@ -69,7 +69,7 @@ public abstract class Agent {
     }
 
     /**
-     * Method used to increase the fitness. can or should be overwritten in the specific agents
+     * Method used to increase the fitness. Can or should be overwritten in the specific agents
      */
     public void increaseFitness() {
         fitness++;

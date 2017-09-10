@@ -95,7 +95,7 @@ public final class ESFieldFactory {
     }
 
     /**
-     * sets different goals for each spawn
+     * sets different goals for each revive
      */
     private static void setStartPosToSpawns(ESField field, List<Spawn> spawns, Position center) {
         for (int i = 0; i < spawns.size(); i++) {

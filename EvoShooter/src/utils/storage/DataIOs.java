@@ -43,7 +43,7 @@ final class DataIOs {
     /**
      * Reads a File from the given Path
      *
-     * Path get validated first
+     * Path validation first
      * @see #validatePath(String)
      * @param path to the File
      * @return an Object

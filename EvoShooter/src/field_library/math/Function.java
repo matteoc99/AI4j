@@ -1,5 +1,7 @@
 package field_library.math;
 
+import static field_library.math.Degrees.simplifyDeg;
+
 /**
  * @author Maximilian Estfelller
  * @since 01.08.2017
@@ -48,41 +50,6 @@ public class Function {
 
         return Math.tan(Math.toRadians(deg));
 
-    }
-
-    /**
-     * Returns a value in the range [0, 360[ equivalent to the given
-     * value deg, seen as an angle
-     * @param deg to calculate with
-     * @return normalized degree-value
-     */
-    public static double normalizeDeg(double deg) {
-        if (deg < 0)
-            return normalizeDeg(deg + 360);
-
-        if (deg >= 360)
-            return normalizeDeg(deg - 360);
-
-        return deg;
-    }
-
-    /**
-     * Returns a value int the range [0, 90] or ]270, 360[, which slope is equivalent
-     * to the given deg
-     * @param deg to simplify
-     * @return simplified deg
-     */
-    public static double simplifyDeg(double deg) {
-        // in order to simplify a degree, it must be normalized first
-        deg = normalizeDeg(deg);
-
-        if (deg > 90) {
-            if (deg < 180)
-                deg += 180;
-            else if (deg <= 270)
-                deg -= 180;
-        }
-        return deg;
     }
 
     /**
@@ -138,6 +105,18 @@ public class Function {
             return null;
         double x = ((f.d - d) / (k - f.k));
         return new Position(x, calcY(x));
+    }
+
+    /**
+     * Returns the closest Position, of this Function, to the given Position
+     * @param pos to calc with
+     * @return closest Position
+     */
+    public Position closestTo(Position pos) {
+        Function fV = new Function(-1/getK());
+        fV.translateToHit(pos);
+
+        return collides(fV);
     }
 
     /**

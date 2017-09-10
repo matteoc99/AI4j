@@ -149,7 +149,7 @@ public class Field extends Canvas {
      * @return distance to the edge of the map
      */
     public double calculateDistanceToEdge(Position pos, double deg) {
-        deg = Function.normalizeDeg(deg);
+        deg = Degrees.normalizeDeg(deg);
 
         // Δx:Δy ratio equals Δx:factor*Δx (tangents), can be infinitive
         double horizontalFactor = Math.abs(1/Math.tan(Math.toRadians(deg)));
@@ -205,7 +205,7 @@ public class Field extends Canvas {
      * @return The Position of the collision and the Object collided with
      */
     public Pair<Position, WallFunction> calcFirstCollisionWithWall(Position pos, double deg) {
-        deg = Function.normalizeDeg(deg);
+        deg = Degrees.normalizeDeg(deg);
 
         Position firstCollision = pos.clone();
         firstCollision.translateTowards(deg, calculateDistanceToEdge(pos, deg));
@@ -376,6 +376,10 @@ public class Field extends Canvas {
         }
 
         return ret;
+    }
+
+    public ArrayList<WallFunction> getWalls() {
+        return walls;
     }
 
     /**
