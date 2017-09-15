@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
  */
 public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePanel{
 
-    /* boolean is used to force a call on layoutComponents() after the first setBounds()
+    /*
+     * boolean is used to force a call on layoutComponents() after the first setBounds()
      * called on this Panel
      */
     private boolean bugFlag = true;

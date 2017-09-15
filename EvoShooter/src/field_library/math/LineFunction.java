@@ -55,4 +55,14 @@ public class LineFunction extends Function {
             return p;
         return null;
     }
+
+    @Override
+    public Position closestTo(Position pos) {
+        Position closest = super.closestTo(pos);
+        if (closest.getX() < a)
+            closest = new Position(a, calcY(a));
+        else if (closest.getX() > b)
+            closest = new Position(b, calcY(b));
+        return closest;
+    }
 }
