@@ -3,6 +3,7 @@ package botGUI;
 
 import agent.cosi.CosiAgent;
 import botGUI.UI.MySlider;
+import botGUI.UI.WorldKeyListener;
 import botGUI.bot.Bot;
 import botGUI.UI.DragAndDropListener;
 import network.Network;
@@ -80,7 +81,7 @@ public class World extends JFrame {
     /**
      * Describes the speed of the moving map
      */
-    private static final int MOVE_SPEED = 40;
+    public static final int MOVE_SPEED = 40;
 
 
     //FPS control
@@ -152,6 +153,10 @@ public class World extends JFrame {
 
     JProgressBar progressBar;
 
+
+    NetworkPanel con = null;
+
+
     public World() {
         setTitle("World");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -162,6 +167,7 @@ public class World extends JFrame {
         setBounds(0, 0, screenSize.width, screenSize.height);
         setLocationRelativeTo(null);
         setExtendedState(MAXIMIZED_BOTH);
+
 
         // networkGUI = new NetworkGUI();
 
@@ -187,95 +193,7 @@ public class World extends JFrame {
 
         createMap();
 
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_R:
-                        generateNewDialog();
-                        break;
-
-                    case KeyEvent.VK_UP:
-                        containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() - MOVE_SPEED);
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        containerPanel.setLocation(containerPanel.getX(), containerPanel.getY() + MOVE_SPEED);
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        containerPanel.setLocation(containerPanel.getX() - MOVE_SPEED, containerPanel.getY());
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        containerPanel.setLocation(containerPanel.getX() + MOVE_SPEED, containerPanel.getY());
-                        break;
-                    case KeyEvent.VK_H:
-                    case KeyEvent.VK_CONTROL:
-                        Point p = MouseInfo.getPointerInfo().getLocation();
-                        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                        screenSize.width -= controlPanelWidth;
-                        int xOff = (int) (p.x - screenSize.getWidth() / 2);
-                        int yOff = (int) (p.y - screenSize.getHeight() / 2);
-                        containerPanel.setLocation(containerPanel.getX() + xOff / 8, containerPanel.getY() + yOff / 8);
-                        break;
-                    case KeyEvent.VK_L:
-                        containerPanel.setLocation(0, 0);
-                        break;
-                    case KeyEvent.VK_P:
-                        pause = !pause;
-                        break;
-
-                    //player steuerung for test
-                    case KeyEvent.VK_W:
-                        population.get(0).yDir = -2;
-
-                        break;
-                    case KeyEvent.VK_S:
-                        population.get(0).yDir = +2;
-
-                        break;
-                    case KeyEvent.VK_A:
-                        population.get(0).xDir = -2;
-
-                        break;
-                    case KeyEvent.VK_D:
-                        population.get(0).xDir = +2;
-                        break;
-                    case KeyEvent.VK_E:
-                        population.get(0).eat();
-
-                        break;
-                    case KeyEvent.VK_X:
-                        population.get(0).rotateAndResize(-10);
-                        break;
-                    case KeyEvent.VK_C:
-                        population.get(0).sensorRotation = 180;
-                        population.get(0).rotateAndResize();
-                        break;
-
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W:
-                        population.get(0).yDir = 0;
-
-                        break;
-                    case KeyEvent.VK_S:
-                        population.get(0).yDir = 0;
-
-                        break;
-                    case KeyEvent.VK_A:
-                        population.get(0).xDir = 0;
-
-                        break;
-                    case KeyEvent.VK_D:
-                        population.get(0).xDir = 0;
-
-                        break;
-                }
-            }
-        });
+        addKeyListener(new WorldKeyListener(this));
 
         dynamicResizer();
 
@@ -339,10 +257,13 @@ public class World extends JFrame {
         labels[3].setBackground(new Color(b.red, b.green, b.blue));
         labels[3].setOpaque(true);
 
-        NetworkPanel con = new NetworkPanel(b.agent.getNet());
-        con.setBounds(20, 60 * labels.length + 20, 350, 300);
-        ret.add(con);
-        con.refresh();
+        if (con == null || (!con.network.equals(b.agent.getNet()))) {
+            con = new NetworkPanel(b.agent.getNet(), "Bot");
+            con.setBounds(20, 60 * labels.length + 20, 350, 300);
+            con.refresh();
+            con.repaint();
+            ret.add(con);
+        }
         return ret;
     }
 
@@ -478,7 +399,7 @@ public class World extends JFrame {
     /**
      * creates a dialog for the new world generation
      */
-    private void generateNewDialog() {
+    public void generateNewDialog() {
 
 
         JPanel dialog = new JPanel();

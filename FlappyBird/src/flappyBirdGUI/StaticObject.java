@@ -8,7 +8,7 @@ import java.net.URL;
  * @author Matteo Cosi
  * @since 15.05.2017
  */
-public class UnbeweglichesObjekt extends JComponent {
+public class StaticObject extends JComponent {
     /**
      * Image displayed on the {@link JComponent}
      */
@@ -19,17 +19,17 @@ public class UnbeweglichesObjekt extends JComponent {
     protected boolean gestorben = false;
 
     /**
-     * Construktor for the {@link UnbeweglichesObjekt}
+     * Construktor for the {@link StaticObject}
      *
      * @param dateiname image to load in the {@link JComponent}
      */
-    public UnbeweglichesObjekt(String dateiname) throws ClassNotFoundException {
+    public StaticObject(String dateiname) throws ClassNotFoundException {
         newimg(dateiname);
 
     }
 
     /**
-     * Loads and draws a new Image on {@link UnbeweglichesObjekt}
+     * Loads and draws a new Image on {@link StaticObject}
      *
      * @param dateiname {@link java.nio.file.Path} to where the image is lacated
      */

@@ -5,7 +5,7 @@ import java.awt.*;
  * @author Matteo Cosi
  * @since 08.08.2017
  */
-public class MyTextField extends JTextField {
+public class Led extends JTextField {
 
     int clicked = 0;
 

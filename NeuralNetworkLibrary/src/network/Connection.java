@@ -177,7 +177,10 @@ public class Connection {
     }
 
     public void changeWeightRelativeToError(double rate, double error) {
-        weight = rate * error * from.getPrevValue() + weight;
+
+        weight = rate * error *
+                from.getPrevValue() + weight;
+
         if (weight > 1) {
             weight=1;
         }

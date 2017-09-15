@@ -7,7 +7,7 @@ import network.Network;
  * @author Matteo Cosi
  * @since 15.04.2017
  */
-public abstract class Agent {
+public class Agent {
 
     /**
      * contains the {@link Network} of the Agent
