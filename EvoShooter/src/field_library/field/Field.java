@@ -35,9 +35,9 @@ public class Field extends Canvas {
     protected final FieldSection[][] sections;
 
     /**
-     * storing all walls
+     * storing all fieldLines
      */
-    private ArrayList<WallFunction> walls = new ArrayList<>();
+    private ArrayList<FieldLine> fieldLines = new ArrayList<>();
 
     public Field(int width,
                  int height,
@@ -113,31 +113,31 @@ public class Field extends Canvas {
     }
 
     /**
-     * Transformers some FunctionData into actual WallFunctions and adds them to this Field
-     * @param wallData data
+     * Transformers some FunctionData into actual FieldLines and adds them to this Field
+     * @param lineData data
      */
-    public void addWalls(Collection<FunctionData> wallData) {
-        for (FunctionData wallDatum : wallData) {
-            WallFunction wall = new WallFunction(this, wallDatum);
-            walls.add(wall);
+    public void addFieldLines(Collection<FunctionData> lineData) {
+        for (FunctionData lineDatum : lineData) {
+            FieldLine line = new FieldLine(this, lineDatum);
+            fieldLines.add(line);
         }
     }
 
     /**
-     * Removes all walls, which are, at any Point, in one of the given Sections
+     * Removes all fieldLines, which are, at any Point, in one of the given Sections
      * @param sections to clear
      */
     public void clearPosition(FieldSection... sections) {
-        // gathers all walls in another List (to avoid ConcurrentModificationException)
-        List<WallFunction> affectedWalls = new ArrayList<>();
+        // gathers all fieldLines in another List (to avoid ConcurrentModificationException)
+        List<FieldLine> affectedLines = new ArrayList<>();
         for (FieldSection section : sections)
-            affectedWalls.addAll(section.getWalls());
+            affectedLines.addAll(section.getFieldLines());
 
-        // removes all walls from all Sections and this Field
-        for (WallFunction affectedWall : affectedWalls) {
-            for (FieldSection section : affectedWall.getTouchedSections())
-                section.removeWall(affectedWall);
-            walls.remove(affectedWall);
+        // removes all fieldLines from all Sections and this Field
+        for (FieldLine affectedLine : affectedLines) {
+            for (FieldSection section : affectedLine.getTouchedSections())
+                section.removeFieldLine(affectedLine);
+            fieldLines.remove(affectedLine);
         }
     }
 
@@ -172,24 +172,24 @@ public class Field extends Canvas {
     }
 
     /**
-     * Checks for walls, that are colliding with the given Circle
+     * Checks for fieldLines, that are colliding with the given Circle
      * @param circle looking for its place in life :(
      * @return Map where and whit what
      */
-    public HashMap<WallFunction, ArrayList<Position>> calcCollisionsWithWalls(Circle circle) {
-        HashMap<WallFunction, ArrayList<Position>> ret = new HashMap<>();
+    public HashMap<FieldLine, ArrayList<Position>> calcCollisionsWithLine(Circle circle) {
+        HashMap<FieldLine, ArrayList<Position>> ret = new HashMap<>();
 
         Collection<FieldSection> sectionsToCheck = getTouchedSections(circle);
 
-        // lists walls that have been checked already, to avoid repetition
-        ArrayList<WallFunction> checkedWalls = new ArrayList<>();
+        // lists fieldLines that have been checked already, to avoid repetition
+        ArrayList<FieldLine> checkedLines = new ArrayList<>();
 
         for (FieldSection fieldSection : sectionsToCheck) {
-            fieldSection.getWalls().stream().filter(wall -> !checkedWalls.contains(wall)).forEach(wall -> {
-                Position[] positions = circle.collides(wall);
-                if (positions != null) ret.put(wall, new ArrayList<>(Arrays.asList(positions)));
+            fieldSection.getFieldLines().stream().filter(line -> !checkedLines.contains(line)).forEach(line -> {
+                Position[] positions = circle.collides(line);
+                if (positions != null) ret.put(line, new ArrayList<>(Arrays.asList(positions)));
 
-                checkedWalls.add(wall);
+                checkedLines.add(line);
             });
         }
 
@@ -204,7 +204,7 @@ public class Field extends Canvas {
      * @param deg to go to
      * @return The Position of the collision and the Object collided with
      */
-    public Pair<Position, WallFunction> calcFirstCollisionWithWall(Position pos, double deg) {
+    public Pair<Position, FieldLine> calcFirstCollisionWithLine(Position pos, double deg) {
         deg = Degrees.normalizeDeg(deg);
 
         Position firstCollision = pos.clone();
@@ -213,22 +213,22 @@ public class Field extends Canvas {
         // representing every possible Position, where a collision can happen
         LineFunction f = new LineFunction(pos, firstCollision);
 
-        HashMap<WallFunction, Position> collisions = calcCollisionsWithWalls(f);
+        HashMap<FieldLine, Position> collisions = calcCollisionsWithLine(f);
 
-        WallFunction collisionObject = null;
+        FieldLine collisionObject = null;
 
         if (deg > 90 && deg <= 270) { // towards left
-            for (WallFunction wallFunction : collisions.keySet()) {
-                if (collisions.get(wallFunction).getX() >= firstCollision.getX()) {
-                    firstCollision = collisions.get(wallFunction);
-                    collisionObject = wallFunction;
+            for (FieldLine fieldLine : collisions.keySet()) {
+                if (collisions.get(fieldLine).getX() >= firstCollision.getX()) {
+                    firstCollision = collisions.get(fieldLine);
+                    collisionObject = fieldLine;
                 }
             }
         } else { // towards right
-            for (WallFunction wallFunction : collisions.keySet()) {
-                if (collisions.get(wallFunction).getX() <= firstCollision.getX()) {
-                    firstCollision = collisions.get(wallFunction);
-                    collisionObject = wallFunction;
+            for (FieldLine fieldLine : collisions.keySet()) {
+                if (collisions.get(fieldLine).getX() <= firstCollision.getX()) {
+                    firstCollision = collisions.get(fieldLine);
+                    collisionObject = fieldLine;
                 }
             }
         }
@@ -237,29 +237,29 @@ public class Field extends Canvas {
     }
 
     /**
-     * Method calculates the Collision of a given LineFunction f with every wall of this Field
+     * Method calculates the Collision of a given LineFunction f with every line of this Field
      *
      * Since both Functions are LineFunctions the can also be no Collision between them
      * @param f to collide with
      * @return Map describing every Collision; collisionObject and collisionPosition
      */
-    public HashMap<WallFunction, Position> calcCollisionsWithWalls(LineFunction f) {
-        HashMap<WallFunction, Position> ret = new HashMap<>();
+    public HashMap<FieldLine, Position> calcCollisionsWithLine(LineFunction f) {
+        HashMap<FieldLine, Position> ret = new HashMap<>();
 
-        for (WallFunction wall : walls) {
-            Position pos = wall.collides(f);
-            if (pos != null) ret.put(wall, pos);
+        for (FieldLine line : fieldLines) {
+            Position pos = line.collides(f);
+            if (pos != null) ret.put(line, pos);
         }
 
         return ret;
     }
 
         /**
-         * Method returns collisions of the given Function f with a wall, listed
+         * Method returns collisions of the given Function f with a line, listed
          * in one of the Sections to check.
          *
          * As the calculation of touched Sections is quite expensive, this method should only be used
-         * for Fields with a very large amount of walls.
+         * for Fields with a very large amount of fieldLines.
          *
          * ATTENTION: Method also returns CollisionPoints, which are not within one of the given Sections,
          * as far as they are within the specified range of a LineFunction
@@ -267,19 +267,19 @@ public class Field extends Canvas {
          * @param f to calculate with
          * @return Map where and with what
          */
-    public HashMap<WallFunction, Position> calcCollisionsWithWalls(LineFunction f,
-                                                                   Collection<FieldSection> sectionsToCheck) {
-        HashMap<WallFunction, Position> ret = new HashMap<>();
+    public HashMap<FieldLine, Position> calcCollisionsWithLine(LineFunction f,
+                                                               Collection<FieldSection> sectionsToCheck) {
+        HashMap<FieldLine, Position> ret = new HashMap<>();
 
-        // lists walls that have been checked already, to avoid repetition
-        ArrayList<WallFunction> checkedWalls = new ArrayList<>();
+        // lists fieldLines that have been checked already, to avoid repetition
+        ArrayList<FieldLine> checkedLines = new ArrayList<>();
 
         for (FieldSection fieldSection : sectionsToCheck) {
-            fieldSection.getWalls().stream().filter(wall -> !checkedWalls.contains(wall)).forEach(wall -> {
-                Position pos = wall.collides(f);
-                if (pos != null) ret.put(wall, pos);
+            fieldSection.getFieldLines().stream().filter(line -> !checkedLines.contains(line)).forEach(line -> {
+                Position pos = line.collides(f);
+                if (pos != null) ret.put(line, pos);
 
-                checkedWalls.add(wall);
+                checkedLines.add(line);
             });
         }
 
@@ -344,7 +344,7 @@ public class Field extends Canvas {
                 // line indicating the start of a new Section
                 double rightLine = getSections()[i][0].RIGHT;
 
-                // calculating the height at which this WallFunction enters a new Section
+                // calculating the height at which this FieldLine enters a new Section
                 double yRes = f.calcY(rightLine);
 
                 ret.add(getSectionAt(new Position(rightLine, yRes)));
@@ -369,7 +369,7 @@ public class Field extends Canvas {
                 if (f.getK() < 0)
                     botLine = Math.nextDown(Math.nextDown(botLine)); // decrement for a minimal amount
 
-                // calculating the xPos at which this WallFunction enters a new Section
+                // calculating the xPos at which this FieldLine enters a new Section
                 double xRes = f.calcX(botLine);
                 ret.add(getSectionAt(new Position(xRes, botLine)));
             }
@@ -378,8 +378,8 @@ public class Field extends Canvas {
         return ret;
     }
 
-    public ArrayList<WallFunction> getWalls() {
-        return walls;
+    public ArrayList<FieldLine> getFieldLines() {
+        return fieldLines;
     }
 
     /**
@@ -411,9 +411,9 @@ public class Field extends Canvas {
 
         g2.setStroke(new BasicStroke(2));
         g2.setColor(Color.BLACK);
-        // walls
-        for (WallFunction wall : walls)
-            wall.paint(g2);
+        // fieldLines
+        for (FieldLine line : fieldLines)
+            line.paint(g2);
     }
 
 

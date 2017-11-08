@@ -19,20 +19,20 @@ public final class FieldFactory {
 
     private FieldFactory() {}
 
-    public static Field createRandomField(int width, int height, int wallAmount) {
-        return createRandomField(width, height, wallAmount, Field.class);
+    public static Field createRandomField(int width, int height, int lineAmount) {
+        return createRandomField(width, height, lineAmount, Field.class);
     }
 
-    public static <T extends Field>T createRandomField(int width, int height, int wallAmount, Class<T> type) {
+    public static <T extends Field>T createRandomField(int width, int height, int lineAmount, Class<T> type) {
         try {
             try {
                 T field = getT(width, height, type);
 
-                field.addWalls(createRandomWalls(field, wallAmount));
+                field.addFieldLines(createRandomFieldLines(field, lineAmount));
 
                 return field;
             } catch (BadFieldException e) {
-                if (e.isRandom()) return createRandomField(width, height, wallAmount, type);
+                if (e.isRandom()) return createRandomField(width, height, lineAmount, type);
                 else throw e;
             }
         } catch (StackOverflowError error) {
@@ -71,20 +71,20 @@ public final class FieldFactory {
         return field;
     }
 
-    public static Collection<FunctionData> createRandomWalls(Field field, int amount) {
-        Collection<FunctionData> walls = new ArrayList<>();
+    public static Collection<FunctionData> createRandomFieldLines(Field field, int amount) {
+        Collection<FunctionData> lines = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
-            walls.add(createRandomWall(field));
+            lines.add(createRandomFieldLine(field));
         }
-        return walls;
+        return lines;
     }
 
-    public static FunctionData createRandomWall(Field field) {
+    public static FunctionData createRandomFieldLine(Field field) {
         FunctionData ret = new FunctionData();
 
         // degree of the function
         double  deg;
-        // offsets to guarantee the function has any Point within this field_library.field
+        // offsets to guarantee the function has any Point within this Field
         int     xOff;
         int     yOff;
         // length of the visible function
@@ -97,7 +97,7 @@ public final class FieldFactory {
 
         ret.setK(calcSlopeByDeg(deg));
 
-        // deciding length of the visible part of the wall + validation
+        // deciding length of the visible part of the line + validation
         do {
             length = (field.width + field.height) / 4 + new Random().nextGaussian() * 10;
         } while (length < (field.width + field.height) / 20 ||

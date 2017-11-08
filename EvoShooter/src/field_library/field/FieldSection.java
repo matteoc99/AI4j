@@ -26,13 +26,13 @@ public class FieldSection {
     public final double RIGHT;
 
     /**
-     * List storing all WallFunctions of this Section
+     * List storing all FieldLines of this Section
      *
      * ATTENTION: Don't change the accessibility, and don't add items directly to this value
      * unless you have spoken to the author.
      * Every addition and deletion can also change specific values of this or other Objects
      */
-    private ArrayList<WallFunction> walls = new ArrayList<>();
+    private ArrayList<FieldLine> fieldLines = new ArrayList<>();
 
     /**
      * Reference to the parent Field
@@ -40,10 +40,10 @@ public class FieldSection {
     private Field parent;
 
     /**
-     * A Section is free to move on as long as addWall has not been called.
-     * @see #addWall(WallFunction)
+     * A Section is free to move on as long as addFieldLine has not been called.
+     * @see #addFieldLine(FieldLine)
      *
-     * Walls that have been added directly to the List do not change this value.
+     * FieldLines that have been added directly to the List do not change this value.
      */
     private boolean freeToMoveOn = true;
 
@@ -57,15 +57,15 @@ public class FieldSection {
         RIGHT       = (int) botRight.getX();
     }
 
-    void addWall(WallFunction wallFunction) {
+    void addFieldLine(FieldLine fieldLine) {
         freeToMoveOn = false;
-        if (!walls.contains(wallFunction))
-            walls.add(wallFunction);
+        if (!fieldLines.contains(fieldLine))
+            fieldLines.add(fieldLine);
         else {
             for (FieldSection fieldSection : getNeighbours()) {
-                fieldSection.walls.remove(wallFunction);
-                fieldSection.walls.add(wallFunction);
-                wallFunction.getTouchedSections().add(fieldSection);
+                fieldSection.fieldLines.remove(fieldLine);
+                fieldSection.fieldLines.add(fieldLine);
+                fieldLine.getTouchedSections().add(fieldSection);
             }
         }
     }
@@ -88,13 +88,13 @@ public class FieldSection {
         return neighbours.toArray(ret);
     }
 
-    void removeWall(WallFunction wallFunction) {
-        walls.remove(wallFunction);
-        if (walls.isEmpty()) freeToMoveOn = true;
+    void removeFieldLine(FieldLine fieldLine) {
+        fieldLines.remove(fieldLine);
+        if (fieldLines.isEmpty()) freeToMoveOn = true;
     }
 
-    ArrayList<WallFunction> getWalls() {
-        return walls;
+    ArrayList<FieldLine> getFieldLines() {
+        return fieldLines;
     }
 
     @Override
@@ -106,7 +106,7 @@ public class FieldSection {
                 ", BOT=" + BOT +
                 ", LEFT=" + LEFT +
                 ", RIGHT=" + RIGHT +
-                ", Walls:[" + getWallIDs() +
+                ", Lines:[" + getLineIDs() +
                 "]}";
     }
 
@@ -115,15 +115,15 @@ public class FieldSection {
     }
 
     /**
-     * Returns the IDs of the stored wall as a String.
-     * @return wallIDs
+     * Returns the IDs of the stored FieldLines as a String.
+     * @return lineIDs
      */
-    private String getWallIDs() {
-        if (walls.size() == 0) return "none";
+    private String getLineIDs() {
+        if (fieldLines.size() == 0) return "none";
 
         StringBuilder ret = new StringBuilder();
-        for (WallFunction wall : walls) {
-            ret.append(wall.getId()).append(", ");
+        for (FieldLine line : fieldLines) {
+            ret.append(line.getId()).append(", ");
         }
         return ret.substring(0, ret.length()-2);
     }

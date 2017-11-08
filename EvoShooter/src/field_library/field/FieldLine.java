@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Maximilian Estfelller
  * @since 18.07.2017
  */
-public class WallFunction extends LineFunction {
+public class FieldLine extends LineFunction {
 
     private static AtomicInteger nextId = new AtomicInteger(0);
 
@@ -21,7 +21,7 @@ public class WallFunction extends LineFunction {
 
     private ArrayList<FieldSection> touchedSections = new ArrayList<>();
 
-    WallFunction(Field field, FunctionData data) {
+    FieldLine(Field field, FunctionData data) {
         this.parent = field;
         this.id = nextId.getAndIncrement();
 
@@ -39,7 +39,7 @@ public class WallFunction extends LineFunction {
      */
     private void register() {
         for (FieldSection fieldSection : parent.getTouchedSections(this)) {
-            fieldSection.addWall(this);
+            fieldSection.addFieldLine(this);
             touchedSections.add(fieldSection);
         }
     }
@@ -54,7 +54,7 @@ public class WallFunction extends LineFunction {
 
     @Override
     public String toString() {
-        return "WallFunction:"+ id +" {" +
+        return "FieldLine:"+ id +" {" +
                 "k=" + getK() +
                 ", d=" + d +
                 ", a=" + a +

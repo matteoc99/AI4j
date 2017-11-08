@@ -18,17 +18,17 @@ public final class ESFieldFactory {
 
     private ESFieldFactory() {}
 
-    public static ESField createRandomESField(int width, int height, int wallAmount) {
+    public static ESField createRandomESField(int width, int height, int lineAmount) {
         try {
             try {
-                ESField field = FieldFactory.createRandomField(width, height, wallAmount, ESField.class);
+                ESField field = FieldFactory.createRandomField(width, height, lineAmount, ESField.class);
 
                 field.setFlag(createFlag(field));
                 field.addSpawns(createSpawns(field));
 
                 return field;
             } catch (BadFieldException e) {
-                if (e.isRandom()) return createRandomESField(width, height, wallAmount);
+                if (e.isRandom()) return createRandomESField(width, height, lineAmount);
                 else throw e;
             }
         } catch (StackOverflowError error) {
@@ -69,7 +69,7 @@ public final class ESFieldFactory {
         // removes all spawns that can see directly to the flag
         spawns.removeIf(spawn -> {
             LineFunction visionLine = new LineFunction(spawn.center, field.getFlag().center);
-            return field.calcCollisionsWithWalls(visionLine).isEmpty();
+            return field.calcCollisionsWithLine(visionLine).isEmpty();
         });
 
         // Each pair of spawns, that do not see each other, have a calculated score
@@ -132,7 +132,7 @@ public final class ESFieldFactory {
                     continue;
 
                 // no entry in case the spawns see each other
-                if (field.calcCollisionsWithWalls(
+                if (field.calcCollisionsWithLine(
                         new LineFunction(spawns.get(i).center, spawns.get(j).center)).isEmpty())
                     continue;
 

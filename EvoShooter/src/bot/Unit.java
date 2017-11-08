@@ -1,7 +1,7 @@
 package bot;
 
 import es_map.ESField;
-import field_library.field.WallFunction;
+import field_library.field.FieldLine;
 import field_library.math.Position;
 import values.Values;
 
@@ -80,7 +80,7 @@ public abstract class Unit {
         if (field.getHeight() - pos.getY() < closestWallDistance)
             closestWallDistance = field.getHeight() - pos.getY();
 
-        for (WallFunction wall : field.getWalls()) {
+        for (FieldLine wall : field.getFieldLines()) {
             if (wall.closestTo(pos).distanceTo(pos) < closestWallDistance)
                 closestWallDistance = wall.closestTo(pos).distanceTo(pos);
         }
