@@ -9,14 +9,10 @@ import static field_library.math.Degrees.simplifyDeg;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Function {
 
-    /**
-     * Slope
-     */
+    /** Slope */
     private double k;
 
-    /**
-     * Y-Offset
-     */
+    /** Y-Offset */
     public double d;
 
     public Function(double k, double d) {
@@ -93,6 +89,15 @@ public class Function {
      */
     public Position collides(Function f) {
         return collidesForceBase(f);
+    }
+
+    /**
+     * Calculates the collision of this Function with a circle
+     * @param c to calculate with
+     * @return Position[] of both collision points
+     */
+    public Position[] collides(Circle c) {
+        return c.collides(this);
     }
 
     /**
