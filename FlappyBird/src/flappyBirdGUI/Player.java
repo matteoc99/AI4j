@@ -3,12 +3,10 @@ package flappyBirdGUI;
 import agent.Agent;
 import com.sun.javafx.geom.Vec2d;
 
-import java.awt.*;
-
 /**
  * Created by mcosi on 09/06/2017.
  */
-public class Player extends BeweglichesObjekt {
+public class Player extends MovingObject {
 
     Vec2d fallspeed = new Vec2d(0, 0);
     long time = System.currentTimeMillis();
@@ -16,7 +14,7 @@ public class Player extends BeweglichesObjekt {
     public Agent agent = null;
 
     /**
-     * Construktor for the {@link UnbeweglichesObjekt}
+     * Construktor for the {@link StaticObject}
      */
     public Player(Agent o) throws ClassNotFoundException {
         super("player.png");

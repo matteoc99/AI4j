@@ -65,7 +65,7 @@ public class PopulationOrganizer {
                 for (int j = 0; j < population; j++) {
                     durchschnitt += agent[j].getFitness();
                     if (agent[j].getFitness() > bestFitness) {
-                        n.addNetwork(agent[j].getNet());
+                        n.addNetwork(agent[j].getNet(), "hi");
                         n.repaint();
                         bestDescriptor = agent[j].getNet().getDescriptor();
                         bestFitness = agent[j].getFitness();

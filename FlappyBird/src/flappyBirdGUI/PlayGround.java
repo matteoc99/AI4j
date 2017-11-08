@@ -175,8 +175,8 @@ public class PlayGround extends JFrame {
         Component[] components = this.getContentPane().getComponents();
         if (components != null && components.length > 0) {
             for (Component c : components) {
-                if (c instanceof BeweglichesObjekt)
-                    ((BeweglichesObjekt) c).move();
+                if (c instanceof MovingObject)
+                    ((MovingObject) c).move();
             }
         }
         super.paint(g);

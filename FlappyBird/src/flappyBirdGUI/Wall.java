@@ -3,9 +3,9 @@ package flappyBirdGUI;
 /**
  * Created by mcosi on 09/06/2017.
  */
-public class Wall extends BeweglichesObjekt {
+public class Wall extends MovingObject {
     /**
-     * Construktor for the {@link UnbeweglichesObjekt}
+     * Construktor for the {@link StaticObject}
      */
     public static Wall allowedWall = null;
 

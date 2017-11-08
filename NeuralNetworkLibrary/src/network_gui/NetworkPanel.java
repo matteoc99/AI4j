@@ -41,7 +41,7 @@ public class NetworkPanel extends JPanel implements NetworkGUIComponent, MovePan
     /**
      * Reference to the network.Network of this Panel
      */
-    private Network network;
+    public Network network;
 
     private String networkName;
 
