@@ -22,11 +22,10 @@ public class FieldLine extends LineFunction {
     private ArrayList<FieldSection> touchedSections = new ArrayList<>();
 
     FieldLine(Field field, FunctionData data) {
+        super(data);
+
         this.parent = field;
         this.id = nextId.getAndIncrement();
-
-        this.a = data.getA();
-        this.b = data.getB();
 
         setK(data.getK());
         this.d = data.getD();
