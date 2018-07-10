@@ -55,7 +55,7 @@ public final class FieldFactory {
         try {
             field = type.getConstructor(int.class, int.class, int.class, int.class).
                     newInstance(width, height,
-                    width  / (4* Values.UNIT_RADIUS),
+                    width  / (4*Values.UNIT_RADIUS),
                     height / (4*Values.UNIT_RADIUS));
 
         } catch (NoSuchMethodException | IllegalAccessException |
@@ -118,11 +118,11 @@ public final class FieldFactory {
     }
 
     private static void adjustABValues(Field field, FunctionData ret) {
-        // adjusting a and b to be within the field_library.field
+        // adjusting a and b to be within the Field
         if (ret.getA() < 0) ret.setA(0);
         if (ret.getB() > field.width-1) ret.setB(field.width-1);
 
-        // adjusting a and b so that their y-value is within the field_library.field
+        // adjusting a and b so that their y-value is within the Field
 
         double topOut = calcXRaw(field.height-1, ret);
         double botOut = calcXRaw(0, ret);

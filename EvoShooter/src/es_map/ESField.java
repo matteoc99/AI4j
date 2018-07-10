@@ -33,6 +33,7 @@ public class ESField extends Field{
                  int horizontalSectionAmount,
                  int verticalSectionAmount) {
         super(width, height, horizontalSectionAmount, verticalSectionAmount, ESFieldSection.class);
+        validationClassVariables();
     }
 
     public void addSpawns(Collection<Spawn> spawns) {
@@ -104,5 +105,14 @@ public class ESField extends Field{
         g.setColor(Color.BLUE);
         for (Spawn spawn : spawns)
             spawn.paint(g);
+    }
+
+    @SuppressWarnings("all")
+    private void validationClassVariables() {
+        if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
+            throw new BadFieldException("Bad Width or Height", BadFieldException.BadFieldType.CONST_ERROR);
+        if (width / horizontalSectionAmount < 2 * Values.UNIT_RADIUS ||
+                height / verticalSectionAmount < 2 * Values.UNIT_RADIUS)
+            throw new BadFieldException("Sections too small", BadFieldException.BadFieldType.CONST_ERROR);
     }
 }

@@ -64,8 +64,6 @@ public class Field extends Canvas {
         this.horizontalSectionAmount = horizontalSectionAmount;
         this.verticalSectionAmount = verticalSectionAmount;
 
-        validationClassVariables();
-
         this.sections = new FieldSection[horizontalSectionAmount][verticalSectionAmount];
 
         createSections(sectionType);
@@ -414,15 +412,5 @@ public class Field extends Canvas {
         // fieldLines
         for (FieldLine line : fieldLines)
             line.paint(g2);
-    }
-
-
-    @SuppressWarnings("all")
-    private void validationClassVariables() {
-        if (width % horizontalSectionAmount != 0 || height % verticalSectionAmount != 0)
-            throw new BadFieldException("Bad Width or Height", BadFieldException.BadFieldType.CONST_ERROR);
-        if (width / horizontalSectionAmount < 2 * Values.UNIT_RADIUS ||
-                height / verticalSectionAmount < 2 * Values.UNIT_RADIUS)
-            throw new BadFieldException("Sections too small", BadFieldException.BadFieldType.CONST_ERROR);
     }
 }
