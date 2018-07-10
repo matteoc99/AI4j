@@ -415,7 +415,7 @@ public class Neuron {
      */
     public Connection getDendriteAt(int index) {
         if (index > dendrites.size())
-            throw new IndexOutOfBoundsException("index > axons.size()");
+            throw new IndexOutOfBoundsException("index > dendrites.size()");
         return dendrites.get(index);
     }
 
