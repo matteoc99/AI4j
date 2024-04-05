@@ -1,7 +1,5 @@
 package game;
 
-import com.sun.corba.se.spi.oa.NullServant;
-
 import javax.swing.*;
 import java.awt.*;
 

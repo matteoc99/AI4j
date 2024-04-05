@@ -1,7 +1,6 @@
 package flappyBirdGUI;
 
 import agent.Agent;
-import com.sun.javafx.geom.Vec2d;
 
 /**
  * Created by mcosi on 09/06/2017.
@@ -37,7 +36,8 @@ public class Player extends MovingObject {
                             //PlayGround.spaceY / PlayGround.HEIGHT,//langsamer
                             //    PlayGround.SPACE/350,
                             getUnten(),
-                            getAbstand()
+                            getAbstand(),
+                            fallspeed.y / (1 + Math.abs(fallspeed.y)), // momentum (sigmoid)
                     })[0];
 
                     if (data > 0.7) {
@@ -80,4 +80,20 @@ public class Player extends MovingObject {
     public double getUnten() {
         return ((getY() + 2) / (PlayGround.HEIGHT + 0.0));
     }
+
+    public class Vec2d {
+        public double x;
+        public double y;
+
+        public Vec2d(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x + ", " + y + ")";
+        }
+    }
+
 }

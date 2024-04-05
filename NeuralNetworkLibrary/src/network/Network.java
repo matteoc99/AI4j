@@ -1,6 +1,5 @@
 package network;
 
-import com.sun.istack.internal.NotNull;
 import network.Layer.LayerType;
 
 import java.lang.reflect.Array;
@@ -369,7 +368,7 @@ public class Network {
      * @param layer1 first network.Layer
      * @param layer2 second network.Layer
      */
-    public void connect(@NotNull Layer layer1, @NotNull Layer layer2) {
+    public void connect(Layer layer1, Layer layer2) {
         if (layer1 == null || layer2 == null)
             return;
         layer1.connectWith(layer2);
@@ -545,11 +544,11 @@ public class Network {
         while (true) {
             index = descriptor.indexOf(",");
             if (index == -1) {
-                desc.add(new Double(descriptor));
+                desc.add(Double.valueOf(descriptor));
                 break;
             }
             String subData = descriptor.substring(0, index);
-            desc.add(new Double(subData));
+            desc.add(Double.valueOf(subData));
             descriptor = descriptor.substring(index + 1);
         }
         double[] ret = new double[desc.size()];

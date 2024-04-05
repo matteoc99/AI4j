@@ -110,7 +110,6 @@ public class PlayGround extends JFrame {
 
             }
         });
-        requestFocus();
         c.add(punkte);
         c.add(highscore);
         setVisible(true);

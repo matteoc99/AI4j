@@ -1,7 +1,5 @@
 package network;
 
-import com.sun.istack.internal.NotNull;
-
 /**
  * An network.Connection is a connection between two {@link Neuron} with a specific weight
  *
@@ -65,7 +63,7 @@ public class Connection {
      * @param weight {@link Connection#weight} of the Connection
      * @param active {@link #active} if the connection is active
      */
-    public Connection(@NotNull Neuron from, @NotNull Neuron to, double weight, boolean active) {
+    public Connection(Neuron from, Neuron to, double weight, boolean active) {
         if (from == null || to == null)
             return;
         setFrom(from);
@@ -103,7 +101,7 @@ public class Connection {
     /**
      * sets {@link Connection#from}
      */
-    public void setFrom(@NotNull Neuron from) {
+    public void setFrom(Neuron from) {
         if (from == null)
             return;
         if (!from.containsAxon(this)) {
@@ -117,7 +115,7 @@ public class Connection {
      *
      * @param to {@link Neuron}
      */
-    public void setTo(@NotNull Neuron to) {
+    public void setTo(Neuron to) {
         if (from == null)
             return;
         if (!to.containsDendrite(this)) {

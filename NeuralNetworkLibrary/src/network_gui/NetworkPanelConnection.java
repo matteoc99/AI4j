@@ -1,6 +1,5 @@
 package network_gui;
 
-import com.sun.istack.internal.NotNull;
 import network.Connection;
 
 import javax.swing.*;
@@ -29,7 +28,7 @@ class NetworkPanelConnection extends JComponent implements NetworkGUIComponent{
 
     private Object equivalent;
 
-    public NetworkPanelConnection(Connection equivalent, @NotNull NetworkPanelNeuron from,@NotNull NetworkPanelNeuron to) {
+    public NetworkPanelConnection(Connection equivalent, NetworkPanelNeuron from, NetworkPanelNeuron to) {
         this.setEquivalent(equivalent);
         this.from = from;
         this.to = to;

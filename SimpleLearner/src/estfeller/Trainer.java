@@ -30,7 +30,7 @@ public class Trainer {
         // display
         new Thread(() -> {
             while (true) {
-                gui.addNetwork(bestNetwork);
+                gui.addNetwork(bestNetwork, "bestNetwork");
                 try {
                     TimeUnit.MILLISECONDS.sleep(1000);
                 } catch (InterruptedException e) {

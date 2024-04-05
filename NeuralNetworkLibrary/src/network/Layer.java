@@ -1,7 +1,5 @@
 package network;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
 
 /**
@@ -77,7 +75,7 @@ public class Layer {
      * @param neurons {@link Layer#neurons}
      * @param type    {@link LayerType}
      */
-    public Layer(@NotNull ArrayList<Neuron> neurons, LayerType type) {
+    public Layer(ArrayList<Neuron> neurons, LayerType type) {
         this(type);
         if (neurons != null) {
             for (int i = 0; i < neurons.size(); i++) {

@@ -68,7 +68,7 @@ public class PopulationOrganizer {
                 bests = new ArrayList<>();
                 for (int j = 0; j < population; j++) {
                     if (agent[j].getFitness() >= bestFitness) {
-                        n.addNetwork(agent[j].getNet());
+                        n.addNetwork(agent[j].getNet(), "network");
                         n.repaint();
                         bestDescriptor = agent[j].getNet().getDescriptor();
                         bestFitness = agent[j].getFitness();

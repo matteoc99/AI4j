@@ -1,7 +1,5 @@
 package game;
 
-import com.sun.javafx.geom.Vec2d;
-
 import javax.swing.*;
 import java.awt.geom.Arc2D;
 
@@ -40,7 +38,7 @@ public class MobileObject extends ImmobileObject {
      */
     public MobileObject(String dateiname) throws ClassNotFoundException {
         super(dateiname);
-        direction = new Vec2d();
+        direction = new Vec2d(0, 0);
         direction.x = 0;
         while (direction.x == 0) {
             direction.x = (int) (Math.random() * 8) - 4;
@@ -52,7 +50,7 @@ public class MobileObject extends ImmobileObject {
 
     public void move() {
         if (position == null) {
-            position = new Vec2d();
+            position = new Vec2d(0, 0);
             position.x = getX();
             position.y = getY();
         }
@@ -70,5 +68,20 @@ public class MobileObject extends ImmobileObject {
         position.x = (int) (position.x + direction.x);
         position.y = (int) (position.y + direction.y);
 
+    }
+
+    public class Vec2d {
+        public double x;
+        public double y;
+
+        public Vec2d(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "(" + x + ", " + y + ")";
+        }
     }
 }

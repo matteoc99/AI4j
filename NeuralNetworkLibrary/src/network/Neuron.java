@@ -1,7 +1,5 @@
 package network;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.ArrayList;
 
 /**
@@ -94,7 +92,7 @@ public class Neuron {
      * @param layer    {@link Layer}
      * @param function {@link #function}
      */
-    public Neuron(@NotNull Layer layer, Function function) {
+    public Neuron(Layer layer, Function function) {
         setMyLayer(layer);
         setFunction(function);
         setIndex(index);
@@ -176,7 +174,7 @@ public class Neuron {
      *
      * @param function {@link #function}
      */
-    public void setFunction(@NotNull Function function) {
+    public void setFunction(Function function) {
         if (function == null)
             return;
         this.function = function;
